@@ -10,4 +10,5 @@ async def chat_websocket(websocket: WebSocket):
     while True:
         data = await websocket.receive_text()
         async for part in chat_service.process_message(data):
+            print(part)
             await websocket.send_text(part)
