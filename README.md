@@ -44,3 +44,8 @@
 - Add documentation to your API by using FastAPI's built-in support for OpenAPI.
 - Use Docker for consistent development, testing, and deployment environments.
 - Consider adding `middlewares` for CORS, error handling, etc., as needed.
+
+
+## Run the backend:
+
+`uvicorn app.main:app --reload`
