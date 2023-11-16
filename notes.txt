@@ -1,0 +1,10 @@
+ssh root@156.232.10.168
+Wdd!@#8606162
+
+pm2 start
+pm2 list
+pm2 logs
+
+nohup gunicorn sapperpro:app --bind=0.0.0.0:8003 --keyfile=privkey.key --certfile=fullchain.pem --error-logfile=error.log >gunicorn.log 2>&1 &
+nohup gunicorn sapperenter:app --bind 0.0.0.0:8000 --keyfile=privkey.key --certfile=fullchain.pem --error-logfile=error.log >gunicorn.log 2>&1 &
+
