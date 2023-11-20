@@ -2,17 +2,9 @@ from fastapi import FastAPI
 from .api.v1.endpoints import websocket_routes
 from .core.config import settings
 from fastapi.staticfiles import StaticFiles
-from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 
 app = FastAPI(title=settings.PROJECT_NAME)
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
 
 app.include_router(websocket_routes.router)
 
