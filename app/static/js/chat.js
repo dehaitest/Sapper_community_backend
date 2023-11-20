@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', (event) => {
-    const ws = new WebSocket(`ws://${window.location.host}/ws/chat`);
+    const ws = new WebSocket(`wss://${window.location.host}/ws/chat`);
     const messagesContainer = document.getElementById('messages');
     const messageInput = document.getElementById('messageInput');
     const sendButton = document.getElementById('sendButton');

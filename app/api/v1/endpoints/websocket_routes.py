@@ -4,7 +4,7 @@ from ....core.config import settings
 
 router = APIRouter()
 
-@router.websocket(settings.WEBSOCKET_ROUTE)
+@router.websocket('/ws/chat')
 async def chat_websocket(websocket: WebSocket):
     chat_service = ChatService()
     await websocket.accept()
