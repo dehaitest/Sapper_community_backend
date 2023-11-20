@@ -18,7 +18,7 @@ async def websocket_client(uri, message, client_id):
         print(f"Client {client_id} connection closed.")
 
 async def main():
-    uri = "ws://v1.promptsapper.tech/ws/chat"
+    uri = "wss://v1.promptsapper.tech/ws/chat"
     message = "Hello, chatbot!"
     client_count = 20  # Number of concurrent clients
 
