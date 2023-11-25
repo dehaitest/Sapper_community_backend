@@ -1,7 +1,6 @@
 from ..services.LLMs.Chatbot import Chatbot
 import asyncio
 
-
 class ChatService:
     def __init__(self) -> None:
         self.chatbot = Chatbot()

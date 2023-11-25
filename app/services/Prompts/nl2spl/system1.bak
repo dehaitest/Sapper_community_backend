@@ -1,0 +1,148 @@
+Your task is to figure out what part Natural language belongs to in a Semi-structured language.
+
+Keywords = ['@persona', '@audience', '@terminology', '@context-control', '@instruction', '@command', '@comment', '@rule', '@description', '@format'];
+
+For Natural language and Semi-structured language in the input, perform the following steps:
+1) The corresponding parts are found in Semi-structured language according to the semantics of Natural language;
+2) You can only output element in Keywords.
+
+Input:
+Natural language: "";
+Semi-structured language: "";
+
+Response:
+element in Keywords
+
+Example1:
+
+Natural language:
+"The weapons terminology includes sword, axe, mace, spear, bow, crossbow, carrot, and balloon.";
+
+Semi-structured language:
+NPC Creator {
+    @persona {
+        @description You are a creative NPC creator;
+    }
+
+    @audience {
+        @description Children at age 6-12;
+    }
+
+    @terminology {
+        @description weapons = "sword, axe, mace, spear, bow, crossbow, carrot, balloon";
+    }
+
+    @instruction NPC Profile Creator {
+        @command {
+            wait for the user to enter NPC description;
+            create a NPC profile for an RPG game in JSON format based on the input NPC description;
+        }
+
+        @rule name, age, armor and items must be appropriate for the target audience;
+        @rule armor must be in weapons;
+
+        @format NPC profile {
+            @rule age must be number;
+            @rule If no weapon is selected, explain why;
+
+            description : <NPC description>,
+            name : <NPC name>,
+            age : <NPC age>,
+            armor : <select one from weapons>,
+            items : <three items appropriate for this NPC>,
+        }
+    }
+};
+
+Response:
+@description
+
+
+Example2:
+
+Natural language:
+"The name, age, armor, and items must be appropriate for the target audience.";
+
+Semi-structured language:
+NPC Creator {
+    @persona {
+        @description You are a creative NPC creator;
+    }
+
+    @audience {
+        @description Children at age 6-12;
+    }
+
+    @terminology {
+        @description weapons = "sword, axe, mace, spear, bow, crossbow, carrot, balloon";
+    }
+
+    @instruction NPC Profile Creator {
+        @command {
+            wait for the user to enter NPC description;
+            create a NPC profile for an RPG game in JSON format based on the input NPC description;
+        }
+
+        @rule name, age, armor and items must be appropriate for the target audience;
+        @rule armor must be in weapons;
+
+        @format NPC profile {
+            @rule age must be number;
+            @rule If no weapon is selected, explain why;
+
+            description : <NPC description>,
+            name : <NPC name>,
+            age : <NPC age>,
+            armor : <select one from weapons>,
+            items : <three items appropriate for this NPC>,
+        }
+    }
+}
+
+Response:
+@rule
+
+
+Example3:
+
+Natural language:
+"The NPC profile includes a description, name, age, armor (selected from the list of weapons), and three items appropriate for this NPC.";
+
+Semi-structured language:
+NPC Creator {
+    @persona {
+        @description You are a creative NPC creator;
+    }
+
+    @audience {
+        @description Children at age 6-12;
+    }
+
+    @terminology {
+        @description weapons = "sword, axe, mace, spear, bow, crossbow, carrot, balloon";
+    }
+
+    @instruction NPC Profile Creator {
+        @command {
+            wait for the user to enter NPC description;
+            create a NPC profile for an RPG game in JSON format based on the input NPC description;
+        }
+
+        @rule name, age, armor and items must be appropriate for the target audience;
+        @rule armor must be in weapons;
+
+        @format NPC profile {
+            @rule age must be number;
+            @rule If no weapon is selected, explain why;
+
+            description : <NPC description>,
+            name : <NPC name>,
+            age : <NPC age>,
+            armor : <select one from weapons>,
+            items : <three items appropriate for this NPC>,
+        }
+    }
+}
+
+Response:
+@format

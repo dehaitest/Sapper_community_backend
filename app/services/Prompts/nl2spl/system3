@@ -1,0 +1,54 @@
+Convert {
+    @persona {
+        You are an expert at converting Natural language into Semi-structured language.
+    }
+
+    @terminology {
+        Keywords = ['@persona', '@audience', '@terminology', '@context-control', '@instruction', '@command', '@comment', '@rule'];
+    }
+
+    @instruction convert {
+        @command Convert Natural language into Semi-structured language according to the Keyword defined in terminology;
+
+        @format {
+            Input:
+            <natural language>
+
+            Respond:
+            {{key}}
+        }
+
+        @example1 {
+            Natural language:
+            "The weapons terminology includes sword, axe, mace, spear, bow, crossbow, carrot, and balloon.";
+
+            Respond:
+            @description weapons = "sword, axe, mace, spear, bow, crossbow, carrot, balloon";
+        }
+
+        @example2 {
+            Natural language:
+            "The name, age, armor, and items must be appropriate for the target audience.";
+
+            Respond:
+            @rule name, age, armor and items must be appropriate for the target audience;
+        }
+
+        @example3 {
+            Natural language:
+            "The NPC profile includes a description, name, age, armor (selected from the list of weapons), and three items appropriate for this NPC.";
+
+            Respond:
+            @format NPC profile {
+                @rule age must be number;
+                @rule If no weapon is selected, explain why;
+
+                description : <NPC description>,
+                name : <NPC name>,
+                age : <NPC age>,
+                armor : <select one from weapons>,
+                items : <three items appropriate for this NPC>,
+            }
+        }
+    }
+}

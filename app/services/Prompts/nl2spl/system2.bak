@@ -1,0 +1,13 @@
+Your task is to find the Natural language counterpart in the Semi-structured language.
+
+Keywords = ['@persona', '@audience', '@terminology', '@context-control', '@instruction', '@command', '@comment', '@rule', '@description', '@format'];
+
+For Natural language and Semi-structured language in the input, perform the following steps:
+1) The corresponding parts are found in Semi-structured language according to the semantics of Natural language;
+2) The content of the response must be part of a Semi-structured language;
+
+Input:
+Natural language: "";
+Semi-structured language: "";
+
+Response:

@@ -1,0 +1,20 @@
+Your task is to replace Semi-structured language A with Semi-structured language B in the Long paragraph.
+
+You can accomplish this replacement task using the following steps:
+1) First, you need to find the semi-structured language position in the Long Semi-structured language based on Semi-structured language A.
+2) Second, you need to delete the semi-structured language so that the slot is free.
+3) Finally, you need to fill in the empty slot with Semi-structured language B.
+
+You must strictly abide by the following requirements:
+1) You cannot change information in other locations, even if the logic is inconsistent.
+2) You can only replace within the original Long Semi-structured language.
+3) You must replace the Semi-structured language B with the Semi-structured language A in the Long Semi-structured language.
+
+Input:
+Long Semi-structured language: " "
+
+Semi-structured language A: " "
+Semi-structured language B: " "
+
+Response:
+" "

@@ -1,12 +1,63 @@
+import json
 from fastapi import APIRouter, WebSocket
-from ...services.chat_service import ChatService
+from ....services.WorkSpaceServices.require_2_SPLForm import Require2SPLForm
+from ....services.get_LLM_response import GetLLMResponse
+from ....services.LLMs.Chatgpt import Chatgpt
+from ....core.config import settings
 
 router = APIRouter()
 
-@router.websocket("/ws/chat")
-async def chat_websocket(websocket: WebSocket, chat_service: ChatService = ChatService()):
+@router.websocket("/ws/sapperchain/require2SPLForm")
+async def require_2_SPLForm(websocket: WebSocket):
     await websocket.accept()
     while True:
         data = await websocket.receive_text()
-        response = await chat_service.process_message(data)
-        await websocket.send_text(response)
+        print(data)
+        chat_service = Chatgpt(settings.OPENAI_KEY)
+        require2SPLForm_instance = Require2SPLForm(data, chat_service.process_message)
+        async for part in require2SPLForm_instance.require_2_splForm():
+            await websocket.send_text(part)
+
+@router.websocket("/ws/sapperchain/NLText2SPLForm")
+async def NLText_2_SPLForm(websocket: WebSocket):
+    await websocket.accept()
+    while True:
+        data = await websocket.receive_text()
+        print(data)
+        chat_service = Chatgpt(settings.OPENAI_KEY)
+        # require2SPLForm_instance = Require2SPLForm(data, chat_service.process_message)
+        # async for part in require2SPLForm_instance.require_2_splForm():
+        #     await websocket.send_text(part)
+
+@router.websocket("/ws/sapperchain/SPLForm2NLText")
+async def SPLForm_2_NLText(websocket: WebSocket):
+    await websocket.accept()
+    while True:
+        data = await websocket.receive_text()
+        print(data)
+        chat_service = Chatgpt(settings.OPENAI_KEY)
+        # require2SPLForm_instance = Require2SPLForm(data, chat_service.process_message)
+        # async for part in require2SPLForm_instance.require_2_splForm():
+        #     await websocket.send_text(part)
+
+@router.websocket("/ws/sapperchain/formCopilot")
+async def form_copilot(websocket: WebSocket):
+    await websocket.accept()
+    while True:
+        data = await websocket.receive_text()
+        print(data)
+        chat_service = Chatgpt(settings.OPENAI_KEY)
+        # require2SPLForm_instance = Require2SPLForm(data, chat_service.process_message)
+        # async for part in require2SPLForm_instance.require_2_splForm():
+        #     await websocket.send_text(part)
+
+@router.websocket("/ws/sapperchain/GetLLMResponse")
+async def get_LLM_response(websocket: WebSocket):
+    await websocket.accept()
+    while True:
+        data = await websocket.receive_text()
+        print(data)
+        chat_service = Chatgpt(settings.OPENAI_KEY)
+        getLLMResponse_instance = GetLLMResponse(chat_service.process_message)
+        async for part in getLLMResponse_instance.get_LLM_Response(json.loads(data)):
+            await websocket.send_text(part)

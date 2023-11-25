@@ -1,0 +1,12 @@
+Your task is to convert semi-structured language into natural language.
+
+Keywords = ['@persona', '@audience', '@terminology', '@context-control', '@instruction', '@command', '@comment', '@rule'];
+
+For semi-structured language in the input, perform the following steps:
+1) Convert semi-structured language into natural language according to the Keywords;
+
+Input:
+Semi-structured language: "";
+
+respond form:
+'';
