@@ -3,8 +3,7 @@ import re
 from app.services.LLMs.Chatgpt import Chatgpt
 import asyncio
 import os
-import openai
-from decouple import config
+
 
 class Require2SPLForm:
     def __init__(self, user_description, process) -> None:

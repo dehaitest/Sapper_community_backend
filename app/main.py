@@ -1,13 +1,15 @@
+# app/main.py
 from fastapi import FastAPI
-from .api.v1.endpoints import websocket_routes, workspace_routes
+from .api.v1.api import api_router
 from .core.config import settings
 from fastapi.staticfiles import StaticFiles
 import uvicorn
 
 app = FastAPI(title=settings.PROJECT_NAME)
 
-app.include_router(websocket_routes.router)
-app.include_router(workspace_routes.router)
+
+app.include_router(api_router)
+
 
 # Mount static files
 app.mount("/static", StaticFiles(directory="app/static"), name="static")
