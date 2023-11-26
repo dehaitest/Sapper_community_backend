@@ -6,8 +6,6 @@ class Settings(BaseSettings):
     API_V1_STR: str
     DATABASE_URL: str
     SECRET_KEY: str
-    MAIL_USERNAME: str
-    MAIL_PASSWORD: str
     OPENAI_KEY: str
 
     class Config:
