@@ -1,0 +1,106 @@
+/* Style for the three-column layout */
+.grid-container {
+    display: grid;
+    grid-template-columns: 1fr 2fr 1fr;
+    gap: 20px;
+    padding: 20px;
+    height: 100vh; /* Set the height to full viewport height */
+}
+
+.prompt-list, .prompt-details, .prompt-creation {
+    /* ... existing styles ... */
+    display: flex;
+    flex-direction: column;
+}
+
+.prompt-list .prompt-item {
+    border-bottom: 1px solid #ccc;
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.prompt-list .prompt-item .prompt-name {
+    font-weight: bold;
+    cursor: pointer; /* Default cursor to pointer to indicate it's clickable */
+}
+
+.prompt-list .prompt-item .prompt-name:hover {
+    /* Add styles for hover state */
+    text-decoration: underline; /* Example: underline text on hover */
+    color: blue; /* Example: change color on hover */
+}
+
+.prompt-list .prompt-item .prompt-description {
+    margin-left: 10px;
+    flex-grow: 1;
+}
+
+.prompt-list .prompt-item .delete-icon {
+    cursor: pointer;
+}
+
+/* Styling for each column */
+.prompt-list, .prompt-details, .prompt-creation {
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 20px;
+    background-color: #f9f9f9;
+}
+
+#detailPromptText, #newPromptText {
+    font-size: 1.2em; /* Larger text size */
+    height: 600px; /* Set a fixed height */
+}
+
+/* Headings style */
+h2 {
+    color: #333;
+    margin-bottom: 15px;
+}
+
+/* Form and input styling */
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+input[type="text"], textarea {
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+input[type="checkbox"] {
+    margin-top: 5px;
+}
+
+label {
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+button {
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+/* Responsive adjustments */
+@media screen and (max-width: 768px) {
+    .grid-container {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Additional styling can be added as per your preference */

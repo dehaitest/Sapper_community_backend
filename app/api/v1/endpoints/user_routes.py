@@ -9,8 +9,7 @@ router = APIRouter()
 
 @router.post("/users/", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
 async def create_user(user: UserCreate, db: AsyncSession = Depends(get_db_session)):
-    user_data = user.model_dump()
-    return await user_service.create_user(db, user_data)
+    return await user_service.create_user(db, user.model_dump())
 
 @router.get("/users/{user_id}", response_model=UserResponse)
 async def read_user(user_id: int, db: AsyncSession = Depends(get_db_session)):

@@ -1,19 +1,39 @@
 import openai
-import asyncio
+from ...core.config import settings
 
 class Chatgpt():
-    def __init__(self, api_key) -> None:
-        openai.api_key = api_key
-        self.stream = True
+    def __init__(self) -> None:
+        self.client = openai.AsyncOpenAI(api_key=settings.OPENAI_KEY) 
 
-    async def process_message(self, message: str):
-        for response in openai.ChatCompletion.create(
-                model="gpt-3.5-turbo",
-                messages=message,
-                stream=True
-        ):
-            if response.choices[0]["finish_reason"] == "stop":
-                yield "__END_OF_RESPONSE__"
-                break
-            await asyncio.sleep(0.001)
-            yield response['choices'][0]['delta']['content']
+    async def process_message(self, message: list):
+        response = await self.client.chat.completions.create(
+            model=settings.OPENAI_MODEL,
+            messages=message,
+        )
+        return response
+    
+class Chatgpt_json():
+    def __init__(self) -> None:
+        self.client = openai.AsyncOpenAI(api_key=settings.OPENAI_KEY) 
+
+    async def process_message(self, message: list):
+        response = await self.client.chat.completions.create(
+            model=settings.OPENAI_MODEL,
+            messages=message,
+            response_format={ "type": "json_object" },
+        )
+        return response
+    
+class Chatgpt_strem():
+    def __init__(self) -> None:
+        self.client = openai.AsyncOpenAI(api_key=settings.OPENAI_KEY) 
+
+    async def process_message(self, message: list):
+        stream = await self.client.chat.completions.create(
+            model=settings.OPENAI_MODEL,
+            messages=message,
+            stream=True,
+        )
+        async for part in stream:
+            yield part
+        

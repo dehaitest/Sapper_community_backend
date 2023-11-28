@@ -6,6 +6,7 @@ class Settings(BaseSettings):
     API_V1_STR: str
     DATABASE_URL: str
     SECRET_KEY: str
+    OPENAI_MODEL: str
     OPENAI_KEY: str
 
     class Config:

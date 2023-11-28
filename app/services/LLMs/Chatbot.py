@@ -6,14 +6,13 @@ class Chatbot():
         self.client = openai.AsyncOpenAI(api_key=settings.OPENAI_KEY) 
         self.sysprompt = self.get_prompt()
         self.chat_history = self.assemble_chat_history()
-
+        
     async def chat(self):
         stream = await self.client.chat.completions.create(
-            model="gpt-3.5-turbo",
+            model="gpt-3.5-turbo-1106",
             messages=self.chat_history,
             stream=True,
         )
-
         async for part in stream:
             yield part
     

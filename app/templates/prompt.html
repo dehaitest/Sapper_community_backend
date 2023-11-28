@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prompt Management</title>
+    <link rel="stylesheet" href="/static/css/prompt_style.css">
+    <script src="/static/js/prompt.js"></script>
+</head>
+<body>
+    <div class="grid-container">
+        <!-- Column 1: List of Prompts -->
+        <div class="prompt-list">
+            <h2>Available Prompts</h2>
+            <div id="promptListContainer">
+                <!-- Example of a prompt item with description and delete icon -->
+                <!-- Dynamic content will replace this -->
+                <div class="prompt-item">
+                    <span class="prompt-name">Prompt Name</span>
+                    <span class="prompt-description">Prompt Description</span>
+                    <span class="delete-icon">🗑️</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Column 2: Edit Prompt Details -->
+        <div class="prompt-details">
+            <h2>Edit Prompt Details</h2>
+            <form id="editPromptDetailsForm">
+                <input type="hidden" id="detailPromptId">
+                <label>Name:</label>
+                <input type="text" id="detailName">
+                <label>Prompt Text:</label>
+                <textarea id="detailPromptText"></textarea>
+                <label>Description:</label>
+                <textarea id="detailDescription"></textarea>
+                <label>Create Date:</label>
+                <input type="text" id="detailCreateDate" disabled>
+                <label>Update Date:</label>
+                <input type="text" id="detailUpdateDate" disabled>
+                <label>Active:</label>
+                <input type="checkbox" id="detailActive">
+                <button type="submit">Save</button>
+            </form>
+        </div>
+
+        <!-- Column 3: Add New Prompt -->
+        <div class="prompt-creation">
+            <h2>Add New Prompt</h2>
+            <form id="createPromptForm">
+                <label>Name:</label>
+                <input type="text" id="newName" placeholder="Name" required>
+                <label>Prompt Text:</label>
+                <textarea id="newPromptText" placeholder="Prompt Text" required></textarea>
+                <label>Description:</label>
+                <textarea id="newDescription" placeholder="Description"></textarea>
+                <button type="submit">Add</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

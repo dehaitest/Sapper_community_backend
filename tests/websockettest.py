@@ -12,15 +12,15 @@ async def websocket_client(uri, message, client_id):
                 print(f"\nClient {client_id} completed.\n")
                 break
             else:
-                print(f"{response}", end=',')
+                print(f"{response}")
         # Explicitly close the connection
         await websocket.close()
         print(f"Client {client_id} connection closed.")
 
 async def main():
-    uri = "wss://v1.promptsapper.tech/ws/chat"
-    message = "Hello, chatbot!"
-    client_count = 20  # Number of concurrent clients
+    uri = "ws://localhost:8000/ws/sapperchain/require2SPLForm"
+    message = "High school math tutor to help students solve math problems and provide detailed instruction."
+    client_count = 1  # Number of concurrent clients
 
     tasks = [websocket_client(uri, message, i) for i in range(client_count)]
     await asyncio.gather(*tasks)

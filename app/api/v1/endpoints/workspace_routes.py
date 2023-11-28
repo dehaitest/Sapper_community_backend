@@ -1,22 +1,23 @@
 import json
-from fastapi import APIRouter, WebSocket
+from fastapi import APIRouter, WebSocket, Depends
 from ....services.WorkSpaceServices.require_2_SPLForm import Require2SPLForm
 from ....services.get_LLM_response import GetLLMResponse
 from ....services.LLMs.Chatgpt import Chatgpt
 from ....core.config import settings
+from sqlalchemy.ext.asyncio import AsyncSession
+from ....services.database import get_db_session
 
 router = APIRouter()
 
 @router.websocket("/ws/sapperchain/require2SPLForm")
-async def require_2_SPLForm(websocket: WebSocket):
+async def require_2_SPLForm(websocket: WebSocket, db: AsyncSession = Depends(get_db_session)):
     await websocket.accept()
     while True:
         data = await websocket.receive_text()
-        print(data)
-        chat_service = Chatgpt(settings.OPENAI_KEY)
-        require2SPLForm_instance = Require2SPLForm(data, chat_service.process_message)
-        async for part in require2SPLForm_instance.require_2_splForm():
-            await websocket.send_text(part)
+        require2SPLForm_instance = await Require2SPLForm.create(db, data)
+        async for response in require2SPLForm_instance.require_2_splForm():
+            print('websocket:', response)
+            await websocket.send_text(response)
 
 @router.websocket("/ws/sapperchain/NLText2SPLForm")
 async def NLText_2_SPLForm(websocket: WebSocket):
