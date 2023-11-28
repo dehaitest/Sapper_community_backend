@@ -1,57 +1,56 @@
-/* Style for the three-column layout */
 .grid-container {
     display: grid;
     grid-template-columns: 1fr 2fr 1fr;
     gap: 20px;
     padding: 20px;
-    height: 100vh; /* Set the height to full viewport height */
+    height: 100vh; /* Full viewport height */
 }
 
-.prompt-list, .prompt-details, .prompt-creation {
-    /* ... existing styles ... */
-    display: flex;
-    flex-direction: column;
-}
-
-.prompt-list .prompt-item {
-    border-bottom: 1px solid #ccc;
-    padding: 10px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.prompt-list .prompt-item .prompt-name {
-    font-weight: bold;
-    cursor: pointer; /* Default cursor to pointer to indicate it's clickable */
-}
-
-.prompt-list .prompt-item .prompt-name:hover {
-    /* Add styles for hover state */
-    text-decoration: underline; /* Example: underline text on hover */
-    color: blue; /* Example: change color on hover */
-}
-
-.prompt-list .prompt-item .prompt-description {
-    margin-left: 10px;
-    flex-grow: 1;
-}
-
-.prompt-list .prompt-item .delete-icon {
-    cursor: pointer;
-}
-
-/* Styling for each column */
+/* Styling for each column with max-height */
 .prompt-list, .prompt-details, .prompt-creation {
     border: 1px solid #ddd;
     border-radius: 5px;
     padding: 20px;
     background-color: #f9f9f9;
+    max-height: 100vh; /* Maximum height of the screen */
+    display: flex;
+    flex-direction: column;
+}
+
+/* Scrollable container for the prompt list */
+.prompt-list {
+    overflow-y: auto;
+}
+
+/* Styling for prompt items in two columns */
+.prompt-list .prompt-item {
+    display: grid;
+    grid-template-columns: 3fr 4fr 1fr;
+    border-bottom: 1px solid #ccc;
+    padding: 10px;
+    align-items: center;
+}
+
+.prompt-list .prompt-item .prompt-name {
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.prompt-list .prompt-item .prompt-name:hover {
+    text-decoration: underline;
+    color: blue;
+}
+
+.prompt-list .prompt-item .prompt-description {
+    margin-left: 10px;
 }
 
 #detailPromptText, #newPromptText {
-    font-size: 1.2em; /* Larger text size */
-    height: 600px; /* Set a fixed height */
+    font-size: 1.2em;
+    flex-grow: 1; /* Expand to fill the vertical space */
+    height: 100%; /* Full height within its container */
+    resize: vertical; /* Allow resizing vertically */
+    height: calc(100vh - 50vh); /* Adjust the value accordingly */
 }
 
 /* Headings style */

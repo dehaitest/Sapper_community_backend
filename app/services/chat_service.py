@@ -1,4 +1,4 @@
-from .LLMs.Chatbot import Chatbot
+from .LLMs.chatbot import Chatbot
 import asyncio
 
 class ChatService:

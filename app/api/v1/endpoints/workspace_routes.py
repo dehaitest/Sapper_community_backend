@@ -2,7 +2,7 @@ import json
 from fastapi import APIRouter, WebSocket, Depends
 from ....services.WorkSpaceServices.require_2_SPLForm import Require2SPLForm
 from ....services.get_LLM_response import GetLLMResponse
-from ....services.LLMs.Chatgpt import Chatgpt
+from ....services.LLMs.chatgpt import Chatgpt
 from ....core.config import settings
 from sqlalchemy.ext.asyncio import AsyncSession
 from ....services.database import get_db_session

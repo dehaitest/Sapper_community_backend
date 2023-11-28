@@ -1,6 +1,6 @@
 import json
-from ..LLMs.Chatgpt import Chatgpt_json
-from ...services.prompt_service import select_prompt_by_name
+from ..LLMs.chatgpt import Chatgpt_json
+from ..prompt_service import select_prompt_by_name
 from sqlalchemy.ext.asyncio import AsyncSession
 from ...common.data_manager import spl_data_manager
 
