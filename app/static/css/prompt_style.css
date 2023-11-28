@@ -50,7 +50,7 @@
     flex-grow: 1; /* Expand to fill the vertical space */
     height: 100%; /* Full height within its container */
     resize: vertical; /* Allow resizing vertically */
-    height: calc(100vh - 50vh); /* Adjust the value accordingly */
+    height: 40vh; /* Adjust the value accordingly */
 }
 
 /* Headings style */
