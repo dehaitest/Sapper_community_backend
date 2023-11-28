@@ -1,10 +1,8 @@
 import json
-import re
-from ..LLMs.Chatgpt import Chatgpt, Chatgpt_json
-import asyncio
-import os
+from ..LLMs.Chatgpt import Chatgpt_json
 from ...services.prompt_service import select_prompt_by_name
 from sqlalchemy.ext.asyncio import AsyncSession
+from ...common.data_manager import spl_data_manager
 
 class Require2SPLForm:
     def __init__(self, user_description, prompt1, prompt2, prompt3) -> None:

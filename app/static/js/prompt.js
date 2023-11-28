@@ -5,6 +5,12 @@ document.addEventListener("DOMContentLoaded", function() {
     // Event listeners for forms
     document.getElementById("createPromptForm").addEventListener("submit", createPrompt);
     document.getElementById("editPromptDetailsForm").addEventListener("submit", savePromptDetails);
+
+    let link = document.createElement('link');
+    link.rel = 'icon';
+    link.href = '/favicon.ico';
+    link.type = 'image/x-icon';
+    document.getElementsByTagName('head')[0].appendChild(link);
 });
 
 // Function to load and display prompts

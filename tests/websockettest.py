@@ -18,7 +18,7 @@ async def websocket_client(uri, message, client_id):
         print(f"Client {client_id} connection closed.")
 
 async def main():
-    uri = "ws://localhost:8000/ws/sapperchain/require2SPLForm"
+    uri = "wss://v1.promptsapper.tech/ws/sapperchain/require2SPLForm"
     message = "High school math tutor to help students solve math problems and provide detailed instruction."
     client_count = 1  # Number of concurrent clients
 
