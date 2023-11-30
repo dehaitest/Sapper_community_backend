@@ -30,7 +30,7 @@ class NLToSPLForm:
     
     async def nl_to_splform(self, db, agent_data):
         new_nl = {'new_nl': json.loads(json.loads(agent_data)['nl'])['NL']}
-        old_agent = await NL_to_SPLForm.get_agent_by_id(db, json.loads(agent_data)['id'])
+        old_agent = await NLToSPLForm.get_agent_by_id(db, json.loads(agent_data)['id'])
         old_nl = {'old_nl': json.loads(old_agent.nl)['NL']}
         old_SPL = {'old_SPL': old_agent.spl}
         chatgpt_json = Chatgpt_json()
@@ -40,6 +40,6 @@ class NLToSPLForm:
         result = json.loads(response.choices[0].message.content)
         splform = convert_spl_to_splform(result)
         new_agent_data = {'spl': json.dumps(result), 'spl_form': json.dumps(splform), 'nl': json.loads(agent_data)['nl']}
-        new_agent = await NL_to_SPLForm.update_agent(db, json.loads(agent_data)['id'], new_agent_data)
+        new_agent = await NLToSPLForm.update_agent(db, json.loads(agent_data)['id'], new_agent_data)
         yield json.dumps(new_agent.to_dict())
         yield "__END_OF_RESPONSE__"
