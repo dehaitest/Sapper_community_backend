@@ -80,7 +80,7 @@ class RequireToSPLForm:
             ]
         }
         yield json.dumps(audienceData)
-        splform['formData'].append(personaData)
+        splform['formData'].append(audienceData)
         terminologyData = {
             "sectionId": str(len(splform['formData'])),
             "sectionType": "Terminology",

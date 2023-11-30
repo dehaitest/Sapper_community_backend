@@ -26,7 +26,7 @@ class SPLForm_to_NL:
 
     @staticmethod
     async def update_agent(db: AsyncSession, agent_id: int, update_data: dict):
-        await edit_agent(db, agent_id, update_data)
+        return await edit_agent(db, agent_id, update_data)
     
     async def splform_to_nl(self, db, agent_data):
         splform = json.loads(json.loads(agent_data)['spl_form'])
@@ -36,7 +36,7 @@ class SPLForm_to_NL:
         prompt.append({"role": "user", "content": "[SPL]: {}".format(spl)})
         response = await chatgpt_json.process_message(prompt)
         result = json.loads(response.choices[0].message.content)
-        yield json.dumps(result)
         new_agent_data = {'spl': json.dumps(spl), 'spl_form': json.dumps(splform), 'nl': json.dumps(result)}
-        await SPLForm_to_NL.update_agent(db, json.loads(agent_data)['id'], new_agent_data)
+        new_agent = await SPLForm_to_NL.update_agent(db, json.loads(agent_data)['id'], new_agent_data)
+        yield json.dumps(new_agent.to_dict())
         yield "__END_OF_RESPONSE__"
