@@ -7,10 +7,12 @@ from typing import List
 
 router = APIRouter()
 
+# Create prompt
 @router.post("/prompts/", response_model=PromptResponse)
 async def create_prompt_endpoint(prompt_data: PromptCreate, db: AsyncSession = Depends(get_db_session)):
     return await create_prompt(db, prompt_data.model_dump())
 
+# Edit prompt
 @router.put("/prompts/{prompt_id}", response_model=PromptResponse)
 async def edit_prompt_endpoint(prompt_id: int, update_data: PromptUpdate, db: AsyncSession = Depends(get_db_session)):
     prompt = await edit_prompt(db, prompt_id, update_data.model_dump())
@@ -18,6 +20,7 @@ async def edit_prompt_endpoint(prompt_id: int, update_data: PromptUpdate, db: As
         raise HTTPException(status_code=404, detail="Prompt not found")
     return prompt
 
+# Get prompt by name
 @router.get("/prompts/by-name/", response_model=PromptResponse)
 async def get_prompt_by_name_endpoint(prompt_name: str, db: AsyncSession = Depends(get_db_session)):
     prompt = await select_prompt_by_name(db, prompt_name)
@@ -25,6 +28,7 @@ async def get_prompt_by_name_endpoint(prompt_name: str, db: AsyncSession = Depen
         raise HTTPException(status_code=404, detail="Prompt not found")
     return prompt
 
+# Get prompt by id
 @router.get("/prompts/by-id/{prompt_id}", response_model=PromptResponse)
 async def get_prompt_by_id_endpoint(prompt_id: int, db: AsyncSession = Depends(get_db_session)):
     print('byid')
@@ -33,12 +37,14 @@ async def get_prompt_by_id_endpoint(prompt_id: int, db: AsyncSession = Depends(g
         raise HTTPException(status_code=404, detail="Prompt not found")
     return prompt
 
+# Delete prompt
 @router.delete("/prompts/{prompt_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_prompt_endpoint(prompt_id: int, db: AsyncSession = Depends(get_db_session)):
     success = await delete_prompt(db, prompt_id)
     if not success:
         raise HTTPException(status_code=404, detail="Prompt not found")
     
+# Get all prompt
 @router.get("/prompts/all", response_model=List[PromptResponse])
 async def get_all_prompts_endpoint(db: AsyncSession = Depends(get_db_session)):
     prompts = await get_all_prompts(db)

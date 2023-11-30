@@ -1,39 +1,64 @@
 import openai
+import asyncio
 from ...core.config import settings
 
-class Chatgpt():
-    def __init__(self) -> None:
-        self.client = openai.AsyncOpenAI(api_key=settings.OPENAI_KEY) 
+class Chatgpt:
+    def __init__(self):
+        self.client = openai.AsyncOpenAI(api_key=settings.OPENAI_KEY)
 
     async def process_message(self, message: list):
-        response = await self.client.chat.completions.create(
-            model=settings.OPENAI_MODEL,
-            messages=message,
-        )
-        return response
+        try:
+            response = await asyncio.wait_for(
+                self.client.chat.completions.create(
+                    model=settings.OPENAI_MODEL,
+                    messages=message,
+                ),
+                timeout=60  # Timeout in seconds
+            )
+            return response
+        except asyncio.TimeoutError:
+            print("Request timed out")
+        except Exception as e:
+            print(f"An error occurred: {e}")
     
-class Chatgpt_json():
-    def __init__(self) -> None:
-        self.client = openai.AsyncOpenAI(api_key=settings.OPENAI_KEY) 
+class Chatgpt_json:
+    def __init__(self):
+        self.client = openai.AsyncOpenAI(api_key=settings.OPENAI_KEY)
 
     async def process_message(self, message: list):
-        response = await self.client.chat.completions.create(
-            model=settings.OPENAI_MODEL,
-            messages=message,
-            response_format={ "type": "json_object" },
-        )
-        return response
-    
-class Chatgpt_strem():
-    def __init__(self) -> None:
-        self.client = openai.AsyncOpenAI(api_key=settings.OPENAI_KEY) 
+        try:
+            response = await asyncio.wait_for(
+                self.client.chat.completions.create(
+                    model=settings.OPENAI_MODEL,
+                    messages=message,
+                    response_format={"type": "json_object"},
+                ),
+                timeout=60  # Timeout in seconds
+            )
+            return response
+        except asyncio.TimeoutError:
+            print("Request timed out")
+        except Exception as e:
+            print(f"An error occurred: {e}")
+
+
+class Chatgpt_stream:
+    def __init__(self):
+        self.client = openai.AsyncOpenAI(api_key=settings.OPENAI_KEY)
 
     async def process_message(self, message: list):
-        stream = await self.client.chat.completions.create(
-            model=settings.OPENAI_MODEL,
-            messages=message,
-            stream=True,
-        )
-        async for part in stream:
-            yield part
-        
+        try:
+            stream = await asyncio.wait_for(
+                self.client.chat.completions.create(
+                    model=settings.OPENAI_MODEL,
+                    messages=message,
+                    stream=True,
+                ),
+                timeout=60  # Timeout in seconds
+            )
+            async for part in stream:
+                yield part
+        except asyncio.TimeoutError:
+            print("Request timed out")
+        except Exception as e:
+            print(f"An error occurred: {e}")

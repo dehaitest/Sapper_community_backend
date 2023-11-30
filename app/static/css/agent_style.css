@@ -1,0 +1,28 @@
+.agent-list {
+    display: flex;
+    flex-direction: column;
+    max-width: 100vw;
+    overflow-y: auto;
+}
+
+.agent-list .agent-item {
+    display: grid;
+    grid-template-columns: 0.5fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 0.5fr;
+    border-bottom: 1px solid #ccc;
+    padding: 10px;
+    align-items: center;
+}
+
+.agent-list .agent-item.title-row {
+    font-weight: bold;
+    background-color: #f0f0f0;
+}
+
+.agent-list .agent-item .delete-icon {
+    cursor: pointer;
+    text-align: center;
+}
+
+.agent-list .agent-item .delete-icon:hover {
+    color: red;
+}

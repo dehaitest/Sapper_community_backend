@@ -27,8 +27,6 @@ async def edit_prompt(db: AsyncSession, prompt_id: int, update_data: dict) -> Pr
     if db_prompt is not None:
         for key, value in update_data.items():
             setattr(db_prompt, key, value)
-
-        db_prompt.update_datetime = datetime.utcnow()
         await db.commit()
         await db.refresh(db_prompt)
         return db_prompt
