@@ -6,18 +6,21 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from ...common.data_conversion import convert_splform_to_spl
 
 class RequireToSPLForm:
-    def __init__(self, user_description, prompt_conv_per_aud_des, prompt_context_control, prompt_instruction_content) -> None:
+    def __init__(self, user_description, prompt_conv_per_aud_des, prompt_context_control, prompt_instruction_content, prompt_spl_guardrails) -> None:
         self.user_description = user_description
         self.prompt_conv_per_aud_des = prompt_conv_per_aud_des
         self.prompt_context_control = prompt_context_control
         self.prompt_instruction_content = prompt_instruction_content
+        self.prompt_spl_guardrails = prompt_spl_guardrails
+
 
     @classmethod
     async def create(cls, db: AsyncSession, user_description):
         prompt_conv_per_aud_des = await cls.get_prompt(db, 'conv_per_aud_des')
         prompt_context_control = await cls.get_prompt(db, 'context_control')
         prompt_instruction_content = await cls.get_prompt(db, 'instruction_content')
-        return cls(user_description, prompt_conv_per_aud_des, prompt_context_control, prompt_instruction_content)
+        prompt_spl_guardrails = await cls.get_prompt(db, 'spl_guardrails')
+        return cls(user_description, prompt_conv_per_aud_des, prompt_context_control, prompt_instruction_content, prompt_spl_guardrails)
 
     @staticmethod
     async def get_prompt(db: AsyncSession, name: str):
@@ -43,6 +46,14 @@ class RequireToSPLForm:
         response = await chatgpt_json.process_message(prompt)
         result = json.loads(response.choices[0].message.content)
         return result['result']['Restraints']
+    
+    async def guardrails(self, system_prompt, user_description, persona, audience, instructions):
+        chatgpt_json = Chatgpt_json()
+        prompt = [{"role": "system", "content": system_prompt}]
+        prompt.append({"role": "user", "content": "[User task description]: {}\n[Character]: {}\n[Audience]: {}\n[Character Instruction]: {}".format(user_description, persona, audience, instructions)})
+        response = await chatgpt_json.process_message(prompt)
+        result = json.loads(response.choices[0].message.content)
+        return result['guardrails']
 
     async def instruction_content(self, system_prompt, user_description, persona, audience, instructions):
         chatgpt_json = Chatgpt_json()
@@ -108,6 +119,20 @@ class RequireToSPLForm:
         }
         yield json.dumps(contextRuleData)
         splform['formData'].append(contextRuleData)
+        guardrails = await self.guardrails(self.prompt_spl_guardrails, self.user_description, personas, audiences, instructions)
+        guardrailsData ={
+            "sectionId": str(len(splform['formData'])),
+            "sectionType": "Guardrails",
+            "sections": [
+                {
+                    "subSectionId": str(i),
+                    "subSectionType": name,
+                    "content": description
+                } for i, (name, description) in enumerate(guardrails.items())
+            ]
+        }
+        yield json.dumps(guardrailsData)
+        splform['formData'].append(guardrailsData)
         for i, instruction_name in enumerate(instructions.keys()):
             instruction = instructions[instruction_name]
             instruction_command, instruction_rule = await self.instruction_content(self.prompt_instruction_content, self.user_description, personas, audiences, instruction)

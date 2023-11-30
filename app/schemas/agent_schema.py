@@ -9,6 +9,7 @@ class AgentBase(BaseModel):
     spl: Optional[str] = None
     spl_form: Optional[str] = None
     nl: Optional[str] = None
+    chain: Optional[str] = None
     created_by: Optional[str] = None
 
 # Model for creation requests
@@ -27,6 +28,7 @@ class AgentResponse(BaseModel):
     spl: Optional[str] = None
     spl_form: Optional[str] = None
     nl: Optional[str] = None
+    chain: Optional[str] = None
     created_by: Optional[str] = None
     create_datetime: datetime
     update_datetime: datetime
