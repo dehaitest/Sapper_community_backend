@@ -2,7 +2,7 @@
     display: flex;
     flex-direction: column;
     max-width: 100vw;
-    overflow-y: auto;
+    overflow-y: auto; /* Keeps the agent list scrollable */
 }
 
 .agent-list .agent-item {
@@ -11,6 +11,8 @@
     border-bottom: 1px solid #ccc;
     padding: 10px;
     align-items: center;
+    max-height: 10vh; /* Maximum height for each agent item */
+    overflow: hidden; /* Optional: hides content that overflows the max height */
 }
 
 .agent-list .agent-item.title-row {
