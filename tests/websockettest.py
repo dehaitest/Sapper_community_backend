@@ -59,6 +59,20 @@ async def notosplform():
                 print(f"{response}")
         await websocket.close()
 
+async def formcopilot():
+    uri = "ws://localhost:8000/ws/sapperchain/formcopilot"
+    # uri = "wss://v1.promptsapper.tech/ws/sapperchain/formcopilot"
+    async with websockets.connect(uri) as websocket:
+        message = '''{"id": 1, "message": "I would like to add the primary school students as audience."}'''
+        await websocket.send(message)
+        while True:
+            response = await websocket.recv()
+            if response == "__END_OF_RESPONSE__":
+                break
+            else:
+                print(f"{response}")
+        await websocket.close()
+
 async def main():
     # uri = "wss://v1.promptsapper.tech/ws/sapperchain/requiretosplform"
     # uri = "ws://localhost:8000/ws/sapperchain/requiretosplform"
@@ -83,6 +97,8 @@ async def main():
             await splformtonl() 
         elif test_index == "3":
             await notosplform() 
+        elif test_index == "4":
+            await formcopilot() 
         else: 
             break
 

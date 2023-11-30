@@ -10,12 +10,12 @@ router = APIRouter()
 # Create agent
 @router.post("/agents/", response_model=AgentResponse)
 async def create_agent_endpoint(agent_data: AgentCreate, db: AsyncSession = Depends(get_db_session)):
-    return await create_agent(db, agent_data.dict())
+    return await create_agent(db, agent_data.model_dump())
 
 # Edit agent
 @router.put("/agents/{agent_id}", response_model=AgentResponse)
 async def edit_agent_endpoint(agent_id: int, update_data: AgentUpdate, db: AsyncSession = Depends(get_db_session)):
-    agent = await edit_agent(db, agent_id, update_data.dict())
+    agent = await edit_agent(db, agent_id, update_data.model_dump())
     if agent is None:
         raise HTTPException(status_code=404, detail="Agent not found")
     return agent

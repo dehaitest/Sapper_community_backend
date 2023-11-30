@@ -5,7 +5,7 @@ from ..agent_service import select_agent_by_id, edit_agent
 from sqlalchemy.ext.asyncio import AsyncSession
 from ...common.data_conversion import convert_splform_to_spl
 
-class SPLForm_to_NL:
+class SPLFormToNL:
     def __init__(self, prompt_spl2nl) -> None:
         self.prompt_spl2nl = prompt_spl2nl
 
