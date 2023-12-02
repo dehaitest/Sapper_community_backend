@@ -3,7 +3,7 @@ from ..LLMs.chatgpt import Chatgpt_json
 from ..prompt_service import select_prompt_by_name
 from ..agent_service import select_agent_by_id, edit_agent
 from sqlalchemy.ext.asyncio import AsyncSession
-from ...common.data_conversion import convert_spl_to_splform
+from ...common.data_conversion import convert_spl_to_splform, convert_splform_to_spl
 
 class NLToSPLForm:
     def __init__(self, prompt_nl2spl) -> None:
@@ -32,7 +32,7 @@ class NLToSPLForm:
         new_nl = {'new_nl': json.loads(json.loads(agent_data)['nl'])['NL']}
         old_agent = await NLToSPLForm.get_agent_by_id(db, json.loads(agent_data)['id'])
         old_nl = {'old_nl': json.loads(old_agent.nl)['NL']}
-        old_SPL = {'old_SPL': old_agent.spl}
+        old_SPL = {'old_SPL': convert_splform_to_spl(json.loads(json.loads(agent_data)['spl_form']))}
         chatgpt_json = Chatgpt_json()
         prompt = [{"role": "system", "content": self.prompt_nl2spl}]
         prompt.append({"role": "user", "content": "[old_nl]: {}, [new_nl]: {}, [old_SPL]: {}".format(old_nl, new_nl, old_SPL)})

@@ -73,6 +73,36 @@ async def formcopilot():
                 print(f"{response}")
         await websocket.close()
 
+async def splcompiler():
+    uri = "ws://localhost:8000/ws/sapperchain/splcompiler"
+    # uri = "wss://v1.promptsapper.tech/ws/sapperchain/splcompiler"
+    async with websockets.connect(uri) as websocket:
+        message = '''{"id": 1, "name": "test", "image": "", "spl": "{\\\"Persona\\\": {\\\"Description-0\\\": \\\"An excellent high school mathematics tutor.\\\"}, \\\"Audience\\\": {\\\"Description-0\\\": \\\"High school students with poor math scores.\\\"}, \\\"Terminology\\\": {\\\"Description-0\\\": \\\"Algebra\\\", \\\"Description-1\\\": \\\"Geometry\\\", \\\"Description-2\\\": \\\"Statistics\\\"}, \\\"ContextControl\\\": {\\\"Rule-0\\\": \\\"Use clear and concise explanations, avoiding unnecessary jargon.\\\", \\\"Rule-1\\\": \\\"Guide students through the problem-solving process step by step, emphasizing the logic and reasoning behind each step.\\\", \\\"Rule-2\\\": \\\"Tailor your teaching strategies to cater to their individual needs and provide personalized assistance.\\\"}, \\\"Guardrails\\\": {\\\"Factuality\\\": \\\"The answers provided by the tutor must come from lecture materials.\\\", \\\"PII\\\": \\\"Remove students' PII from questions.\\\"}, \\\"Instruction-0\\\": {\\\"Name\\\": \\\"Analyze problem\\\", \\\"Commands\\\": [\\\"Read and understand the problem statement together with the student.\\\", \\\"Identify the key information and any given conditions or constraints.\\\", \\\"Discuss and clarify any unfamiliar terms or symbols.\\\", \\\"Determine the specific mathematical concepts and skills required to solve the problem.\\\"], \\\"Rules\\\": [\\\"Avoid overly complex or ambiguous phrasing.\\\", \\\"Provide appropriate explanations or mathematical concepts to facilitate user understanding.\\\"]}, \\\"Instruction-1\\\": {\\\"Name\\\": \\\"Provide guidance\\\", \\\"Commands\\\": [\\\"Break down the problem into smaller, manageable steps, and guide the student through each step.\\\", \\\"Demonstrate problem-solving strategies and provide clear explanations for each step.\\\"], \\\"Rules\\\": [\\\"Avoid using advanced mathematical concepts that may overwhelm the student.\\\", \\\"Ensure that the guidance provided is clear and understandable to students with poor math scores.\\\"]}}", "spl_form": "{\\\"formData\\\": [{\\\"sectionId\\\": \\\"0\\\", \\\"sectionType\\\": \\\"Persona\\\", \\\"sections\\\": [{\\\"subSectionId\\\": \\\"0\\\", \\\"subSectionType\\\": \\\"Description-0\\\", \\\"content\\\": \\\"An excellent high school mathematics tutor.\\\"}]}, {\\\"sectionId\\\": \\\"1\\\", \\\"sectionType\\\": \\\"Audience\\\", \\\"sections\\\": [{\\\"subSectionId\\\": \\\"0\\\", \\\"subSectionType\\\": \\\"Description-0\\\", \\\"content\\\": \\\"High school students with poor math scores.\\\"}]}, {\\\"sectionId\\\": \\\"2\\\", \\\"sectionType\\\": \\\"Terminology\\\", \\\"sections\\\": [{\\\"subSectionId\\\": \\\"0\\\", \\\"subSectionType\\\": \\\"Description-0\\\", \\\"content\\\": \\\"Algebra\\\"}, {\\\"subSectionId\\\": \\\"1\\\", \\\"subSectionType\\\": \\\"Description-1\\\", \\\"content\\\": \\\"Geometry\\\"}, {\\\"subSectionId\\\": \\\"2\\\", \\\"subSectionType\\\": \\\"Description-2\\\", \\\"content\\\": \\\"Statistics\\\"}]}, {\\\"sectionId\\\": \\\"3\\\", \\\"sectionType\\\": \\\"ContextControl\\\", \\\"sections\\\": [{\\\"subSectionId\\\": \\\"0\\\", \\\"subSectionType\\\": \\\"Rule-0\\\", \\\"content\\\": \\\"Use clear and concise explanations, avoiding unnecessary jargon.\\\"}, {\\\"subSectionId\\\": \\\"1\\\", \\\"subSectionType\\\": \\\"Rule-1\\\", \\\"content\\\": \\\"Guide students through the problem-solving process step by step, emphasizing the logic and reasoning behind each step.\\\"}, {\\\"subSectionId\\\": \\\"2\\\", \\\"subSectionType\\\": \\\"Rule-2\\\", \\\"content\\\": \\\"Tailor your teaching strategies to cater to their individual needs and provide personalized assistance.\\\"}]}, {\\\"sectionId\\\": \\\"4\\\", \\\"sectionType\\\": \\\"Guardrails\\\", \\\"sections\\\": [{\\\"subSectionId\\\": \\\"0\\\", \\\"subSectionType\\\": \\\"Factuality\\\", \\\"content\\\": \\\"The answers provided by the tutor must come from lecture materials.\\\"}, {\\\"subSectionId\\\": \\\"1\\\", \\\"subSectionType\\\": \\\"PII\\\", \\\"content\\\": \\\"Remove students' PII from questions.\\\"}]}, {\\\"sectionId\\\": \\\"5\\\", \\\"sectionType\\\": \\\"Instruction-0\\\", \\\"sections\\\": [{\\\"subSectionId\\\": \\\"0\\\", \\\"subSectionType\\\": \\\"Name\\\", \\\"content\\\": \\\"Analyze problem\\\"}, {\\\"subSectionId\\\": \\\"1\\\", \\\"subSectionType\\\": \\\"Commands\\\", \\\"content\\\": [\\\"Read and understand the problem statement together with the student.\\\", \\\"Identify the key information and any given conditions or constraints.\\\", \\\"Discuss and clarify any unfamiliar terms or symbols.\\\", \\\"Determine the specific mathematical concepts and skills required to solve the problem.\\\"]}, {\\\"subSectionId\\\": \\\"2\\\", \\\"subSectionType\\\": \\\"Rules\\\", \\\"content\\\": [\\\"Avoid overly complex or ambiguous phrasing.\\\", \\\"Provide appropriate explanations or mathematical concepts to facilitate user understanding.\\\"]}]}, {\\\"sectionId\\\": \\\"6\\\", \\\"sectionType\\\": \\\"Instruction-1\\\", \\\"sections\\\": [{\\\"subSectionId\\\": \\\"0\\\", \\\"subSectionType\\\": \\\"Name\\\", \\\"content\\\": \\\"Provide guidance\\\"}, {\\\"subSectionId\\\": \\\"1\\\", \\\"subSectionType\\\": \\\"Commands\\\", \\\"content\\\": [\\\"Break down the problem into smaller, manageable steps, and guide the student through each step.\\\", \\\"Demonstrate problem-solving strategies and provide clear explanations for each step.\\\"]}, {\\\"subSectionId\\\": \\\"2\\\", \\\"subSectionType\\\": \\\"Rules\\\", \\\"content\\\": [\\\"Avoid using advanced mathematical concepts that may overwhelm the student.\\\", \\\"Ensure that the guidance provided is clear and understandable to students with poor math scores.\\\"]}]}]}", "nl": "{\\\"NL\\\": [{\\\"id\\\": 0, \\\"type\\\": [\\\"Persona\\\", \\\"Terminology\\\"], \\\"content\\\": \\\"The persona is an excellent high school mathematics tutor who specializes in areas such as algebra, geometry, and statistics.\\\"}, {\\\"id\\\": 1, \\\"type\\\": [\\\"ContextControl\\\"], \\\"content\\\": \\\"To ensure effective teaching, it is important to use clear and concise explanations, avoiding unnecessary jargon. Additionally, guiding students through the problem-solving process step by step and tailoring teaching strategies to cater to their individual needs are essential.\\\"}, {\\\"id\\\": 2, \\\"type\\\": [\\\"Guardrails\\\"], \\\"content\\\": \\\"Before processing students' questions, the tutor ensures that the answers come from lecture materials and removes students' personally identifiable information (PII) from the questions.\\\"}, {\\\"id\\\": 3, \\\"type\\\": [\\\"Instructions\\\"], \\\"content\\\": \\\"The tutor's approach includes carefully analyzing mathematical problems by reading and understanding the problem statement together with the student, identifying key information, and discussing and clarifying any unfamiliar terms or symbols. Additionally, the tutor determines the specific mathematical concepts and skills required to solve the problem.\\\"}, {\\\"id\\\": 4, \\\"type\\\": [\\\"Instructions\\\"], \\\"content\\\": \\\"In providing guidance, the tutor breaks down the problem into smaller, manageable steps, and guides the student through each step. Furthermore, the tutor demonstrates problem-solving strategies and provides clear explanations for each step, ensuring that the guidance provided is clear and understandable to students with poor math scores.\\\"}, {\\\"id\\\": 5, \\\"type\\\": [\\\"Audience\\\"], \\\"content\\\": \\\"The primary audience for this tutor is high school students who are good at statistic.\\\"}]}", "chain": null, "created_by": "sapper", "create_datetime": "2023-11-30T15:26:46", "update_datetime": "2023-11-30T15:26:57", "active": true}'''
+        await websocket.send(message)
+        while True:
+            response = await websocket.recv()
+            if response == "__END_OF_RESPONSE__":
+                break
+            else:
+                print(f"{response}")
+        await websocket.close()      
+
+async def splemulator():
+    uri = "ws://localhost:8000/ws/sapperchain/splemulator"
+    # uri = "wss://v1.promptsapper.tech/ws/sapperchain/splemulator"
+    async with websockets.connect(uri) as websocket:
+        message = '''{"id": 1}'''
+        await websocket.send(message)
+        while True:
+            message = input('input message >>> ')
+            await websocket.send(message)
+            response = await websocket.recv()
+            if response == "__END_OF_RESPONSE__":
+                break
+            else:
+                print(f"{response}")
+        await websocket.close()
+
 async def main():
     # uri = "wss://v1.promptsapper.tech/ws/sapperchain/requiretosplform"
     # uri = "ws://localhost:8000/ws/sapperchain/requiretosplform"
@@ -99,6 +129,10 @@ async def main():
             await nltosplform() 
         elif test_index == "4":
             await formcopilot() 
+        elif test_index == "5":
+            await splcompiler() 
+        elif test_index == "6":
+            await splemulator() 
         else: 
             break
 

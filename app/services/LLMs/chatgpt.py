@@ -23,6 +23,15 @@ class Chatgpt:
     
 class Chatgpt_json:
     def __init__(self):
+        self.client = None
+
+    @classmethod
+    async def create(cls):
+        instance = cls()
+        await instance.async_init()
+        return instance
+
+    async def async_init(self):
         self.client = openai.AsyncOpenAI(api_key=settings.OPENAI_KEY)
 
     async def process_message(self, message: list):

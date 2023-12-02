@@ -14,6 +14,7 @@ class Agent(Base):
     spl_form = Column(Text)
     nl = Column(Text)
     chain = Column(Text)
+    settings = Column(Text)
     created_by = Column(String(255))
     create_datetime = Column(DateTime, default=datetime.utcnow)
     update_datetime = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)

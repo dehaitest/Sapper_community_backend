@@ -29,6 +29,8 @@ function displayAgents(agents) {
             <span class="agent-spl">${agent.spl}</span>
             <span class="agent-spl-form">${agent.spl_form}</span>
             <span class="agent-nl">${agent.nl}</span>
+            <span class="agent-chain">${agent.chain}</span>
+            <span class="agent-settings">${agent.settings}</span>
             <span class="agent-created-by">${agent.created_by}</span>
             <span class="agent-create-datetime">${agent.create_datetime}</span>
             <span class="agent-update-datetime">${agent.update_datetime}</span>
