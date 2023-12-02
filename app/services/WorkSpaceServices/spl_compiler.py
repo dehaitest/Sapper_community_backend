@@ -6,13 +6,15 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from ...common.data_conversion import convert_splform_to_spl
 
 class SPLCompiler:
-    def __init__(self, prompt_spl_compiler) -> None:
+    def __init__(self, chatgpt_json, prompt_spl_compiler) -> None:
         self.prompt_spl_compiler = prompt_spl_compiler
+        self.chatgpt_json = chatgpt_json
 
     @classmethod
     async def create(cls, db: AsyncSession):
         prompt_spl_compiler = await cls.get_prompt(db, 'spl_compiler')
-        return cls(prompt_spl_compiler)
+        chatgpt_json = await Chatgpt_json.create()
+        return cls(chatgpt_json, prompt_spl_compiler)
 
     @staticmethod
     async def get_prompt(db: AsyncSession, name: str):
@@ -30,10 +32,9 @@ class SPLCompiler:
     
     async def spl_compiler(self, db, agent_data):
         agent = await SPLCompiler.get_agent_by_id(db, json.loads(agent_data)['id'])
-        chatgpt_json = Chatgpt_json()
         prompt = [{"role": "system", "content": self.prompt_spl_compiler}]
         prompt.append({"role": "user", "content": "{}".format(agent.spl)})
-        response = await chatgpt_json.process_message(prompt)
+        response = await self.chatgpt_json.process_message(prompt)
         result = json.loads(response.choices[0].message.content)
         new_agent_data = {'chain': json.dumps(result)}
         new_agent = await SPLCompiler.update_agent(db, json.loads(agent_data)['id'], new_agent_data)

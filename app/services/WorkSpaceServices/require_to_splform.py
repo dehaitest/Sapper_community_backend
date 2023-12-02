@@ -6,12 +6,13 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from ...common.data_conversion import convert_splform_to_spl
 
 class RequireToSPLForm:
-    def __init__(self, user_description, prompt_conv_per_aud_des, prompt_context_control, prompt_instruction_content, prompt_spl_guardrails) -> None:
+    def __init__(self, chatgpt_json, user_description, prompt_conv_per_aud_des, prompt_context_control, prompt_instruction_content, prompt_spl_guardrails) -> None:
         self.user_description = user_description
         self.prompt_conv_per_aud_des = prompt_conv_per_aud_des
         self.prompt_context_control = prompt_context_control
         self.prompt_instruction_content = prompt_instruction_content
         self.prompt_spl_guardrails = prompt_spl_guardrails
+        self.chatgpt_json = chatgpt_json
 
 
     @classmethod
@@ -20,7 +21,8 @@ class RequireToSPLForm:
         prompt_context_control = await cls.get_prompt(db, 'context_control')
         prompt_instruction_content = await cls.get_prompt(db, 'instruction_content')
         prompt_spl_guardrails = await cls.get_prompt(db, 'spl_guardrails')
-        return cls(user_description, prompt_conv_per_aud_des, prompt_context_control, prompt_instruction_content, prompt_spl_guardrails)
+        chatgpt_json = await Chatgpt_json.create()
+        return cls(chatgpt_json, user_description, prompt_conv_per_aud_des, prompt_context_control, prompt_instruction_content, prompt_spl_guardrails)
 
     @staticmethod
     async def get_prompt(db: AsyncSession, name: str):
@@ -32,34 +34,30 @@ class RequireToSPLForm:
         return await create_agent(db, agent_data)
         
     async def conv_per_aud_des(self, system_prompt, user_description):
-        chatgpt_json = Chatgpt_json()
         prompt = [{"role": "system", "content": system_prompt}]
         prompt.append({"role": "user", "content": "[User task description]: {}".format(user_description)})
-        response = await chatgpt_json.process_message(prompt)
+        response = await self.chatgpt_json.process_message(prompt)
         result = json.loads(response.choices[0].message.content)
         return result['result']["Character"], result['result']["Audience"], result['result']["Terminology"], result['result']["Instructions"]
 
     async def context_control(self, system_prompt, user_description, persona, audience, instructions):
-        chatgpt_json = Chatgpt_json()
         prompt = [{"role": "system", "content": system_prompt}]
         prompt.append({"role": "user", "content": "[User task description]: {}\n[Character]: {}\n[Audience]: {}\n[Character Instruction]: {}".format(user_description, persona, audience, instructions)})
-        response = await chatgpt_json.process_message(prompt)
+        response = await self.chatgpt_json.process_message(prompt)
         result = json.loads(response.choices[0].message.content)
         return result['result']['Restraints']
     
     async def guardrails(self, system_prompt, user_description, persona, audience, instructions):
-        chatgpt_json = Chatgpt_json()
         prompt = [{"role": "system", "content": system_prompt}]
         prompt.append({"role": "user", "content": "[User task description]: {}\n[Character]: {}\n[Audience]: {}\n[Character Instruction]: {}".format(user_description, persona, audience, instructions)})
-        response = await chatgpt_json.process_message(prompt)
+        response = await self.chatgpt_json.process_message(prompt)
         result = json.loads(response.choices[0].message.content)
         return result['guardrails']
 
     async def instruction_content(self, system_prompt, user_description, persona, audience, instructions):
-        chatgpt_json = Chatgpt_json()
         prompt = [{"role": "system", "content": system_prompt}]
         prompt.append({"role": "user", "content": "[User task description]: {}\n[Character]: {}\n[Audience]: {}\n[Character Instruction]: {}".format(user_description, persona, audience, instructions)})
-        response = await chatgpt_json.process_message(prompt)
+        response = await self.chatgpt_json.process_message(prompt)
         result = json.loads(response.choices[0].message.content)
         return result['result']["Commands"], result['result']["Restraints"]
 

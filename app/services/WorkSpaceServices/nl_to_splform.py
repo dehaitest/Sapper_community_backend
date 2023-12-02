@@ -6,13 +6,15 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from ...common.data_conversion import convert_spl_to_splform, convert_splform_to_spl
 
 class NLToSPLForm:
-    def __init__(self, prompt_nl2spl) -> None:
+    def __init__(self, chatgpt_json, prompt_nl2spl) -> None:
         self.prompt_nl2spl = prompt_nl2spl
+        self.chatgpt_json = chatgpt_json
 
     @classmethod
     async def create(cls, db: AsyncSession):
         prompt_nl2spl = await cls.get_prompt(db, 'nl2spl')
-        return cls(prompt_nl2spl)
+        chatgpt_json = await Chatgpt_json.create()
+        return cls(chatgpt_json, prompt_nl2spl)
 
     @staticmethod
     async def get_prompt(db: AsyncSession, name: str):
@@ -33,10 +35,9 @@ class NLToSPLForm:
         old_agent = await NLToSPLForm.get_agent_by_id(db, json.loads(agent_data)['id'])
         old_nl = {'old_nl': json.loads(old_agent.nl)['NL']}
         old_SPL = {'old_SPL': convert_splform_to_spl(json.loads(json.loads(agent_data)['spl_form']))}
-        chatgpt_json = Chatgpt_json()
         prompt = [{"role": "system", "content": self.prompt_nl2spl}]
         prompt.append({"role": "user", "content": "[old_nl]: {}, [new_nl]: {}, [old_SPL]: {}".format(old_nl, new_nl, old_SPL)})
-        response = await chatgpt_json.process_message(prompt)
+        response = await self.chatgpt_json.process_message(prompt)
         result = json.loads(response.choices[0].message.content)
         splform = convert_spl_to_splform(result)
         new_agent_data = {'spl': json.dumps(result), 'spl_form': json.dumps(splform), 'nl': json.loads(agent_data)['nl']}
