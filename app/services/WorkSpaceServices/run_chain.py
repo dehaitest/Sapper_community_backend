@@ -1,43 +1,58 @@
 import json
+from ..LLMs.chatgpt import Chatgpt_json
 from ..LLMs.assistant import Assistant
-from ..agent_service import select_agent_by_id
+from ..agent_service import select_agent_by_id, edit_agent
+from ..prompt_service import select_prompt_by_name
 from sqlalchemy.ext.asyncio import AsyncSession
 import asyncio
 
 class RunChain:
-    def __init__(self, client, assistant, thread) -> None:
+    def __init__(self, client, assistant, thread, chain, chatgpt_json, prompt_if_condition) -> None:
         self.client = client
         self.assistant = assistant
         self.thread = thread
+        self.chain = chain
+        self.chatgpt_json = chatgpt_json
+        self.prompt_if_condition = prompt_if_condition
 
     @classmethod
     async def create(cls, db: AsyncSession, message_data):
         agent = await cls.get_agent_by_id(db, json.loads(message_data)['id'])
-        try: 
-            user_settings = json.loads(agent.settings)
-        except:
-            user_settings = {}
-        user_settings.update({'instruction': agent.spl})
+        agent_settings = json.loads(agent.settings)
+        chain = json.loads(agent.chain)
+        agent_settings.update({'instruction': "{}, {}, {}, {}".format(agent_settings.get('instruction', ''), chain.get('Persona', ''), chain.get('Audience', ''), chain.get('Terminology', ''))})
         assistant_init = await Assistant.create()
-        assistant = await assistant_init.create_assistant(user_settings)
+        if 'assistant_id' in agent_settings and agent_settings.get('assistant_id'):
+            assistant = await assistant_init.load_assistant(agent_settings)
+            assistant = await assistant_init.update_assistant(agent_settings)
+        else:
+            assistant = await assistant_init.create_assistant(agent_settings)
+            agent_settings.update({'assistant_id': assistant.id})
+        await cls.update_agent(db, agent.id, {'settings': json.dumps(agent_settings)}) 
         thread = await assistant_init.create_thread()
-        return cls(assistant_init.client, assistant, thread)
+        chatgpt_json = await Chatgpt_json.create()
+        prompt_if_condition = await cls.get_prompt(db, 'if_condition')
+        return cls(assistant_init.client, assistant, thread, chain, chatgpt_json, prompt_if_condition)
+    
+    @staticmethod
+    async def get_prompt(db: AsyncSession, name: str):
+        prompt = await select_prompt_by_name(db, name)
+        return prompt.prompt if prompt else ''
+    
+    @staticmethod
+    async def update_agent(db: AsyncSession, agent_id: int, update_data: dict):
+        return await edit_agent(db, agent_id, update_data)
     
     @staticmethod
     async def get_agent_by_id(db: AsyncSession, agent_id: int):
         agent = await select_agent_by_id(db, agent_id)
         return agent if agent else ''
     
-    @staticmethod
-    async def get_agent_by_id(db: AsyncSession, agent_id: int):
-        agent = await select_agent_by_id(db, agent_id)
-        return agent if agent else ''
-    
-    async def run_chain(self, message_data):
+    async def run_step(self, step):
         await self.client.beta.threads.messages.create(
             thread_id=self.thread.id,
             role="user",
-            content=message_data)
+            content=step)
 
         run = await self.client.beta.threads.runs.create(
             thread_id=self.thread.id,
@@ -62,3 +77,19 @@ class RunChain:
         messages = await self.client.beta.threads.messages.list(thread_id=self.thread.id)
         # print(messages.data[0].content[0].text.value)
         yield messages.data[0].content[0].text.value
+    
+    async def run_chain(self, message_data):
+        await self.client.beta.threads.messages.create(
+            thread_id=self.thread.id,
+            role="user",
+            content=message_data)
+        steps = self.chain.get('Steps')
+        for step in steps:
+            if len(step.get('next_steps')) == 0:
+                yield 'len=0'
+                yield "__END_OF_RESPONSE__"
+                break
+            elif len(step.get('next_steps')) > 1:
+                yield 'len>1'
+            else:
+                yield 'len=1'

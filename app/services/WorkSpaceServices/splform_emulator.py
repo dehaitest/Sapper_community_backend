@@ -14,19 +14,25 @@ class SPLEmulator:
     async def create(cls, db: AsyncSession, message_data):
         agent = await cls.get_agent_by_id(db, json.loads(message_data)['id'])
         try: 
-            user_settings = json.loads(agent.settings)
+            agent_settings = json.loads(agent.settings)
         except:
-            user_settings = {}
-        user_settings.update({'instruction': agent.spl})
+            agent_settings = {}
+        agent_settings.update({'instruction': agent.spl})
         assistant_init = await Assistant.create()
-        assistant = await assistant_init.create_assistant(user_settings)
+        if 'assistant_id' in agent_settings and agent_settings.get('assistant_id'):
+            assistant = await assistant_init.load_assistant(agent_settings)
+            assistant = await assistant_init.update_assistant(agent_settings)
+            print(assistant.tools)
+        else:
+            assistant = await assistant_init.create_assistant(agent_settings)
+            agent_settings.update({'assistant_id': assistant.id})
+        await cls.update_agent(db, agent.id, {'settings': json.dumps(agent_settings)})
         thread = await assistant_init.create_thread()
         return cls(assistant_init.client, assistant, thread)
     
     @staticmethod
-    async def update_agent(db: AsyncSession, agent_id: int):
-        agent = await select_agent_by_id(db, agent_id)
-        return agent if agent else ''
+    async def update_agent(db: AsyncSession, agent_id: int, update_data: dict):
+        return await edit_agent(db, agent_id, update_data)
     
     @staticmethod
     async def get_agent_by_id(db: AsyncSession, agent_id: int):
@@ -60,5 +66,5 @@ class SPLEmulator:
             else:
                 await asyncio.sleep(1)
         messages = await self.client.beta.threads.messages.list(thread_id=self.thread.id)
-        # print(messages.data[0].content[0].text.value)
+        print(messages.data[0].content[0].text.value)
         yield messages.data[0].content[0].text.value

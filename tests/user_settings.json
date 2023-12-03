@@ -1,0 +1,32 @@
+{
+    "name": "test",
+    "model": "gpt-3.5-turbo-1106 or gpt-4-1106-preview",
+    "assistant_id": "some id",
+    "instruction": "some instructions",
+    "files": [
+        {
+            "file_name": "some name",
+            "file_id": "some id",
+            "content_type": "some type",
+            "active": 0
+        },
+        {
+            "file_name": "some name",
+            "file_id": "alfjoiafjew",
+            "content_type": "sometype",
+            "active": 0
+        }
+    ],
+    "tools": [
+        {
+            "name": "some name",
+            "detail": {"type": "retrieval"},
+            "active": 0
+        },
+        {
+            "name": "some name",
+            "detail": {"type": "retrieval"},
+            "active": 0
+        }
+    ]
+}

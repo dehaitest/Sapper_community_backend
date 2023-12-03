@@ -13,6 +13,8 @@ async def create_agent(db: AsyncSession, agent_data: dict) -> Agent:
         spl=agent_data.get('spl', ''),
         spl_form=agent_data.get('spl_form', ''),
         nl=agent_data.get('nl', ''),
+        chain=agent_data.get('chain', ''),
+        settings=agent_data.get('settings', ''),
         created_by=agent_data.get('created_by', 'sapper'),
         create_datetime=agent_data.get('create_datetime', datetime.utcnow()),
         update_datetime=agent_data.get('update_datetime', datetime.utcnow()),
