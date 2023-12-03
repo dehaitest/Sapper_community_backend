@@ -20,7 +20,6 @@ class RunChain:
         agent = await cls.get_agent_by_id(db, json.loads(message_data)['id'])
         agent_settings = json.loads(agent.settings)
         chain = json.loads(agent.chain)
-        print('chain:', chain)
         instruction = await cls.get_prompt(db, 'instruction')
         agent_settings.update({'instruction': "{}, {}, {}, {}".format(instruction, chain.get('Persona', ''), chain.get('Audience', ''), chain.get('Terminology', ''))})
         assistant_init = await Assistant.create()
@@ -60,26 +59,21 @@ class RunChain:
             thread_id=self.thread.id,
             assistant_id=self.assistant.id)
 
-        while True:
-            # print('run status:', run.status)
-            if run.status == "queued":
-                break
-            else:
-                await asyncio.sleep(1)
-
-        while True:
+        while run.status == "queued":
+            await asyncio.sleep(1)
             run = await self.client.beta.threads.runs.retrieve(
                 thread_id=self.thread.id,
                 run_id=run.id)
-            # print('run status:', run.status)
-            if run.status != "in_progress":
-                break
-            else:
-                await asyncio.sleep(1)
+
+        while run.status == "in_progress":
+            await asyncio.sleep(1)
+            run = await self.client.beta.threads.runs.retrieve(
+                thread_id=self.thread.id,
+                run_id=run.id)
+
         messages = await self.client.beta.threads.messages.list(thread_id=self.thread.id)
-        # print(messages.data[0].content[0].text.value)
-        # yield messages.data[0].content[0].text.value
         return messages.data[0].content[0].text.value
+
     
     async def run_chain(self, message_data):
         steps = self.chain.get('Steps')

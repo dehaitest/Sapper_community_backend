@@ -113,8 +113,8 @@ async def splemulator():
         await websocket.close()
 
 async def runchain():
-    # uri = "ws://localhost:8000/ws/sapperchain/runchain"
-    uri = "wss://v1.promptsapper.tech/ws/sapperchain/runchain"
+    uri = "ws://localhost:8000/ws/sapperchain/runchain"
+    # uri = "wss://v1.promptsapper.tech/ws/sapperchain/runchain"
     async with websockets.connect(uri) as websocket:
         message = '''{"id": 1}'''
         await websocket.send(message)
