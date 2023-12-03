@@ -17,10 +17,10 @@ router = APIRouter()
 @router.websocket("/ws/sapperchain/requiretosplform")
 async def require_to_splform_endpoint(websocket: WebSocket, db: AsyncSession = Depends(get_db_session)):
     await websocket.accept()
-    requireToSPLForm_instance = await RequireToSPLForm.create(db, data)
+    requireToSPLForm_instance = await RequireToSPLForm.create(db)
     while True: 
         data = await websocket.receive_text()
-        async for response in requireToSPLForm_instance.require_to_splForm(db):
+        async for response in requireToSPLForm_instance.require_to_splForm(db, data):
             await websocket.send_text(response)
 
 # Natural language to SPL form

@@ -21,8 +21,8 @@ async def websocket_client(uri, message, client_id):
         print(f"Client {client_id} connection closed.")
 
 async def requiretosplform():
-    # uri = "ws://localhost:8000/ws/sapperchain/requiretosplform"
-    uri = "wss://v1.promptsapper.tech/ws/sapperchain/requiretosplform"
+    uri = "ws://localhost:8000/ws/sapperchain/requiretosplform"
+    # uri = "wss://v1.promptsapper.tech/ws/sapperchain/requiretosplform"
     message = "High school math tutor to help students solve math problems and provide detailed instruction."
     async with websockets.connect(uri) as websocket:
         await websocket.send(message)
@@ -113,8 +113,8 @@ async def splemulator():
         await websocket.close()
 
 async def runchain():
-    uri = "ws://localhost:8000/ws/sapperchain/runchain"
-    # uri = "wss://v1.promptsapper.tech/ws/sapperchain/runchain"
+    # uri = "ws://localhost:8000/ws/sapperchain/runchain"
+    uri = "wss://v1.promptsapper.tech/ws/sapperchain/runchain"
     async with websockets.connect(uri) as websocket:
         message = '''{"id": 1}'''
         await websocket.send(message)
