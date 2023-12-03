@@ -72,7 +72,7 @@ async def formcopilot():
     # uri = "ws://localhost:8000/ws/sapperchain/formcopilot"
     uri = "wss://v1.promptsapper.tech/ws/sapperchain/formcopilot"
     async with websockets.connect(uri) as websocket:
-        message = '''{"id": 1, "message": "I would like to add the primary school students as audience."}'''
+        message = '''{"id": 56, "message": "I would like to add the primary school students as audience."}'''
         await websocket.send(message)
         while True:
             response = await websocket.recv()
@@ -119,13 +119,17 @@ async def runchain():
         message = '''{"id": 1}'''
         await websocket.send(message)
         while True:
-            message = input('input message >>> ')
-            await websocket.send(message)
-            response = await websocket.recv()
-            if response == "__END_OF_RESPONSE__":
+            message = input('input>>> ')
+            if message == 'exit':
                 break
             else:
-                print(f"{response}")
+                await websocket.send(message)
+                while True:
+                    response = await websocket.recv()
+                    if response == "__END_OF_RESPONSE__":
+                        break
+                    else:
+                        print(f"{response}")
         await websocket.close()
 
 async def upload_file():

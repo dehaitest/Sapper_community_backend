@@ -32,6 +32,7 @@ class SPLFormCopilot:
     
     async def splform_copilot(self, db, message_data):
         old_agent = await SPLFormCopilot.get_agent_by_id(db, json.loads(message_data)['id'])
+        print('old_agent', old_agent)
         old_SPL = {'old_SPL': old_agent.spl}
         prompt = [{"role": "system", "content": self.prompt_splform_copilot}]
         prompt.append({"role": "user", "content": "[user description]: {}, [old_SPL]: {}".format(json.loads(message_data)['message'], old_SPL)})
