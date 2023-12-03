@@ -20,7 +20,7 @@ class RunChain:
         agent = await cls.get_agent_by_id(db, json.loads(message_data)['id'])
         agent_settings = json.loads(agent.settings)
         chain = json.loads(agent.chain)
-        print(chain)
+        print('chain:', chain)
         instruction = await cls.get_prompt(db, 'instruction')
         agent_settings.update({'instruction': "{}, {}, {}, {}".format(instruction, chain.get('Persona', ''), chain.get('Audience', ''), chain.get('Terminology', ''))})
         assistant_init = await Assistant.create()
