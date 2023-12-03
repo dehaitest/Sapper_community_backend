@@ -66,5 +66,4 @@ class SPLEmulator:
             else:
                 await asyncio.sleep(1)
         messages = await self.client.beta.threads.messages.list(thread_id=self.thread.id)
-        print(messages.data[0].content[0].text.value)
         yield messages.data[0].content[0].text.value

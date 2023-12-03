@@ -24,6 +24,7 @@ class SPLFormCopilot:
     @staticmethod
     async def get_agent_by_id(db: AsyncSession, agent_id: int):
         agent = await select_agent_by_id(db, agent_id)
+        print(agent)
         return agent if agent else ''
 
     @staticmethod
@@ -31,7 +32,9 @@ class SPLFormCopilot:
         return await edit_agent(db, agent_id, update_data)
     
     async def splform_copilot(self, db, message_data):
-        old_agent = await SPLFormCopilot.get_agent_by_id(db, json.loads(message_data)['id'])
+        print('input message', message_data, type(message_data))
+        print('json input message', json.loads(message_data), type(json.loads(message_data)))
+        old_agent = await SPLFormCopilot.get_agent_by_id(db, json.loads(message_data).get('id'))
         print('old_agent', old_agent)
         old_SPL = {'old_SPL': old_agent.spl}
         prompt = [{"role": "system", "content": self.prompt_splform_copilot}]
@@ -40,6 +43,6 @@ class SPLFormCopilot:
         result = json.loads(response.choices[0].message.content)
         splform = convert_spl_to_splform(result)
         new_agent_data = {'spl': json.dumps(result), 'spl_form': json.dumps(splform)}
-        new_agent = await SPLFormCopilot.update_agent(db, json.loads(message_data)['id'], new_agent_data)
+        new_agent = await SPLFormCopilot.update_agent(db, json.loads(message_data).get('id'), new_agent_data)
         yield json.dumps(new_agent.to_dict())
         yield "__END_OF_RESPONSE__"

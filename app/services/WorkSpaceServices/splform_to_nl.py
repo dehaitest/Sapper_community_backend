@@ -38,6 +38,6 @@ class SPLFormToNL:
         response = await self.chatgpt_json.process_message(prompt)
         result = json.loads(response.choices[0].message.content)
         new_agent_data = {'spl': json.dumps(spl), 'spl_form': json.dumps(splform), 'nl': json.dumps(result)}
-        new_agent = await SPLFormToNL.update_agent(db, json.loads(agent_data)['id'], new_agent_data)
+        new_agent = await SPLFormToNL.update_agent(db, int(json.loads(agent_data)['id']), new_agent_data)
         yield json.dumps(new_agent.to_dict())
         yield "__END_OF_RESPONSE__"
