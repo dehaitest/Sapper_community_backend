@@ -15,6 +15,42 @@ async function loadAgents() {
     }
 }
 
+function saveAgentDetails(event) {
+    event.preventDefault();
+
+    const agentId = document.getElementById("detailAgentId").value;
+    const updatedAgent = {
+        name: document.getElementById("detailName").value,
+        image: document.getElementById("detailImage").value,
+        spl: document.getElementById("detailSPL").value,
+        spl_form: document.getElementById("detailSPLForm").value,
+        nl: document.getElementById("detailNL").value,
+        chain: document.getElementById("detailChain").value,
+        settings: document.getElementById("detailSettings").value,
+        active: document.getElementById("detailActive").checked
+    };
+
+    fetch(`/agents/${agentId}`, {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(updatedAgent)
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Failed to update the agent');
+        }
+        return response.json();
+    })
+    .then(() => {
+        alert("Agent updated successfully");
+        // Additional code to refresh the agent list and details
+    })
+    .catch(error => console.error("Error updating agent:", error));
+}
+
+
 function displayAgents(agents) {
     const container = document.getElementById('agentListContainer');
     container.innerHTML = ''; // Clear existing content
