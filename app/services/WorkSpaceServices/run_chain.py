@@ -79,17 +79,22 @@ class RunChain:
         yield messages.data[0].content[0].text.value
     
     async def run_chain(self, message_data):
-        await self.client.beta.threads.messages.create(
-            thread_id=self.thread.id,
-            role="user",
-            content=message_data)
         steps = self.chain.get('Steps')
-        for step in steps:
+        step_id = 0
+        while True:
+            step = steps[step_id]
             if len(step.get('next_steps')) == 0:
                 yield 'len=0'
                 yield "__END_OF_RESPONSE__"
                 break
             elif len(step.get('next_steps')) > 1:
-                yield 'len>1'
+                next_steps = [next_step for next_step in steps if next_step.get('step_id') in step.get('next_steps')]
+                prompt = [{"role": "system", "content": self.prompt_if_condition}]
+                prompt.append({"role": "user", "content": "[current step]: {}, [step output]: {}, [next steps]: {}".format(step, new_nl, next_steps)})
+                response = await self.chatgpt_json.process_message(prompt)
+                result = json.loads(response.choices[0].message.content)
+                step_id = result.get('step_id')
+                yield 'next step {}'.format(step_id)
             else:
-                yield 'len=1'
+                step_id = step.get('next_steps')
+                yield 'next step {}'.format(step_id)
