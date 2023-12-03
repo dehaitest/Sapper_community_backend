@@ -49,11 +49,12 @@ class RunChain:
         agent = await select_agent_by_id(db, agent_id)
         return agent if agent else ''
     
-    async def run_step(self, message):
+    async def run_step(self, message, file_ids):
         await self.client.beta.threads.messages.create(
             thread_id=self.thread.id,
             role="user",
-            content=message)
+            content=message,
+            file_ids=file_ids)
 
         run = await self.client.beta.threads.runs.create(
             thread_id=self.thread.id,
@@ -78,18 +79,26 @@ class RunChain:
     async def run_chain(self, message_data):
         steps = self.chain.get('Steps')
         step_id = 0
-        message = message_data
+        message = json.loads(message_data).get('message')
+        file_ids = json.loads(message_data).get('file_ids', [])
+        if len(file_ids):
+            step = steps[step_id]
+            yield json.dumps(step)
+            message = await self.run_step("{} Input message: {}".format(step.get('step_instruction'), message), file_ids)               
+            yield message
+            step_id = step.get('next_steps')[0]
+            yield 'next step {}'.format(step_id)             
         while True:
             step = steps[step_id]
             if len(step.get('next_steps')) == 0:
                 yield json.dumps(step)
-                message = await self.run_step("{} Input message: {}".format(step.get('step_instruction'), message))               
+                message = await self.run_step("{} Input message: {}".format(step.get('step_instruction'), message), [])               
                 yield message
                 yield "__END_OF_RESPONSE__"
                 break
             elif len(step.get('next_steps')) > 1:
                 yield json.dumps(step)
-                message = await self.run_step("{} Input message: {}".format(step.get('step_instruction'), message))
+                message = await self.run_step("{} Input message: {}".format(step.get('step_instruction'), message), [])
                 yield message
                 next_steps = [next_step for next_step in steps if next_step.get('step_id') in step.get('next_steps')]
                 prompt = [{"role": "system", "content": self.prompt_if_condition}]
@@ -101,7 +110,7 @@ class RunChain:
                 yield 'next step {}'.format(step_id)
             else:
                 yield json.dumps(step)
-                message = await self.run_step("{} Input message: {}".format(step.get('step_instruction'), message))               
+                message = await self.run_step("{} Input message: {}".format(step.get('step_instruction'), message), [])               
                 yield message
                 step_id = step.get('next_steps')[0]
                 yield 'next step {}'.format(step_id)

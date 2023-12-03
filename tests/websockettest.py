@@ -3,6 +3,7 @@ import websockets
 import httpx
 import asyncio
 import aiofiles
+import json
 
 async def websocket_client(uri, message, client_id):
     async with websockets.connect(uri) as websocket:
@@ -69,10 +70,10 @@ async def nltosplform():
         await websocket.close()
 
 async def formcopilot():
-    uri = "ws://localhost:8000/ws/sapperchain/formcopilot"
-    # uri = "wss://v1.promptsapper.tech/ws/sapperchain/formcopilot"
+    # uri = "ws://localhost:8000/ws/sapperchain/formcopilot"
+    uri = "wss://v1.promptsapper.tech/ws/sapperchain/formcopilot"
     async with websockets.connect(uri) as websocket:
-        message = '''{"id": 1, "message": "I would like to add the primary school students as audience."}'''
+        message = '''{"id": 56, "message": "I would like to add the primary school students as audience."}'''
         while True:
             user_input = input('input>>> ')
             if user_input == 'exit':
@@ -118,13 +119,13 @@ async def splemulator():
         await websocket.close()
 
 async def runchain():
-    # uri = "ws://localhost:8000/ws/sapperchain/runchain"
-    uri = "wss://v1.promptsapper.tech/ws/sapperchain/runchain"
+    uri = "ws://localhost:8000/ws/sapperchain/runchain"
+    # uri = "wss://v1.promptsapper.tech/ws/sapperchain/runchain"
     async with websockets.connect(uri) as websocket:
         message = '''{"id": 1}'''
         await websocket.send(message)
         while True:
-            message = input('input>>> ')
+            message = json.dumps({"message": "What is math", "file_ids": ["file-ZfyYGmasPMdFNi6Cvcj0P4Jm"]})
             if message == 'exit':
                 break
             else:
