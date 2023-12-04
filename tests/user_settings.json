@@ -8,25 +8,25 @@
             "file_name": "some name",
             "file_id": "some id",
             "content_type": "some type",
-            "active": 0
+            "active": 1
         },
         {
             "file_name": "some name",
             "file_id": "alfjoiafjew",
             "content_type": "sometype",
-            "active": 0
+            "active": 1
         }
     ],
     "tools": [
         {
             "name": "some name",
             "detail": {"type": "retrieval"},
-            "active": 0
+            "active": 1
         },
         {
             "name": "some name",
             "detail": {"type": "retrieval"},
-            "active": 0
+            "active": 1
         }
     ]
 }

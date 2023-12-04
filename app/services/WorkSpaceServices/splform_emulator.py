@@ -49,21 +49,17 @@ class SPLEmulator:
             thread_id=self.thread.id,
             assistant_id=self.assistant.id)
 
-        while True:
-            # print('run status:', run.status)
-            if run.status == "queued":
-                break
-            else:
-                await asyncio.sleep(1)
-
-        while True:
+        while run.status == "queued":
+            await asyncio.sleep(1)
             run = await self.client.beta.threads.runs.retrieve(
                 thread_id=self.thread.id,
                 run_id=run.id)
-            # print('run status:', run.status)
-            if run.status != "in_progress":
-                break
-            else:
-                await asyncio.sleep(1)
+
+        while run.status == "in_progress":
+            await asyncio.sleep(1)
+            run = await self.client.beta.threads.runs.retrieve(
+                thread_id=self.thread.id,
+                run_id=run.id)
+        
         messages = await self.client.beta.threads.messages.list(thread_id=self.thread.id)
         yield messages.data[0].content[0].text.value

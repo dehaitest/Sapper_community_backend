@@ -40,6 +40,7 @@ class SPLCompiler:
         agent_settings.update({'tools': [{"name": "retrieval", "detail": {"type": "retrieval"}, "active": 1}, {"name": "code_interpreter", "detail": {"type": "code_interpreter"}, "active": 1}]})
         agent_settings.update({'name': agent.name})
         agent_settings.update({'instruction': self.instruction})
+        agent_settings.update({'files': []})
         return agent_settings
     
     async def spl_compiler(self, db, agent_data):

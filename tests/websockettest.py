@@ -103,8 +103,8 @@ async def splcompiler():
         await websocket.close()      
 
 async def splemulator():
-    # uri = "ws://localhost:8000/ws/sapperchain/splemulator"
-    uri = "wss://v1.promptsapper.tech/ws/sapperchain/splemulator"
+    uri = "ws://localhost:8000/ws/sapperchain/splemulator"
+    # uri = "wss://v1.promptsapper.tech/ws/sapperchain/splemulator"
     async with websockets.connect(uri) as websocket:
         message = '''{"id": 1}'''
         await websocket.send(message)
@@ -119,8 +119,8 @@ async def splemulator():
         await websocket.close()
 
 async def runchain():
-    uri = "ws://localhost:8000/ws/sapperchain/runchain"
-    # uri = "wss://v1.promptsapper.tech/ws/sapperchain/runchain"
+    # uri = "ws://localhost:8000/ws/sapperchain/runchain"
+    uri = "wss://v1.promptsapper.tech/ws/sapperchain/runchain"
     async with websockets.connect(uri) as websocket:
         message = '''{"id": 1}'''
         await websocket.send(message)
@@ -168,7 +168,7 @@ async def main():
     # await asyncio.gather(*tasks)
 
     while True:
-        test_index = input("Test index: ")
+        test_index = input("Test index: 1. requiretosplform, 2. splformtonl, 3. nltosplform, 4. formcopilot, 5. splcompiler, 6. splemulator, 7, upload_file, 8. runchain \n")
         if test_index == "1":
             await requiretosplform() 
         elif test_index == "2":
