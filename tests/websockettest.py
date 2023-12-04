@@ -139,7 +139,8 @@ async def runchain():
         await websocket.close()
 
 async def upload_file():
-    url = "http://localhost:8000/sapperchain/uploadfile"
+    # url = "http://localhost:8000/sapperchain/uploadfile"
+    url = "https://v1.promptsapper.tech/sapperchain/uploadfile"
     file_path = "knowledge.txt"
     try:
         async with httpx.AsyncClient() as client:
