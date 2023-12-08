@@ -53,7 +53,7 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
     response.set_cookie(key="refresh_token", value=refresh_token, httponly=True, max_age=max_age)
     return response
 
-@router.post("/users/refresh-token", response_model=Token)
+@router.post("/users/refreshtoken", response_model=Token)
 async def refresh_access_token(refresh_token: Optional[str] = Cookie(None), db: AsyncSession = Depends(get_db_session)):
     if refresh_token is None or not (uuid := await user_service.validate_token(db, refresh_token)):
         raise HTTPException(

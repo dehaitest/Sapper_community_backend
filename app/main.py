@@ -3,7 +3,7 @@ from fastapi import FastAPI
 from .api.v1.api import api_router
 from .core.config import settings
 from fastapi.staticfiles import StaticFiles
-# from fastapi.middleware.cors import CORSMiddleware
+from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 
 app = FastAPI(title=settings.PROJECT_NAME)
@@ -12,13 +12,13 @@ app = FastAPI(title=settings.PROJECT_NAME)
 app.include_router(api_router)
 
 # # Add CORS middleware to allow all origins
-# app.add_middleware(
-#     CORSMiddleware,
-#     allow_origins=["*"],  # Allows all origins
-#     allow_credentials=True,
-#     allow_methods=["*"],  # Allows all methods
-#     allow_headers=["*"],  # Allows all headers
-# )
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Allows all origins
+    allow_credentials=True,
+    allow_methods=["*"],  # Allows all methods
+    allow_headers=["*"],  # Allows all headers
+)
 
 # Mount static files
 app.mount("/static", StaticFiles(directory="app/static"), name="static")

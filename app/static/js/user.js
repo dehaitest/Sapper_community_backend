@@ -79,7 +79,7 @@ async function login() {
 
 async function refreshAccessToken() {
     try {
-        const response = await fetch('/users/refresh-token', {
+        const response = await fetch('/users/refreshtoken', {
             method: 'POST',
             credentials: 'include', // Include cookies in the request
             headers: {
