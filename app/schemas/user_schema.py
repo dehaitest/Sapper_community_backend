@@ -1,15 +1,22 @@
 # app/schemas/user_schema.py
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr
 
 class UserCreate(BaseModel):
     name: str
-    email: str
+    email: EmailStr  
     password: str
 
 class UserResponse(BaseModel):
-    id: int
+    uuid: str
     name: str
-    email: str
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str = "bearer"
+
+class UserWithToken(BaseModel):
+    user: UserResponse
+    token: Token
 
     class Config:
         from_attributes = True

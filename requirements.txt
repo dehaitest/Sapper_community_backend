@@ -8,3 +8,5 @@ asyncmy
 passlib[bcrypt]
 cryptography
 python-multipart
+python-jose[cryptography]
+pydantic[email]

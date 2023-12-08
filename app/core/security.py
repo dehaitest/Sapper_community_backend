@@ -1,7 +1,6 @@
 # app/core/security.py
 from passlib.context import CryptContext
 
-# Create a CryptContext object, which is used to handle all hashing and checking operations
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 def hash_password(password: str) -> str:

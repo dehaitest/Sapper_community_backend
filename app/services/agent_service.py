@@ -8,17 +8,10 @@ from ..models.agent_model import Agent
 # Create Agent
 async def create_agent(db: AsyncSession, agent_data: dict) -> Agent:
     db_agent = Agent(
-        name=agent_data.get('name', 'test'),
-        image=agent_data.get('image', ''), 
-        spl=agent_data.get('spl', ''),
-        spl_form=agent_data.get('spl_form', ''),
-        nl=agent_data.get('nl', ''),
-        chain=agent_data.get('chain', ''),
-        settings=agent_data.get('settings', ''),
-        created_by=agent_data.get('created_by', 'sapper'),
-        create_datetime=agent_data.get('create_datetime', datetime.utcnow()),
-        update_datetime=agent_data.get('update_datetime', datetime.utcnow()),
-        active=agent_data.get('active', True)  # Default to True if not provided
+        **agent_data,
+        create_datetime=datetime.utcnow(),
+        update_datetime=datetime.utcnow(),
+        active=True
     )
 
     db.add(db_agent)
@@ -27,8 +20,8 @@ async def create_agent(db: AsyncSession, agent_data: dict) -> Agent:
     return db_agent
 
 # Edit Agent
-async def edit_agent(db: AsyncSession, agent_id: int, update_data: dict) -> Agent:
-    query = select(Agent).where(Agent.id == agent_id)
+async def edit_agent(db: AsyncSession, agent_uuid: str, update_data: dict) -> Agent:
+    query = select(Agent).where(Agent.uuid == agent_uuid)
     result = await db.execute(query)
     db_agent = result.scalar_one_or_none()
 
@@ -42,18 +35,28 @@ async def edit_agent(db: AsyncSession, agent_id: int, update_data: dict) -> Agen
     return None  
 
 # Select Agent by Name
-async def select_agent_by_name(db: AsyncSession, agent_name: str) -> Agent:
+async def select_agents_by_name(db: AsyncSession, agent_name: str) -> List[Agent]:
     result = await db.execute(select(Agent).where(Agent.name == agent_name))
-    return result.scalar_one_or_none()
+    return result.scalars().all()
+
+# Select Agent by Creator
+async def select_agents_by_creator(db: AsyncSession, creator_id: int) -> List[Agent]:
+    result = await db.execute(select(Agent).where(Agent.creator_id == creator_id))
+    return result.scalars().all()
 
 # Select Agent by ID
 async def select_agent_by_id(db: AsyncSession, agent_id: int) -> Agent:
     result = await db.execute(select(Agent).where(Agent.id == agent_id))
     return result.scalar_one_or_none()
 
+# Select Agent by UUID
+async def select_agent_by_uuid(db: AsyncSession, agent_uuid: str) -> Agent:
+    result = await db.execute(select(Agent).where(Agent.uuid == agent_uuid))
+    return result.scalar_one_or_none()
+
 # Delete Agent
-async def delete_agent(db: AsyncSession, agent_id: int) -> bool:
-    query = select(Agent).where(Agent.id == agent_id)
+async def delete_agent(db: AsyncSession, agent_uuid: str) -> bool:
+    query = select(Agent).where(Agent.uuid == agent_uuid)
     result = await db.execute(query)
     db_agent = result.scalar_one_or_none()
 

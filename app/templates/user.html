@@ -10,7 +10,7 @@
 <body>
     <h2>Create User</h2>
     <form id="createUserForm">
-        <input type="text" id="name" placeholder="Name" required>
+        <input type="text" id="name" placeholder="Name">
         <input type="email" id="email" placeholder="Email" required>
         <input type="password" id="password" placeholder="Password" required>
         <button type="submit">Create User</button>
@@ -21,6 +21,16 @@
         <input type="number" id="userId" placeholder="User ID" required>
         <button type="submit">Get User</button>
     </form>
+
+    <h2>Login</h2>
+    <form id="loginForm">
+        <input type="email" id="loginEmail" placeholder="Email" required>
+        <input type="password" id="loginPassword" placeholder="Password" required>
+        <button type="submit">Login</button>
+    </form>
+
+    <h2>Refresh Token</h2>
+    <button id="refreshTokenButton">Refresh Token</button>
 
     <div id="result"></div>
 </body>

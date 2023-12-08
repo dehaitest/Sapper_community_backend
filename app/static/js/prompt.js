@@ -12,10 +12,13 @@ document.addEventListener("DOMContentLoaded", function() {
     link.type = 'image/x-icon';
     document.getElementsByTagName('head')[0].appendChild(link);
 });
-
+const accessToken = sessionStorage.getItem('accessToken');
 // Function to load and display prompts
 function loadPrompts() {
-    fetch('/prompts/all') 
+    fetch('/prompts/all', {
+        headers: {
+            "Authorization": `Bearer ${accessToken}` 
+        },}) 
         .then(response => response.json())
         .then(prompts => {
             const promptListContainer = document.getElementById("promptListContainer");
@@ -55,7 +58,10 @@ function loadPrompts() {
 
 // Function to load details of a prompt
 function loadPromptDetails(promptId) {
-    fetch(`/prompts/by-id/${promptId}`)
+    fetch(`/prompts/by-id/${promptId}`, {
+        headers: {
+            "Authorization": `Bearer ${accessToken}` 
+        },})
         .then(response => response.json())
         .then(prompt => {
             document.getElementById("detailPromptId").value = prompt.id;
@@ -84,7 +90,8 @@ function savePromptDetails(event) {
     fetch(`/prompts/${promptId}`, {
         method: "PUT",
         headers: {
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${accessToken}` 
         },
         body: JSON.stringify(updatedPrompt)
     })
@@ -115,7 +122,8 @@ function createPrompt(event) {
     fetch('/prompts/', {
         method: "POST",
         headers: {
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${accessToken}` 
         },
         body: JSON.stringify(newPrompt)
     })
@@ -138,7 +146,12 @@ function deletePrompt(promptId) {
         return; // Do nothing if the user cancels the confirmation dialog
     }
 
-    fetch(`/prompts/${promptId}`, { method: 'DELETE' })
+    fetch(`/prompts/${promptId}`, { 
+        method: 'DELETE' , 
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${accessToken}` 
+        },})
         .then(response => {
             if (response.ok) {
                 alert("Prompt deleted successfully");

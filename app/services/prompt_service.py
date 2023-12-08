@@ -4,6 +4,7 @@ from sqlalchemy.future import select
 from ..models.prompt_model import Prompt
 from typing import List
 
+# Create prompt
 async def create_prompt(db: AsyncSession, prompt_data: dict) -> Prompt:
     db_prompt = Prompt(
         name=prompt_data['name'],
@@ -19,6 +20,7 @@ async def create_prompt(db: AsyncSession, prompt_data: dict) -> Prompt:
     await db.refresh(db_prompt)
     return db_prompt
 
+# Edit prompt
 async def edit_prompt(db: AsyncSession, prompt_id: int, update_data: dict) -> Prompt:
     query = select(Prompt).where(Prompt.id == prompt_id)
     result = await db.execute(query)
@@ -30,17 +32,19 @@ async def edit_prompt(db: AsyncSession, prompt_id: int, update_data: dict) -> Pr
         await db.commit()
         await db.refresh(db_prompt)
         return db_prompt
-
     return None  
 
+# Select prompt by name
 async def select_prompt_by_name(db: AsyncSession, prompt_name: str) -> Prompt:
     result = await db.execute(select(Prompt).where(Prompt.name == prompt_name))
     return result.scalar_one_or_none()
 
+# Select prompt by id
 async def select_prompt_by_id(db: AsyncSession, prompt_id: int) -> Prompt:
     result = await db.execute(select(Prompt).where(Prompt.id == prompt_id))
     return result.scalar()
 
+# Delete prompt
 async def delete_prompt(db: AsyncSession, prompt_id: int) -> bool:
     query = select(Prompt).where(Prompt.id == prompt_id)
     result = await db.execute(query)
@@ -53,6 +57,7 @@ async def delete_prompt(db: AsyncSession, prompt_id: int) -> bool:
 
     return False 
 
+# Get all prompt
 async def get_all_prompts(db: AsyncSession) -> List[Prompt]:
     result = await db.execute(select(Prompt))
     return result.scalars().all()
