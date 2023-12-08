@@ -16,7 +16,7 @@ document.addEventListener("DOMContentLoaded", function() {
         refreshAccessToken();
     });
 });
-
+const accessToken = sessionStorage.getItem('accessToken');
 function createUser() {
     const name = document.getElementById("name").value;
     const email = document.getElementById("email").value;
@@ -35,9 +35,12 @@ function createUser() {
 }
 
 function getUser() {
-    const userId = document.getElementById("userId").value;
+    const useruuid = document.getElementById("userUUId").value;
 
-    fetch("/users/" + userId)
+    fetch("/users/by-uuid" + useruuid, {
+        headers: {
+            "Authorization": `Bearer ${accessToken}` 
+        },})
     .then(response => response.json())
     .then(data => showResult(data))
     .catch(error => console.error("Error:", error));

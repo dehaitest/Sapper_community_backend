@@ -11,7 +11,10 @@ function uploadFile() {
 
     fetch('/sapperchain/uploadfile', {
         method: 'POST',
-        body: formData
+        body: formData, 
+        headers: {
+            "Authorization": `Bearer ${accessToken}` 
+        },
     })
     .then(response => {
         if (!response.ok) {

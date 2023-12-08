@@ -1,7 +1,7 @@
 import json
 from ..LLMs.chatgpt import Chatgpt_json
-from ..prompt_service import select_prompt_by_name
-from ..agent_service import select_agent_by_id, edit_agent
+from ..prompt_service import get_prompt_by_name
+from ..agent_service import get_agent_by_id, edit_agent_by_uuid
 from sqlalchemy.ext.asyncio import AsyncSession
 from ...common.data_conversion import convert_spl_to_splform, convert_splform_to_spl
 
@@ -18,17 +18,17 @@ class NLToSPLForm:
 
     @staticmethod
     async def get_prompt(db: AsyncSession, name: str):
-        prompt = await select_prompt_by_name(db, name)
+        prompt = await get_prompt_by_name(db, name)
         return prompt.prompt if prompt else ''
     
     @staticmethod
     async def get_agent_by_id(db: AsyncSession, agent_id: int):
-        agent = await select_agent_by_id(db, agent_id)
+        agent = await get_agent_by_id(db, agent_id)
         return agent if agent else ''
 
     @staticmethod
     async def update_agent(db: AsyncSession, agent_id: int, update_data: dict):
-        return await edit_agent(db, agent_id, update_data)
+        return await edit_agent_by_uuid(db, agent_id, update_data)
     
     async def nl_to_splform(self, db, agent_data):
         new_nl = {'new_nl': json.loads(json.loads(agent_data)['nl'])['NL']}

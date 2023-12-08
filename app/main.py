@@ -8,10 +8,9 @@ import uvicorn
 
 app = FastAPI(title=settings.PROJECT_NAME)
 
-
 app.include_router(api_router)
 
-# # Add CORS middleware to allow all origins
+# Add CORS middleware to allow all origins
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],  # Allows all origins

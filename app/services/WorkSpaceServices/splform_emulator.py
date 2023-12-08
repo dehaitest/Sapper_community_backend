@@ -1,6 +1,6 @@
 import json
 from ..LLMs.assistant import Assistant
-from ..agent_service import select_agent_by_id, edit_agent
+from ..agent_service import get_agent_by_id, edit_agent_by_uuid
 from sqlalchemy.ext.asyncio import AsyncSession
 import asyncio
 
@@ -32,11 +32,11 @@ class SPLEmulator:
     
     @staticmethod
     async def update_agent(db: AsyncSession, agent_id: int, update_data: dict):
-        return await edit_agent(db, agent_id, update_data)
+        return await edit_agent_by_uuid(db, agent_id, update_data)
     
     @staticmethod
     async def get_agent_by_id(db: AsyncSession, agent_id: int):
-        agent = await select_agent_by_id(db, agent_id)
+        agent = await get_agent_by_id(db, agent_id)
         return agent if agent else ''
     
     async def spl_emulator(self, message_data):

@@ -24,7 +24,7 @@ async def edit_prompt_endpoint(prompt_id: int, update_data: PromptUpdate, db: As
 # Get prompt by name
 @router.get("/prompts/by-name/", response_model=PromptResponse)
 async def get_prompt_by_name_endpoint(prompt_name: str = Query(...), db: AsyncSession = Depends(get_db_session), _: None = Depends(auth_current_user)):
-    prompt = await prompt_service.select_prompt_by_name(db, prompt_name)
+    prompt = await prompt_service.get_prompt_by_name(db, prompt_name)
     if prompt is None:
         raise HTTPException(status_code=404, detail="Prompt not found")
     return prompt
@@ -33,7 +33,7 @@ async def get_prompt_by_name_endpoint(prompt_name: str = Query(...), db: AsyncSe
 @router.get("/prompts/by-id/{prompt_id}", response_model=PromptResponse)
 async def get_prompt_by_id_endpoint(prompt_id: int, db: AsyncSession = Depends(get_db_session), _: None = Depends(auth_current_user)):
     print('byid')
-    prompt = await prompt_service.select_prompt_by_id(db, prompt_id)
+    prompt = await prompt_service.get_prompt_by_id(db, prompt_id)
     if prompt is None:
         raise HTTPException(status_code=404, detail="Prompt not found")
     return prompt

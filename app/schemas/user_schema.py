@@ -6,6 +6,9 @@ class UserCreate(BaseModel):
     email: EmailStr  
     password: str
 
+    class Config:
+        from_attributes = True
+
 class UserResponse(BaseModel):
     uuid: str
     name: str
@@ -17,6 +20,3 @@ class Token(BaseModel):
 class UserWithToken(BaseModel):
     user: UserResponse
     token: Token
-
-    class Config:
-        from_attributes = True

@@ -7,20 +7,37 @@
     <link rel="stylesheet" href="/static/css/agent_style.css">
 </head>
 <body>
+    <div class="create-agent-form">
+        <h2>Create New Agent</h2>
+        <form id="agentCreationForm">
+            <input type="text" id="agentName" name="name" placeholder="Name">
+            <input type="text" id="agentDescription" name="description" placeholder="Description">
+            <button type="submit">Create Agent</button>
+        </form>
+    </div>
+    <div class="create-settings-form">
+        <h2>Settings</h2>
+        <form id="settingsCreationForm">
+            <input type="number" id="settingsId" name="id" placeholder="ID">
+            <input type="text" id="settingsModel" name="model" placeholder="Model">
+            <input type="text" id="settingsOpenAIKey" name="openai_key" placeholder="OpenAI Key">
+            <button type="submit">Save Settings</button>
+        </form>
+    </div>    
     <div class="agent-list">
         <h2>Available Agents</h2>
         <div class="agent-item title-row">
             <span class="agent-id">ID</span>
+            <span class="agent-uuid">UUID</span>
             <span class="agent-name">Name</span>
-            <span class="agent-image">Image</span>
             <span class="agent-spl">SPL</span>
             <span class="agent-spl-form">SPL Form</span>
-            <span class="agent-nl">NL</span>
+            <span class="agent-cfp">CFP</span>
+            <span class="agent-lint">Lint</span>
             <span class="agent-chain">Chain</span>
-            <span class="agent-settings">Settings</span>
-            <span class="agent-created-by">Created By</span>
-            <span class="agent-create-datetime">Create Datetime</span>
-            <span class="agent-update-datetime">Update Datetime</span>
+            <span class="agent-settingsID">SettingsID</span>
+            <span class="agent-ownerUUID">OwnerUUID</span>
+            <span class="agent-creatorUUID">CreatorUUID</span>
             <span class="agent-active">Active</span>
             <span class="delete-icon">Delete</span>
         </div>

@@ -6,11 +6,13 @@ class FileCreate(BaseModel):
     file_id: str
     content_type: str
 
+    class Config:
+        from_attributes = True
+
 class FileResponse(BaseModel):
     file_name: str
     file_id: str
     content_type: str
     active: int
 
-    class Config:
-        from_attributes = True
+

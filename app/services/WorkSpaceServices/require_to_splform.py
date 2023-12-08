@@ -1,6 +1,6 @@
 import json
 from ..LLMs.chatgpt import Chatgpt_json
-from ..prompt_service import select_prompt_by_name
+from ..prompt_service import get_prompt_by_name
 from ..agent_service import create_agent
 from sqlalchemy.ext.asyncio import AsyncSession
 from ...common.data_conversion import convert_splform_to_spl
@@ -25,7 +25,7 @@ class RequireToSPLForm:
 
     @staticmethod
     async def get_prompt(db: AsyncSession, name: str):
-        prompt = await select_prompt_by_name(db, name)
+        prompt = await get_prompt_by_name(db, name)
         return prompt.prompt if prompt else ''
     
     @staticmethod

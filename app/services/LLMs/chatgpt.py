@@ -1,16 +1,27 @@
 import openai
 import asyncio
-from ...core.config import settings
+# from ...core.config import settings
+from sqlalchemy.ext.asyncio import AsyncSession
 
 class Chatgpt:
     def __init__(self):
-        self.client = openai.AsyncOpenAI(api_key=settings.OPENAI_KEY)
+        self.client = None
+
+    @classmethod
+    async def create(cls, settings):
+        instance = cls()
+        await instance.async_init(settings)
+        return instance
+
+    async def async_init(self, settings):
+        self.client = openai.AsyncOpenAI(api_key=settings.openai_key)
+        self.model = settings.model
 
     async def process_message(self, message: list):
         try:
             response = await asyncio.wait_for(
                 self.client.chat.completions.create(
-                    model=settings.OPENAI_MODEL,
+                    model=self.model,
                     messages=message,
                 ),
                 timeout=60  # Timeout in seconds
@@ -26,19 +37,20 @@ class Chatgpt_json:
         self.client = None
 
     @classmethod
-    async def create(cls):
+    async def create(cls, settings):
         instance = cls()
-        await instance.async_init()
+        await instance.async_init(settings)
         return instance
 
-    async def async_init(self):
-        self.client = openai.AsyncOpenAI(api_key=settings.OPENAI_KEY)
+    async def async_init(self, settings):
+        self.client = openai.AsyncOpenAI(api_key=settings.openai_key)
+        self.model = settings.model
 
     async def process_message(self, message: list):
         try:
             response = await asyncio.wait_for(
                 self.client.chat.completions.create(
-                    model=settings.OPENAI_MODEL,
+                    model=self.model,
                     messages=message,
                     response_format={"type": "json_object"},
                 ),
@@ -53,13 +65,23 @@ class Chatgpt_json:
 
 class Chatgpt_stream:
     def __init__(self):
-        self.client = openai.AsyncOpenAI(api_key=settings.OPENAI_KEY)
+        self.client = None
+
+    @classmethod
+    async def create(cls, settings):
+        instance = cls()
+        await instance.async_init(settings)
+        return instance
+
+    async def async_init(self, settings):
+        self.client = openai.AsyncOpenAI(api_key=settings.openai_key)
+        self.model = settings.model
 
     async def process_message(self, message: list):
         try:
             stream = await asyncio.wait_for(
                 self.client.chat.completions.create(
-                    model=settings.OPENAI_MODEL,
+                    model=self.model,
                     messages=message,
                     stream=True,
                 ),

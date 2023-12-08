@@ -8,6 +8,9 @@ class PromptBase(BaseModel):
     prompt: str
     description: Optional[str] = None
 
+    class Config:
+        from_attributes = True
+
 # Model for creation requests
 class PromptCreate(PromptBase):
     pass
@@ -25,6 +28,3 @@ class PromptResponse(BaseModel):
     create_datetime: datetime
     update_datetime: datetime
     active: bool
-
-    class Config:
-        from_attributes = True

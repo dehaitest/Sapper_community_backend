@@ -1,7 +1,7 @@
 from fastapi import APIRouter, WebSocket, Depends, File, UploadFile
 from ....services.WorkSpaceServices.require_to_splform import RequireToSPLForm
-from ....services.WorkSpaceServices.splform_to_nl import SPLFormToNL
-from ....services.WorkSpaceServices.nl_to_splform import NLToSPLForm
+from ....services.WorkSpaceServices.splform_to_cfp import SPLFormToCFP
+from ....services.WorkSpaceServices.splform_lint import NLToSPLForm
 from ....services.WorkSpaceServices.splform_copilot import SPLFormCopilot
 from ....services.WorkSpaceServices.spl_compiler import SPLCompiler
 from ....services.WorkSpaceServices.splform_emulator import SPLEmulator
@@ -10,12 +10,16 @@ from ....services.WorkSpaceServices.upload_file import UploadUserFile
 from sqlalchemy.ext.asyncio import AsyncSession
 from ....services.database import get_db_session
 from ....schemas.file_schema import FileResponse
+from ....services.user_service import validate_token 
+from ...dependencies import auth_current_user
+import json
 
 router = APIRouter()
 
 # Initialize SPL form
 @router.websocket("/ws/sapperchain/requiretosplform")
 async def require_to_splform_endpoint(websocket: WebSocket, db: AsyncSession = Depends(get_db_session)):
+    await validate_token(db, websocket.query_params.get('token'))
     await websocket.accept()
     requireToSPLForm_instance = await RequireToSPLForm.create(db)
     while True: 
@@ -23,31 +27,35 @@ async def require_to_splform_endpoint(websocket: WebSocket, db: AsyncSession = D
         async for response in requireToSPLForm_instance.require_to_splForm(db, data):
             await websocket.send_text(response)
 
-# Natural language to SPL form
-@router.websocket("/ws/sapperchain/nltosplform")
+# SPL linting
+@router.websocket("/ws/sapperchain/splformlint")
 async def NLText_to_SPLForm_endpoint(websocket: WebSocket, db: AsyncSession = Depends(get_db_session)):
+    await validate_token(db, websocket.query_params.get('token'))
     await websocket.accept()
-    NLToSPLForm_instance = await NLToSPLForm.create(db)
+    NLToSPLForm_instance = await NLToSPLForm.create(db, websocket.query_params.get('agent_uuid'))
     while True:
         data = await websocket.receive_text()
         async for response in NLToSPLForm_instance.nl_to_splform(db, data):
             await websocket.send_text(response)
 
-# SPL form to natural lanuage
-@router.websocket("/ws/sapperchain/splformtonl")
-async def splform_to_nl_endpoint(websocket: WebSocket, db: AsyncSession = Depends(get_db_session)):
+# SPL to Control Flow Path (CFP)
+@router.websocket("/ws/sapperchain/splformtocfp")
+async def splform_to_cfp_endpoint(websocket: WebSocket, db: AsyncSession = Depends(get_db_session)):
+    await validate_token(db, websocket.query_params.get('token'))
     await websocket.accept()
-    SPLFormToNL_instance = await SPLFormToNL.create(db)
+    SPLFormToCFP_instance = await SPLFormToCFP.create(db, websocket.query_params.get('agent_uuid'))
     while True:
         data = await websocket.receive_text()
-        async for response in SPLFormToNL_instance.splform_to_nl(db, data):
+        async for response in SPLFormToCFP_instance.splform_to_cfp(db, data):
             await websocket.send_text(response)
 
 # SPL form copilot
 @router.websocket("/ws/sapperchain/formcopilot")
 async def form_copilot_endpoint(websocket: WebSocket, db: AsyncSession = Depends(get_db_session)):
+    await validate_token(db, websocket.query_params.get('token'))
     await websocket.accept()
-    SPLFormCopilot_instance = await SPLFormCopilot.create(db)
+    SPLFormCopilot_instance = await SPLFormCopilot.create(db, websocket.query_params.get('agent_uuid'))
+    await websocket.send_text(json.dumps({'copilot': 'Welcome to Sapper copilot! How can I help you?'}))
     while True:
         data = await websocket.receive_text()
         async for response in SPLFormCopilot_instance.splform_copilot(db, data):
@@ -56,8 +64,9 @@ async def form_copilot_endpoint(websocket: WebSocket, db: AsyncSession = Depends
 # SPL compiler
 @router.websocket("/ws/sapperchain/splcompiler")
 async def spl_compiler_endpoint(websocket: WebSocket, db: AsyncSession = Depends(get_db_session)):
+    await validate_token(db, websocket.query_params.get('token'))
     await websocket.accept()
-    SPLCompiler_instance = await SPLCompiler.create(db)
+    SPLCompiler_instance = await SPLCompiler.create(db, websocket.query_params.get('agent_uuid'))
     while True: 
         data = await websocket.receive_text()
         async for response in SPLCompiler_instance.spl_compiler(db, data):
@@ -66,9 +75,9 @@ async def spl_compiler_endpoint(websocket: WebSocket, db: AsyncSession = Depends
 # SPL emulator
 @router.websocket("/ws/sapperchain/splemulator")
 async def spl_emulator_endpoint(websocket: WebSocket, db: AsyncSession = Depends(get_db_session)):
+    await validate_token(db, websocket.query_params.get('token'))
     await websocket.accept()
-    data = await websocket.receive_text()
-    SPLEmulator_instance = await SPLEmulator.create(db, data)
+    SPLEmulator_instance = await SPLEmulator.create(db, websocket.query_params.get('agent_uuid'))
     while True:
         data = await websocket.receive_text()
         async for response in SPLEmulator_instance.spl_emulator(data):
@@ -77,9 +86,9 @@ async def spl_emulator_endpoint(websocket: WebSocket, db: AsyncSession = Depends
 # Run chain
 @router.websocket("/ws/sapperchain/runchain")
 async def run_chain_endpoint(websocket: WebSocket, db: AsyncSession = Depends(get_db_session)):
+    await validate_token(db, websocket.query_params.get('token'))
     await websocket.accept()
-    data = await websocket.receive_text()
-    RunChain_instance = await RunChain.create(db, data)
+    RunChain_instance = await RunChain.create(db, websocket.query_params.get('agent_uuid'))
     while True:
         data = await websocket.receive_text()
         async for response in RunChain_instance.run_chain(data):
@@ -87,6 +96,6 @@ async def run_chain_endpoint(websocket: WebSocket, db: AsyncSession = Depends(ge
 
 # Upload file
 @router.post("/sapperchain/uploadfile", response_model=FileResponse)
-async def upload_file_endpoint(file: UploadFile = File(...)):
+async def upload_file_endpoint(file: UploadFile = File(...), _: None = Depends(auth_current_user)):
     UploadUserFile_Instance = await UploadUserFile.create()
     return await UploadUserFile_Instance.upload_user_file(file)

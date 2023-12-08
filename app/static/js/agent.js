@@ -1,10 +1,91 @@
 document.addEventListener('DOMContentLoaded', function() {
     loadAgents();
+    document.getElementById("agentCreationForm").addEventListener("submit", function(event) {
+        event.preventDefault();
+        createAgent();
+    });
+    document.getElementById("settingsCreationForm").addEventListener("submit", function(event) {
+        event.preventDefault();
+        updateSettings();
+    });
 });
+const accessToken = sessionStorage.getItem('accessToken');
+function createAgent() {
+    const agentName = document.getElementById('agentName').value;
+    const agentDescription = document.getElementById('agentDescription').value;
+
+    // Construct the data object
+    const agentData = {
+        name: agentName,
+        description: agentDescription
+    };
+
+    fetch('/agents/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            "Authorization": `Bearer ${accessToken}` 
+        },
+        body: JSON.stringify(agentData)
+    })
+    .then(response => {
+        if (response.ok) {
+            return response.json();
+        } else {
+            throw new Error('Failed to create agent');
+        }
+    })
+    .then(result => {
+        console.log('Agent created:', result);
+        // Optionally, update the UI to reflect the new agent
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+}
+
+function updateSettings() {
+    const settingsId = document.getElementById('settingsId').value;
+    const settingsModel = document.getElementById('settingsModel').value;
+    const settingsOpenAIKey = document.getElementById('settingsOpenAIKey').value;
+
+    // Construct the data object
+    const settingsData = {
+        model: settingsModel,
+        openai_key: settingsOpenAIKey
+    };
+
+    fetch(`/settings/${settingsId}`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+            "Authorization": `Bearer ${accessToken}`
+        },
+        body: JSON.stringify(settingsData)
+    })
+    .then(response => {
+        if (response.ok) {
+            return response.json();
+        } else {
+            throw new Error('Failed to update settings');
+        }
+    })
+    .then(result => {
+        console.log('Settings updated:', result);
+        // Optionally, update the UI to reflect the changes
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+}
 
 async function loadAgents() {
     try {
-        const response = await fetch('/agents/all');
+        const response = await fetch('/agents/all', {
+            headers: {
+                "Authorization": `Bearer ${accessToken}` 
+            }
+        });
         if (!response.ok) {
             throw new Error(`HTTP error! Status: ${response.status}`);
         }
@@ -60,16 +141,16 @@ function displayAgents(agents) {
         agentDiv.className = 'agent-item';
         agentDiv.innerHTML = `
             <span class="agent-id">${agent.id}</span>
+            <span class="agent-uuid">${agent.uuid}</span>
             <span class="agent-name">${agent.name}</span>
-            <span class="agent-image">${agent.image}</span>
             <span class="agent-spl">${agent.spl}</span>
             <span class="agent-spl-form">${agent.spl_form}</span>
-            <span class="agent-nl">${agent.nl}</span>
+            <span class="agent-cfp">${agent.cfp}</span>
+            <span class="agent-lint">${agent.lint}</span>
             <span class="agent-chain">${agent.chain}</span>
-            <span class="agent-settings">${agent.settings}</span>
-            <span class="agent-created-by">${agent.created_by}</span>
-            <span class="agent-create-datetime">${agent.create_datetime}</span>
-            <span class="agent-update-datetime">${agent.update_datetime}</span>
+            <span class="agent-settings">${agent.settings_id}</span>
+            <span class="agent-ownerUUID">${agent.owner_uuid}</span>
+            <span class="agent-creatorUUID">${agent.creator_uuid}</span>
             <span class="agent-active">${agent.active ? 'Yes' : 'No'}</span>
             <span class="delete-icon" onclick="deleteAgent(${agent.id})">🗑️</span>
         `;
@@ -80,7 +161,10 @@ function displayAgents(agents) {
 async function deleteAgent(agentId) {
     try {
         const response = await fetch(`/agents/${agentId}`, {
-            method: 'DELETE'
+            method: 'DELETE',
+            headers: {
+                "Authorization": `Bearer ${accessToken}` 
+            }
         });
         if (!response.ok) {
             throw new Error(`HTTP error! Status: ${response.status}`);

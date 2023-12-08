@@ -6,14 +6,7 @@ from typing import List
 
 # Create prompt
 async def create_prompt(db: AsyncSession, prompt_data: dict) -> Prompt:
-    db_prompt = Prompt(
-        name=prompt_data['name'],
-        prompt=prompt_data['prompt'],
-        description=prompt_data.get('description', ''),  # Using .get() for optional fields
-        create_datetime=prompt_data.get('create_datetime', datetime.utcnow()),
-        update_datetime=prompt_data.get('update_datetime', datetime.utcnow()),
-        active=prompt_data.get('active', True)  # Default to True if not provided
-    )
+    db_prompt = Prompt(**prompt_data, active=True)
 
     db.add(db_prompt)
     await db.commit()
@@ -34,13 +27,13 @@ async def edit_prompt(db: AsyncSession, prompt_id: int, update_data: dict) -> Pr
         return db_prompt
     return None  
 
-# Select prompt by name
-async def select_prompt_by_name(db: AsyncSession, prompt_name: str) -> Prompt:
+# Get prompt by name
+async def get_prompt_by_name(db: AsyncSession, prompt_name: str) -> Prompt:
     result = await db.execute(select(Prompt).where(Prompt.name == prompt_name))
     return result.scalar_one_or_none()
 
-# Select prompt by id
-async def select_prompt_by_id(db: AsyncSession, prompt_id: int) -> Prompt:
+# Get prompt by id
+async def get_prompt_by_id(db: AsyncSession, prompt_id: int) -> Prompt:
     result = await db.execute(select(Prompt).where(Prompt.id == prompt_id))
     return result.scalar()
 
@@ -54,7 +47,6 @@ async def delete_prompt(db: AsyncSession, prompt_id: int) -> bool:
         await db.delete(db_prompt)
         await db.commit()
         return True
-
     return False 
 
 # Get all prompt

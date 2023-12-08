@@ -8,6 +8,7 @@ from ....schemas.user_schema import UserCreate, UserResponse, UserWithToken, Tok
 from fastapi.responses import JSONResponse
 from typing import Optional
 from datetime import datetime
+from ...dependencies import auth_current_user
 
 router = APIRouter()
 
@@ -23,9 +24,17 @@ async def create_user(user: UserCreate, db: AsyncSession = Depends(get_db_sessio
     return await user_service.create_user(db, user.model_dump())
 
 # Get user by ID
-@router.get("/users/{user_id}", response_model=UserResponse)
-async def get_user_by_id(user_id: int, db: AsyncSession = Depends(get_db_session)):
+@router.get("/users/by-id{user_id}", response_model=UserResponse)
+async def get_user_by_id(user_id: int, db: AsyncSession = Depends(get_db_session), _: None = Depends(auth_current_user)):
     db_user = await user_service.get_user_by_id(db, user_id)
+    if db_user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+    return db_user
+
+# Get user by UUID
+@router.get("/users/by-uuid{user_uuid}", response_model=UserResponse)
+async def get_user_by_uuid(user_uuid: str, db: AsyncSession = Depends(get_db_session), _: None = Depends(auth_current_user)):
+    db_user = await user_service.get_user_by_uuid(db, user_uuid)
     if db_user is None:
         raise HTTPException(status_code=404, detail="User not found")
     return db_user

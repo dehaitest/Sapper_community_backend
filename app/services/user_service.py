@@ -30,13 +30,10 @@ async def edit_user(db: AsyncSession, user_id: int, update_data: dict) -> User:
 
     if db_user is not None:
         update_other_than_last_login = any(key != "last_login" for key in update_data.keys())
-
         for key, value in update_data.items():
             setattr(db_user, key, value)
-
         if update_other_than_last_login:
             db_user.update_datetime = datetime.utcnow()
-
         await db.commit()
         await db.refresh(db_user)
         return db_user
