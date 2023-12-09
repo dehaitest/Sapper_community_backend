@@ -26,8 +26,10 @@ class RunChain:
         }
         agent = await cls.get_agent_by_uuid(db, agent_uuid)
         settings = await cls.get_settings_by_id(db, agent.settings_id)
-        settings = SettingsResponse.model_validate(settings, from_attributes=True).model_dump()
         user = await cls.get_user_by_uuid(db, agent.owner_uuid)
+        chatgpt_settings = {'model': settings.model, 'openai_key': user.openai_key}
+        chatgpt_json = await Chatgpt_json.create(chatgpt_settings)
+        settings = SettingsResponse.model_validate(settings, from_attributes=True).model_dump()
         assistant_init = await Assistant.create({'openai_key': user.openai_key})
         chain = json.loads(agent.chain)
         instruction = prompts.get('instruction')
@@ -36,8 +38,6 @@ class RunChain:
         assistant = await assistant_init.update_assistant(settings)
         await cls.update_settings(db, agent.settings_id, settings)
         thread = await assistant_init.create_thread()
-        chatgpt_json = await Chatgpt_json.create({'model': settings.get('model'), 'openai_key': user.openai_key})
-
         return cls(assistant_init.client, assistant, thread, chain, chatgpt_json, prompts)
     
     @staticmethod
@@ -119,7 +119,7 @@ class RunChain:
                 message = await self.run_step("{} Input message: {}".format(step.get('step_instruction'), message), [])
                 yield json.dumps({"console": message})
                 next_steps = [next_step for next_step in steps if next_step.get('step_id') in step.get('next_steps')]
-                prompt = [{"role": "system", "content": self.prompt_if_condition}]
+                prompt = [{"role": "system", "content": self.prompts.get('if_condition')}]
                 prompt.append({"role": "user", "content": "[current step]: {}, [step output]: {}, [next steps]: {}".format(step, message, next_steps)})
                 yield json.dumps({"console": "Identify next step"})
                 response = await self.chatgpt_json.process_message(prompt)
