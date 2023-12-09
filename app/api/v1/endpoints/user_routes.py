@@ -67,7 +67,7 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
     response_data = UserWithToken(user=user_response, token=token_data)
     response = JSONResponse(content=response_data.model_dump())
     max_age = 30 * 24 * 60 * 60  # 30 days, in seconds
-    response.set_cookie(key="refresh_token", value=refresh_token, httponly=True, max_age=max_age)
+    response.set_cookie(key="refresh_token", value=refresh_token, httponly=True, max_age=max_age, samesite='None', secure=True)
     return response
 
 @router.post("/users/refreshtoken", response_model=Token)
