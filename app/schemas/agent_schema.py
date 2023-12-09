@@ -17,6 +17,9 @@ class AgentBase(BaseModel):
     creator_uuid: Optional[str] = None
     active: Optional[bool] = None
 
+    class Config:
+        from_attributes = True
+
 # Model for creation requests
 class AgentCreate(BaseModel):
     name: str
@@ -44,6 +47,7 @@ class AgentResponsePersonal(BaseModel):
     image: Optional[str] = None
     owner_uuid: str
     creator_uuid: str
+    settings_id: int
     create_datetime: datetime
     update_datetime: datetime
     active: bool
@@ -63,6 +67,3 @@ class AgentResponse(BaseModel):
     owner_uuid: Optional[str] = None
     creator_uuid: Optional[str] = None
     active: Optional[bool] = None
-
-    class Config:
-        from_attributes = True

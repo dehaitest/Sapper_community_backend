@@ -46,8 +46,8 @@ async def get_agent_by_uuid_endpoint(agent_uuid: str, db: AsyncSession = Depends
     return agent
 
 # Get agents by creator
-@router.get("/agents/by-creator/", response_model=List[AgentResponsePersonal])
-async def get_agents_by_creator_endpoint(db: AsyncSession = Depends(get_db_session), user_uuid = Depends(get_current_user)):
+@router.get("/agents/by-creator/{user_uuid}", response_model=List[AgentResponsePersonal])
+async def get_agents_by_creator_endpoint(user_uuid: str, db: AsyncSession = Depends(get_db_session), _: None = Depends(auth_current_user)):
     agents = await agent_service.get_agents_by_creator(db, user_uuid)
     if not agents:
         raise HTTPException(status_code=404, detail="Agents not found for the given creator")
@@ -62,15 +62,15 @@ async def get_agent_by_id_endpoint(agent_id: int, db: AsyncSession = Depends(get
     return agent
 
 # Delete agent by id
-@router.delete("/agents/{agent_id}", status_code=status.HTTP_204_NO_CONTENT)
-async def delete_agent_endpoint(agent_id: int, db: AsyncSession = Depends(get_db_session), _: None = Depends(auth_current_user)):
+@router.delete("/agents/by-id/{agent_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_agent_by_id_endpoint(agent_id: int, db: AsyncSession = Depends(get_db_session), _: None = Depends(auth_current_user)):
     success = await agent_service.delete_agent_by_id(db, agent_id)
     if not success:
         raise HTTPException(status_code=404, detail="Agent not found")
     
 # Delete agent by uuid
-@router.delete("/agents/{agent_uuid}", status_code=status.HTTP_204_NO_CONTENT)
-async def delete_agent_endpoint(agent_uuid: str, db: AsyncSession = Depends(get_db_session), _: None = Depends(auth_current_user)):
+@router.delete("/agents/by-uuid/{agent_uuid}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_agent_by_uuid_endpoint(agent_uuid: str, db: AsyncSession = Depends(get_db_session), _: None = Depends(auth_current_user)):
     success = await agent_service.delete_agent_by_uuid(db, agent_uuid)
     if not success:
         raise HTTPException(status_code=404, detail="Agent not found")

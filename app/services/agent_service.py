@@ -38,7 +38,7 @@ async def get_agents_by_name(db: AsyncSession, agent_name: str) -> List[Agent]:
     return result.scalars().all()
 
 # Get Agent by Creator
-async def get_agents_by_creator(db: AsyncSession, creator_uuid: int) -> List[Agent]:
+async def get_agents_by_creator(db: AsyncSession, creator_uuid: str) -> List[Agent]:
     result = await db.execute(select(Agent).where(Agent.creator_uuid == creator_uuid))
     return result.scalars().all()
 

@@ -8,6 +8,10 @@ document.addEventListener('DOMContentLoaded', function() {
         event.preventDefault();
         updateSettings();
     });
+    document.getElementById("userUuidForm").addEventListener("submit", async function(event) {
+        event.preventDefault();
+        await getAgentsByCreator();
+    });
 });
 const accessToken = sessionStorage.getItem('accessToken');
 function createAgent() {
@@ -77,6 +81,31 @@ function updateSettings() {
     .catch(error => {
         console.error('Error:', error);
     });
+}
+
+async function getAgentsByCreator() {
+    const userUuid = document.getElementById("userUuid").value;
+    if (!userUuid) {
+        alert("Please enter a User UUID");
+        return;
+    }
+
+    try {
+        const response = await fetch(`/agents/by-creator/${userUuid}`, {
+            headers: {
+                "Authorization": `Bearer ${accessToken}`  // Assuming accessToken is defined in your scope
+            }
+        });
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        const agents = await response.json();
+        console.log(agents)
+        displayAgents(agents);  // Reuse the existing function to display agents
+    } catch (error) {
+        console.error('Error fetching agents:', error);
+        alert("Failed to fetch agents for the given creator");
+    }
 }
 
 async function loadAgents() {
@@ -152,15 +181,15 @@ function displayAgents(agents) {
             <span class="agent-ownerUUID">${agent.owner_uuid}</span>
             <span class="agent-creatorUUID">${agent.creator_uuid}</span>
             <span class="agent-active">${agent.active ? 'Yes' : 'No'}</span>
-            <span class="delete-icon" onclick="deleteAgent(${agent.id})">🗑️</span>
+            <span class="delete-icon" onclick="deleteAgent('${agent.uuid}')">🗑️</span>
         `;
         container.appendChild(agentDiv);
     });
 }
 
-async function deleteAgent(agentId) {
+async function deleteAgent(agentUUId) {
     try {
-        const response = await fetch(`/agents/${agentId}`, {
+        const response = await fetch(`/agents/by-uuid/${agentUUId}`, {
             method: 'DELETE',
             headers: {
                 "Authorization": `Bearer ${accessToken}` 
