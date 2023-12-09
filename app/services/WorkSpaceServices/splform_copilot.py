@@ -2,6 +2,7 @@ import json
 from ..LLMs.chatgpt import Chatgpt_json, Chatgpt
 from ..prompt_service import get_prompt_by_name
 from ..agent_service import get_agent_by_uuid, edit_agent_by_uuid
+from ..user_service import get_user_by_uuid
 from ..settings_service import get_settings_by_id
 from sqlalchemy.ext.asyncio import AsyncSession
 from ...common.data_conversion import convert_spl_to_splform, convert_splform_to_spl
@@ -27,8 +28,10 @@ class SPLFormCopilot:
         }
         agent = await cls.get_agent_by_uuid(db, agent_uuid)
         settings = await cls.get_settings_by_id(db, agent.settings_id)
-        chatgpt_json = await Chatgpt_json.create(settings)
-        chatgpt = await Chatgpt.create(settings)
+        user = await cls.get_user_by_uuid(db, agent.owner_uuid)
+        chatgpt_settings = {'model': settings.model, 'openai_key': user.openai_key}
+        chatgpt_json = await Chatgpt_json.create(chatgpt_settings)
+        chatgpt = await Chatgpt.create(chatgpt_settings)
         return cls(chatgpt_json, chatgpt, prompts, agent_uuid)
 
     @staticmethod
@@ -44,6 +47,11 @@ class SPLFormCopilot:
     async def get_agent_by_uuid(db: AsyncSession, agent_uuid: str):
         agent = await get_agent_by_uuid(db, agent_uuid)
         return agent if agent else ''
+    
+    @staticmethod
+    async def get_user_by_uuid(db: AsyncSession, user_uuid: str):
+        user = await get_user_by_uuid(db, user_uuid)
+        return user if user else ''
 
     @staticmethod
     async def update_agent(db: AsyncSession, agent_uuid: str, update_data: dict):

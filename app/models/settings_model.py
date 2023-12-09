@@ -10,7 +10,6 @@ class Settings(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     model = Column(String(32))
-    openai_key = Column(String(128))
     assistant_id = Column(String(64))
     instruction = Column(Text)
     file = Column(Text)

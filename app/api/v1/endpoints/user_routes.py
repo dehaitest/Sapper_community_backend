@@ -4,7 +4,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.ext.asyncio import AsyncSession
 from ....services import user_service
 from ....services.database import get_db_session
-from ....schemas.user_schema import UserCreate, UserResponse, UserWithToken, Token
+from ....schemas.user_schema import UserCreate, UserResponse, UserWithToken, Token, UserUpdate
 from fastapi.responses import JSONResponse
 from typing import Optional
 from datetime import datetime
@@ -39,6 +39,14 @@ async def get_user_by_uuid(user_uuid: str, db: AsyncSession = Depends(get_db_ses
         raise HTTPException(status_code=404, detail="User not found")
     return db_user
 
+# Edit user by UUID
+@router.put("/users/by-uuid/{user_uuid}", response_model=UserResponse)
+async def edit_user_by_uuid_endpoint(user_uuid: str, update_data: UserUpdate, db: AsyncSession = Depends(get_db_session), _: None = Depends(auth_current_user)):
+    user = await user_service.edit_user_by_uuid(db, user_uuid, update_data.model_dump())
+    if user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+    return user
+
 # Login
 @router.post("/users/login", response_model=UserWithToken)
 async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(), db: AsyncSession = Depends(get_db_session)):
@@ -50,7 +58,7 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
             detail="Incorrect email or password",
             headers={"WWW-Authenticate": "Bearer"},
         )
-    user = await user_service.edit_user(db, user.id, {"last_login": datetime.utcnow()})
+    user = await user_service.edit_user_by_id(db, user.id, {"last_login": datetime.utcnow()})
     access_token = user_service.create_access_token(data={"sub": user.uuid})
     refresh_token = user_service.create_refresh_token(data={"sub": user.uuid})
     

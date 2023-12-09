@@ -4,9 +4,13 @@ document.addEventListener('DOMContentLoaded', function() {
         event.preventDefault();
         createAgent();
     });
-    document.getElementById("settingsCreationForm").addEventListener("submit", function(event) {
+    document.getElementById("modelSettingsCreationForm").addEventListener("submit", function(event) {
         event.preventDefault();
-        updateSettings();
+        updateModelSettings();
+    });
+    document.getElementById("keySettingsCreationForm").addEventListener("submit", function(event) {
+        event.preventDefault();
+        updateKeySettings();
     });
     document.getElementById("userUuidForm").addEventListener("submit", async function(event) {
         event.preventDefault();
@@ -48,10 +52,9 @@ function createAgent() {
     });
 }
 
-function updateSettings() {
+function updateModelSettings() {
     const settingsId = document.getElementById('settingsId').value;
     const settingsModel = document.getElementById('settingsModel').value;
-    const settingsOpenAIKey = document.getElementById('settingsOpenAIKey').value;
 
     // Construct the data object
     const settingsData = {
@@ -60,6 +63,38 @@ function updateSettings() {
     };
 
     fetch(`/settings/${settingsId}`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+            "Authorization": `Bearer ${accessToken}`
+        },
+        body: JSON.stringify(settingsData)
+    })
+    .then(response => {
+        if (response.ok) {
+            return response.json();
+        } else {
+            throw new Error('Failed to update settings');
+        }
+    })
+    .then(result => {
+        console.log('Settings updated:', result);
+        // Optionally, update the UI to reflect the changes
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+}
+
+function updateKeySettings() {
+    const settingsOpenAIKey = document.getElementById('settingsOpenAIKey').value;
+    const user_uuid = 'user_1l9P3qT2CH4zLbCw'
+    // Construct the data object
+    const settingsData = {
+        openai_key: settingsOpenAIKey
+    };
+
+    fetch(`/users/by-uuid/${user_uuid}`, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json',

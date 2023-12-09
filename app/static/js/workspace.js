@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
     const accessToken = sessionStorage.getItem('accessToken');
-    const agent_uuid = 'agent_5I43F3Chmpz5wMok'
+    const agent_uuid = 'agent_JCxeaYQl11bcaDkO'
     initializeChatbot(`ws://localhost:8000/ws/sapperchain/formcopilot?token=${accessToken}&agent_uuid=${agent_uuid}`, 'Chatbot 1');
     // Add more chatbots here, e.g., initializeChatbot('wss://anotherendpoint', 'Chatbot 2');
 });

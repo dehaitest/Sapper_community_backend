@@ -4,7 +4,6 @@ from datetime import datetime
 
 class SettingsBase(BaseModel):
     model: Optional[str] = None
-    openai_key: Optional[str] = None
     assistant_id: Optional[str] = None
     instruction: Optional[str] = None
     file: Optional[str] = None

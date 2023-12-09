@@ -14,8 +14,8 @@ class Chatgpt:
         return instance
 
     async def async_init(self, settings):
-        self.client = openai.AsyncOpenAI(api_key=settings.openai_key)
-        self.model = settings.model
+        self.client = openai.AsyncOpenAI(api_key=settings.get('openai_key'))
+        self.model = settings.get('model')
 
     async def process_message(self, message: list):
         try:
@@ -43,8 +43,8 @@ class Chatgpt_json:
         return instance
 
     async def async_init(self, settings):
-        self.client = openai.AsyncOpenAI(api_key=settings.openai_key)
-        self.model = settings.model
+        self.client = openai.AsyncOpenAI(api_key=settings.get('openai_key'))
+        self.model = settings.get('model')
 
     async def process_message(self, message: list):
         try:
@@ -74,8 +74,8 @@ class Chatgpt_stream:
         return instance
 
     async def async_init(self, settings):
-        self.client = openai.AsyncOpenAI(api_key=settings.openai_key)
-        self.model = settings.model
+        self.client = openai.AsyncOpenAI(api_key=settings.get('openai_key'))
+        self.model = settings.get('model')
 
     async def process_message(self, message: list):
         try:

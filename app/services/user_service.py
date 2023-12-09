@@ -22,8 +22,8 @@ async def create_user(db: AsyncSession, user_data: dict) -> User:
     await db.refresh(db_user)
     return db_user
 
-# Edit user
-async def edit_user(db: AsyncSession, user_id: int, update_data: dict) -> User:
+# Edit user by ID
+async def edit_user_by_id(db: AsyncSession, user_id: int, update_data: dict) -> User:
     query = select(User).where(User.id == user_id)
     result = await db.execute(query)
     db_user = result.scalar_one_or_none()
@@ -37,7 +37,22 @@ async def edit_user(db: AsyncSession, user_id: int, update_data: dict) -> User:
         await db.commit()
         await db.refresh(db_user)
         return db_user
+    return None
 
+# Edit user by UUID
+async def edit_user_by_uuid(db: AsyncSession, user_uuid: str, update_data: dict) -> User:
+    query = select(User).where(User.uuid == user_uuid)
+    result = await db.execute(query)
+    db_user = result.scalar_one_or_none()
+    if db_user is not None:
+        update_other_than_last_login = any(key != "last_login" for key in update_data.keys())
+        for key, value in update_data.items():
+            setattr(db_user, key, value)
+        if update_other_than_last_login:
+            db_user.update_datetime = datetime.utcnow()
+        await db.commit()
+        await db.refresh(db_user)
+        return db_user
     return None
 
 # Get user by ID

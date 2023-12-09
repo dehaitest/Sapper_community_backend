@@ -13,6 +13,7 @@ class User(Base):
     name = Column(String(32))
     email = Column(String(255), unique=True, index=True)
     hashed_password = Column(String(255))
+    openai_key = Column(String(128))
     create_datetime = Column(DateTime, default=datetime.utcnow)
     update_datetime = Column(DateTime, default=datetime.utcnow)
     last_login = Column(DateTime, default=datetime.utcnow)
