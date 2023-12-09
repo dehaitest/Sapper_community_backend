@@ -7,7 +7,11 @@ import json
 
 # Create settings
 async def create_settings(db: AsyncSession, settings_data: dict) -> Settings:
-    tool = json.dumps({'tools': [{"name": "retrieval", "detail": {"type": "retrieval"}, "active": 1}, {"name": "code_interpreter", "detail": {"type": "code_interpreter"}, "active": 1}]})
+    tool = json.dumps({
+        'tools': [{"name": "retrieval", "detail": {"type": "retrieval"}, "active": 1}, {"name": "code_interpreter", "detail": {"type": "code_interpreter"}, "active": 1}],
+        'model': "gpt-3.5-turbo-1106",
+        }
+    )
     db_settings = Settings(**settings_data, tool=tool)
 
     db.add(db_settings)
