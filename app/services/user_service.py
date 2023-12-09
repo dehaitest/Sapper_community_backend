@@ -16,7 +16,7 @@ async def create_user(db: AsyncSession, user_data: dict) -> User:
     uuid = 'user_{}'.format(id_generation.generate_id())
     while await get_user_by_uuid(db, uuid):
         uuid = 'user_{}'.format(id_generation.generate_id())
-    db_user = User(**user_data, uuid=uuid, hashed_password=hashed_password)
+    db_user = User(**user_data, uuid=uuid, hashed_password=hashed_password, active=True)
     db.add(db_user)
     await db.commit()
     await db.refresh(db_user)

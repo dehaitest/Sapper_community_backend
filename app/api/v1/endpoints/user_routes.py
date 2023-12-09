@@ -24,7 +24,7 @@ async def create_user(user: UserCreate, db: AsyncSession = Depends(get_db_sessio
     return await user_service.create_user(db, user.model_dump())
 
 # Get user by ID
-@router.get("/users/by-id{user_id}", response_model=UserResponse)
+@router.get("/users/by-id/{user_id}", response_model=UserResponse)
 async def get_user_by_id(user_id: int, db: AsyncSession = Depends(get_db_session), _: None = Depends(auth_current_user)):
     db_user = await user_service.get_user_by_id(db, user_id)
     if db_user is None:
@@ -32,7 +32,7 @@ async def get_user_by_id(user_id: int, db: AsyncSession = Depends(get_db_session
     return db_user
 
 # Get user by UUID
-@router.get("/users/by-uuid{user_uuid}", response_model=UserResponse)
+@router.get("/users/by-uuid/{user_uuid}", response_model=UserResponse)
 async def get_user_by_uuid(user_uuid: str, db: AsyncSession = Depends(get_db_session), _: None = Depends(auth_current_user)):
     db_user = await user_service.get_user_by_uuid(db, user_uuid)
     if db_user is None:

@@ -37,7 +37,7 @@ function createUser() {
 function getUser() {
     const useruuid = document.getElementById("userUUId").value;
 
-    fetch("/users/by-uuid" + useruuid, {
+    fetch("/users/by-uuid/" + useruuid, {
         headers: {
             "Authorization": `Bearer ${accessToken}` 
         },})
