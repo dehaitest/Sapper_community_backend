@@ -1,7 +1,7 @@
 from fastapi import APIRouter, WebSocket, Depends, File, UploadFile
 from ....services.WorkSpaceServices.require_to_splform import RequireToSPLForm
 from ....services.WorkSpaceServices.splform_to_cfp import SPLFormToCFP
-from ....services.WorkSpaceServices.splform_lint import NLToSPLForm
+from ....services.WorkSpaceServices.splform_lint import SPLFormLint
 from ....services.WorkSpaceServices.splform_copilot import SPLFormCopilot
 from ....services.WorkSpaceServices.spl_compiler import SPLCompiler
 from ....services.WorkSpaceServices.splform_emulator import SPLEmulator
@@ -16,7 +16,7 @@ import json
 
 router = APIRouter()
 
-# Initialize SPL form
+# Initialize SPL form (deprecated)
 @router.websocket("/ws/sapperchain/requiretosplform")
 async def require_to_splform_endpoint(websocket: WebSocket, db: AsyncSession = Depends(get_db_session)):
     await validate_token(db, websocket.query_params.get('token'))
@@ -29,13 +29,13 @@ async def require_to_splform_endpoint(websocket: WebSocket, db: AsyncSession = D
 
 # SPL linting
 @router.websocket("/ws/sapperchain/splformlint")
-async def NLText_to_SPLForm_endpoint(websocket: WebSocket, db: AsyncSession = Depends(get_db_session)):
+async def SPLForm_Lint_endpoint(websocket: WebSocket, db: AsyncSession = Depends(get_db_session)):
     await validate_token(db, websocket.query_params.get('token'))
     await websocket.accept()
-    NLToSPLForm_instance = await NLToSPLForm.create(db, websocket.query_params.get('agent_uuid'))
+    SPLFormLint_instance = await SPLFormLint.create(db, websocket.query_params.get('agent_uuid'))
     while True:
         data = await websocket.receive_text()
-        async for response in NLToSPLForm_instance.nl_to_splform(db, data):
+        async for response in SPLFormLint_instance.splform_lint(db):
             await websocket.send_text(response)
 
 # SPL to Control Flow Path (CFP)
@@ -46,7 +46,7 @@ async def splform_to_cfp_endpoint(websocket: WebSocket, db: AsyncSession = Depen
     SPLFormToCFP_instance = await SPLFormToCFP.create(db, websocket.query_params.get('agent_uuid'))
     while True:
         data = await websocket.receive_text()
-        async for response in SPLFormToCFP_instance.splform_to_cfp(db, data):
+        async for response in SPLFormToCFP_instance.splform_to_cfp(db):
             await websocket.send_text(response)
 
 # SPL form copilot

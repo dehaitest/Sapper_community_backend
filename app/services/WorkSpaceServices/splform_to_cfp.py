@@ -5,7 +5,7 @@ from ..agent_service import get_agent_by_uuid, edit_agent_by_uuid
 from ..user_service import get_user_by_uuid
 from ..settings_service import get_settings_by_id
 from sqlalchemy.ext.asyncio import AsyncSession
-from ...common.data_conversion import convert_splform_to_spl
+from ...schemas.agent_schema import AgentResponseWorkspace
 
 class SPLFormToCFP:
     def __init__(self, chatgpt_json, prompts, agent_uuid) -> None:
@@ -49,14 +49,28 @@ class SPLFormToCFP:
     async def update_agent(db: AsyncSession, agent_uuid: str, update_data: dict):
         return await edit_agent_by_uuid(db, agent_uuid, update_data)
     
-    async def splform_to_cfp(self, db, agent_data):
-        splform = json.loads(json.loads(agent_data)['spl_form'])
-        spl = convert_splform_to_spl(splform)
-        prompt = [{"role": "system", "content": self.prompt_spl2nl}]
+    async def spl_to_cfp(self, spl):
+        prompt = [{"role": "system", "content": self.prompts.get('generate_cfp')}]
         prompt.append({"role": "user", "content": "[SPL]: {}".format(spl)})
         response = await self.chatgpt_json.process_message(prompt)
-        result = json.loads(response.choices[0].message.content)
-        new_agent_data = {'spl': json.dumps(spl), 'spl_form': json.dumps(splform), 'nl': json.dumps(result)}
-        new_agent = await SPLFormToCFP.update_agent(db, self.agent_uuid, new_agent_data)
-        yield json.dumps(new_agent.to_dict())
+        return json.loads(response.choices[0].message.content)
+    
+    async def cfp_debugging(self, persona, cfp):
+        prompt = [{"role": "system", "content": self.prompts.get('cfp_debug')}]
+        prompt.append({"role": "user", "content": "[SPL]: {}, [ExecutionPaths]: {}".format(persona, cfp)})
+        response = await self.chatgpt_json.process_message(prompt)
+        return json.loads(response.choices[0].message.content)
+    
+    async def splform_to_cfp(self, db):
+        agent = await SPLFormToCFP.get_agent_by_uuid(db, self.agent_uuid)
+        spl = json.loads(agent.spl)
+        instructions = {}
+        for key, value in spl.items():
+            if 'Instruction' in key:
+                instructions[key] = instructions.get(key, value)
+        cfp = await self.spl_to_cfp(instructions)
+        result = await self.cfp_debugging(spl["Persona"], cfp)
+        agent_data = {'cfp': json.dumps(result)}
+        agent = await SPLFormToCFP.update_agent(db, self.agent_uuid, agent_data)
+        yield json.dumps(AgentResponseWorkspace.model_validate(agent, from_attributes=True).model_dump())
         yield "__END_OF_RESPONSE__"

@@ -1,7 +1,11 @@
 document.addEventListener('DOMContentLoaded', function() {
     const accessToken = sessionStorage.getItem('accessToken');
-    const agent_uuid = 'agent_JCxeaYQl11bcaDkO'
-    initializeChatbot(`ws://localhost:8000/ws/sapperchain/formcopilot?token=${accessToken}&agent_uuid=${agent_uuid}`, 'Chatbot 1');
+    const agent_uuid = 'agent_nqSrjJNeajgWRY29'
+    initializeChatbot(`ws://localhost:8000/ws/sapperchain/formcopilot?token=${accessToken}&agent_uuid=${agent_uuid}`, 'Copilot');
+    initializeChatbot(`ws://localhost:8000/ws/sapperchain/splformtocfp?token=${accessToken}&agent_uuid=${agent_uuid}`, 'CFP');
+    initializeChatbot(`ws://localhost:8000/ws/sapperchain/splformlint?token=${accessToken}&agent_uuid=${agent_uuid}`, 'Lint');
+
+
     // Add more chatbots here, e.g., initializeChatbot('wss://anotherendpoint', 'Chatbot 2');
 });
 

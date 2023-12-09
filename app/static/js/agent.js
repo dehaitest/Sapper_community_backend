@@ -88,7 +88,7 @@ function updateModelSettings() {
 
 function updateKeySettings() {
     const settingsOpenAIKey = document.getElementById('settingsOpenAIKey').value;
-    const user_uuid = 'user_1l9P3qT2CH4zLbCw'
+    const user_uuid = 'user_r2THdaOtfiRWB2vx'
     // Construct the data object
     const settingsData = {
         openai_key: settingsOpenAIKey

@@ -1,20 +1,29 @@
 import json
 from ..LLMs.chatgpt import Chatgpt_json
 from ..prompt_service import get_prompt_by_name
-from ..agent_service import get_agent_by_id, edit_agent_by_uuid
+from ..agent_service import get_agent_by_uuid, edit_agent_by_uuid
+from ..user_service import get_user_by_uuid
+from ..settings_service import get_settings_by_id
 from sqlalchemy.ext.asyncio import AsyncSession
-from ...common.data_conversion import convert_spl_to_splform, convert_splform_to_spl
+from ...schemas.agent_schema import AgentResponseWorkspace
 
-class NLToSPLForm:
-    def __init__(self, chatgpt_json, prompt_nl2spl) -> None:
-        self.prompt_nl2spl = prompt_nl2spl
+class SPLFormLint:
+    def __init__(self, chatgpt_json, prompts, agent_uuid) -> None:
+        self.prompts = prompts
         self.chatgpt_json = chatgpt_json
+        self.agent_uuid = agent_uuid
 
     @classmethod
-    async def create(cls, db: AsyncSession):
-        prompt_nl2spl = await cls.get_prompt(db, 'nl2spl')
-        chatgpt_json = await Chatgpt_json.create()
-        return cls(chatgpt_json, prompt_nl2spl)
+    async def create(cls, db: AsyncSession, agent_uuid):
+        prompts = {
+            'spl_linting': await cls.get_prompt(db, 'spl_linting'),
+        }
+        agent = await cls.get_agent_by_uuid(db, agent_uuid)
+        settings = await cls.get_settings_by_id(db, agent.settings_id)
+        user = await cls.get_user_by_uuid(db, agent.owner_uuid)
+        chatgpt_settings = {'model': settings.model, 'openai_key': user.openai_key}
+        chatgpt_json = await Chatgpt_json.create(chatgpt_settings)
+        return cls(chatgpt_json, prompts, agent_uuid)
 
     @staticmethod
     async def get_prompt(db: AsyncSession, name: str):
@@ -22,25 +31,31 @@ class NLToSPLForm:
         return prompt.prompt if prompt else ''
     
     @staticmethod
-    async def get_agent_by_id(db: AsyncSession, agent_id: int):
-        agent = await get_agent_by_id(db, agent_id)
+    async def get_agent_by_uuid(db: AsyncSession, agent_uuid: str):
+        agent = await get_agent_by_uuid(db, agent_uuid)
         return agent if agent else ''
+    
+    @staticmethod
+    async def get_settings_by_id(db: AsyncSession, id: int):
+        return await get_settings_by_id(db, id)
+    
+    @staticmethod
+    async def get_user_by_uuid(db: AsyncSession, user_uuid: str):
+        user = await get_user_by_uuid(db, user_uuid)
+        return user if user else ''
 
     @staticmethod
-    async def update_agent(db: AsyncSession, agent_id: int, update_data: dict):
-        return await edit_agent_by_uuid(db, agent_id, update_data)
+    async def update_agent(db: AsyncSession, agent_uuid: str, update_data: dict):
+        return await edit_agent_by_uuid(db, agent_uuid, update_data)
     
-    async def nl_to_splform(self, db, agent_data):
-        new_nl = {'new_nl': json.loads(json.loads(agent_data)['nl'])['NL']}
-        old_agent = await NLToSPLForm.get_agent_by_id(db, json.loads(agent_data)['id'])
-        old_nl = {'old_nl': json.loads(old_agent.nl)['NL']}
-        old_SPL = {'old_SPL': convert_splform_to_spl(json.loads(json.loads(agent_data)['spl_form']))}
-        prompt = [{"role": "system", "content": self.prompt_nl2spl}]
-        prompt.append({"role": "user", "content": "[old_nl]: {}, [new_nl]: {}, [old_SPL]: {}".format(old_nl, new_nl, old_SPL)})
+    async def splform_lint(self, db):
+        agent = await SPLFormLint.get_agent_by_uuid(db, self.agent_uuid)
+        spl = agent.spl
+        prompt = [{"role": "system", "content": self.prompts.get('spl_linting')}]
+        prompt.append({"role": "user", "content": "[SPL]: {}".format(spl)})
         response = await self.chatgpt_json.process_message(prompt)
         result = json.loads(response.choices[0].message.content)
-        splform = convert_spl_to_splform(result)
-        new_agent_data = {'spl': json.dumps(result), 'spl_form': json.dumps(splform), 'nl': json.loads(agent_data)['nl']}
-        new_agent = await NLToSPLForm.update_agent(db, json.loads(agent_data)['id'], new_agent_data)
-        yield json.dumps(new_agent.to_dict())
+        agent_data = {'lint': json.dumps(result)}
+        agent = await SPLFormLint.update_agent(db, self.agent_uuid, agent_data)
+        yield json.dumps(AgentResponseWorkspace.model_validate(agent, from_attributes=True).model_dump())
         yield "__END_OF_RESPONSE__"
