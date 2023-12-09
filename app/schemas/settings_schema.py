@@ -1,6 +1,5 @@
 from pydantic import BaseModel
 from typing import Optional
-from datetime import datetime
 
 class SettingsBase(BaseModel):
     model: Optional[str] = None
@@ -16,7 +15,7 @@ class SettingsCreate(SettingsBase):
     pass
 
 class SettingsResponse(SettingsBase):
-    pass
+    id: int
 
 class SettingsUpdate(SettingsBase):
     pass

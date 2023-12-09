@@ -1,11 +1,10 @@
 from sqlalchemy.ext.asyncio import AsyncSession
-from datetime import datetime
 from sqlalchemy.future import select
 from typing import List
 from ..models.agent_model import Agent
-from ..common import id_generation
+from ..common import id_generation, data_conversion
 from ..services import settings_service
-
+import json
 
 # Create Agent
 async def create_agent(db: AsyncSession, user_uuid: str, agent_data: dict) -> Agent:
@@ -26,6 +25,9 @@ async def edit_agent_by_uuid(db: AsyncSession, agent_uuid: str, update_data: dic
     db_agent = result.scalar_one_or_none()
     if db_agent is not None:
         for key, value in update_data.items():
+            if key == 'spl_form':
+                spl = data_conversion.convert_splform_to_spl(json.loads(value))
+                setattr(db_agent, 'spl', json.dumps(spl))
             setattr(db_agent, key, value)
         await db.commit()
         await db.refresh(db_agent)

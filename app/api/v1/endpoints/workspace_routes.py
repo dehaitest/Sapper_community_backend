@@ -69,7 +69,7 @@ async def spl_compiler_endpoint(websocket: WebSocket, db: AsyncSession = Depends
     SPLCompiler_instance = await SPLCompiler.create(db, websocket.query_params.get('agent_uuid'))
     while True: 
         data = await websocket.receive_text()
-        async for response in SPLCompiler_instance.spl_compiler(db, data):
+        async for response in SPLCompiler_instance.spl_compiler(db):
             await websocket.send_text(response)
 
 # SPL emulator

@@ -16,6 +16,16 @@ document.addEventListener('DOMContentLoaded', function() {
         event.preventDefault();
         await getAgentsByCreator();
     });
+
+    document.getElementById("agentUuidForm").addEventListener("submit", async function(event) {
+        event.preventDefault();
+        await getAgentsByAgentUuid();
+    });
+
+    document.getElementById("settingsForm").addEventListener("submit", async function(event) {
+        event.preventDefault();
+        await getSettingsById();
+    });    
 });
 const accessToken = sessionStorage.getItem('accessToken');
 function createAgent() {
@@ -88,7 +98,7 @@ function updateModelSettings() {
 
 function updateKeySettings() {
     const settingsOpenAIKey = document.getElementById('settingsOpenAIKey').value;
-    const user_uuid = 'user_r2THdaOtfiRWB2vx'
+    const user_uuid = 'user_uGrLIUqDST7W1a6m'
     // Construct the data object
     const settingsData = {
         openai_key: settingsOpenAIKey
@@ -139,7 +149,30 @@ async function getAgentsByCreator() {
         displayAgents(agents);  // Reuse the existing function to display agents
     } catch (error) {
         console.error('Error fetching agents:', error);
-        alert("Failed to fetch agents for the given creator");
+    }
+}
+
+async function getAgentsByAgentUuid() {
+    const agentUuid = document.getElementById("agentUuid").value;
+    if (!agentUuid) {
+        alert("Please enter a User UUID");
+        return;
+    }
+
+    try {
+        const response = await fetch(`/agents/by-uuid/${agentUuid}`, {
+            headers: {
+                "Authorization": `Bearer ${accessToken}`  // Assuming accessToken is defined in your scope
+            }
+        });
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        const agents = await response.json();
+        console.log(agents)
+        // displayAgents(agents);  // Reuse the existing function to display agents
+    } catch (error) {
+        console.error('Error fetching agents:', error);
     }
 }
 
@@ -193,6 +226,32 @@ function saveAgentDetails(event) {
         // Additional code to refresh the agent list and details
     })
     .catch(error => console.error("Error updating agent:", error));
+}
+
+async function getSettingsById() {
+    // Assuming you have an input field in your form to get the settings ID
+    let settingsId = document.getElementById("settingsId2").value;
+    console.log(settingsId)
+    if (!settingsId) {
+        console.log("Please enter a Settings ID.");
+        return;
+    }
+
+    try {
+        let response = await fetch(`/settings/by-id/${settingsId}`, {
+            headers: {
+                "Authorization": `Bearer ${accessToken}` 
+            }
+        });
+        if (response.ok) {
+            let data = await response.json();
+            console.log(data); // Or update the DOM with the received settings
+        } else {
+            alert("Error: " + response.status + " - " + response.statusText);
+        }
+    } catch (error) {
+        console.error('Error fetching the settings:', error);
+    }
 }
 
 

@@ -1,26 +1,23 @@
 import openai
-from ...core.config import settings
-import json
 
 class Assistant:
     def __init__(self):
         self.client = None
 
     @classmethod
-    async def create(cls):
+    async def create(cls, settings: dict):
         instance = cls()
-        await instance.async_init()
+        await instance.async_init(settings)
         return instance
 
-    async def async_init(self):
-        self.client = openai.AsyncOpenAI(api_key=settings.OPENAI_KEY)
+    async def async_init(self, settings: dict):
+        self.client = openai.AsyncOpenAI(api_key=settings.get('openai_key'))
 
     async def create_assistant(self, agent_settings: dict):
         try:
             assistant = await self.client.beta.assistants.create(
                 instructions=agent_settings.get('instruction', ''),
-                model=settings.OPENAI_MODEL,
-                name=agent_settings.get('name', 'Assistant'),
+                model=agent_settings.get('model'),
             )
             return assistant
         except Exception as e:
@@ -39,8 +36,7 @@ class Assistant:
         try:
             assistant = await self.client.beta.assistants.create(
                 instructions=agent_settings.get('instruction', ''),
-                model=agent_settings.get('model', settings.OPENAI_MODEL),
-                name=agent_settings.get('name', 'Assistant'),
+                model=agent_settings.get('model'),
                 tools= [tool.get('detail') for tool in agent_settings.get('tools') if tool.get('active')] if 'tools' in agent_settings and agent_settings['tools'] else [],
                 file_ids=[file.get('file_id') for file in agent_settings.get('files') if file.get('active')] if 'files' in agent_settings and agent_settings['files'] else [],
             )

@@ -24,7 +24,7 @@ async def edit_agent_card_endpoint(agent_uuid: str, update_data: AgentCreate, db
 # Edit agent 
 @router.put("/agents/{agent_uuid}", response_model=AgentResponseWorkspace)
 async def edit_agent_endpoint(agent_uuid: str, update_data: AgentUpdate, db: AsyncSession = Depends(get_db_session), _: None = Depends(auth_current_user)):
-    agent = await agent_service.edit_agent(db, agent_uuid, update_data.model_dump())
+    agent = await agent_service.edit_agent_by_uuid(db, agent_uuid, update_data.model_dump())
     if agent is None:
         raise HTTPException(status_code=404, detail="Agent not found")
     return agent

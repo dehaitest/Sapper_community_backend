@@ -3,10 +3,12 @@ from datetime import datetime
 from sqlalchemy.future import select
 from ..models.settings_model import Settings
 from typing import List
+import json
 
 # Create settings
 async def create_settings(db: AsyncSession, settings_data: dict) -> Settings:
-    db_settings = Settings(**settings_data)
+    tool = json.dumps({'tools': [{"name": "retrieval", "detail": {"type": "retrieval"}, "active": 1}, {"name": "code_interpreter", "detail": {"type": "code_interpreter"}, "active": 1}]})
+    db_settings = Settings(**settings_data, tool=tool)
 
     db.add(db_settings)
     await db.commit()

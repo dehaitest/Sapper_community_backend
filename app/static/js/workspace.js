@@ -1,10 +1,18 @@
 document.addEventListener('DOMContentLoaded', function() {
     const accessToken = sessionStorage.getItem('accessToken');
-    const agent_uuid = 'agent_nqSrjJNeajgWRY29'
+    const agent_uuid = 'agent_ZztT8axsHZ0ZrliL'
+    // Input: plain text
     initializeChatbot(`ws://localhost:8000/ws/sapperchain/formcopilot?token=${accessToken}&agent_uuid=${agent_uuid}`, 'Copilot');
+    // Input: No need input, any char
     initializeChatbot(`ws://localhost:8000/ws/sapperchain/splformtocfp?token=${accessToken}&agent_uuid=${agent_uuid}`, 'CFP');
+    // Input: No need input, any char
     initializeChatbot(`ws://localhost:8000/ws/sapperchain/splformlint?token=${accessToken}&agent_uuid=${agent_uuid}`, 'Lint');
-
+    // Input: {"message": "user input message", "file_ids": ["dafasa", "asdfasf"]}
+    initializeChatbot(`ws://localhost:8000/ws/sapperchain/splemulator?token=${accessToken}&agent_uuid=${agent_uuid}`, 'Emulator');
+    // Input: No need input, any char
+    initializeChatbot(`ws://localhost:8000/ws/sapperchain/splcompiler?token=${accessToken}&agent_uuid=${agent_uuid}`, 'Compiler');
+    // Input: {"message": "user input message", "file_ids": ["dafasa", "asdfasf"]}
+    initializeChatbot(`ws://localhost:8000/ws/sapperchain/runchain?token=${accessToken}&agent_uuid=${agent_uuid}`, 'RunChain');
 
     // Add more chatbots here, e.g., initializeChatbot('wss://anotherendpoint', 'Chatbot 2');
 });

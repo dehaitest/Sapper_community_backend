@@ -1,39 +1,44 @@
 import json
 from ..LLMs.chatgpt import Chatgpt_json
 from ..LLMs.assistant import Assistant
-from ..agent_service import get_agent_by_id, edit_agent_by_uuid
+from ..agent_service import get_agent_by_uuid, edit_agent_by_uuid
 from ..prompt_service import get_prompt_by_name
+from ..settings_service import get_settings_by_id, edit_settings
+from ..user_service import get_user_by_uuid
 from sqlalchemy.ext.asyncio import AsyncSession
+from ...schemas.settings_schema import SettingsResponse
 import asyncio
 
 class RunChain:
-    def __init__(self, client, assistant, thread, chain, chatgpt_json, prompt_if_condition) -> None:
+    def __init__(self, client, assistant, thread, chain, chatgpt_json, prompts) -> None:
         self.client = client
         self.assistant = assistant
         self.thread = thread
         self.chain = chain
         self.chatgpt_json = chatgpt_json
-        self.prompt_if_condition = prompt_if_condition
+        self.prompts = prompts
 
     @classmethod
-    async def create(cls, db: AsyncSession, message_data):
-        agent = await cls.get_agent_by_id(db, json.loads(message_data)['id'])
-        agent_settings = json.loads(agent.settings)
+    async def create(cls, db: AsyncSession, agent_uuid):
+        prompts = {
+            'instruction': await cls.get_prompt(db, 'instruction'),
+            'if_condition': await cls.get_prompt(db, 'if_condition'),
+        }
+        agent = await cls.get_agent_by_uuid(db, agent_uuid)
+        settings = await cls.get_settings_by_id(db, agent.settings_id)
+        settings = SettingsResponse.model_validate(settings, from_attributes=True).model_dump()
+        user = await cls.get_user_by_uuid(db, agent.owner_uuid)
+        assistant_init = await Assistant.create({'openai_key': user.openai_key})
         chain = json.loads(agent.chain)
-        instruction = await cls.get_prompt(db, 'instruction')
-        agent_settings.update({'instruction': "{}, {}, {}, {}".format(instruction, chain.get('Persona', ''), chain.get('Audience', ''), chain.get('Terminology', ''))})
-        assistant_init = await Assistant.create()
-        if 'assistant_id' in agent_settings and agent_settings.get('assistant_id'):
-            assistant = await assistant_init.load_assistant(agent_settings)
-            assistant = await assistant_init.update_assistant(agent_settings)
-        else:
-            assistant = await assistant_init.create_assistant(agent_settings)
-            agent_settings.update({'assistant_id': assistant.id})
-        await cls.update_agent(db, agent.id, {'settings': json.dumps(agent_settings)}) 
+        instruction = prompts.get('instruction')
+        settings.update({'instruction': "{}, {}, {}, {}".format(instruction, chain.get('Persona', ''), chain.get('Audience', ''), chain.get('Terminology', ''))})
+        assistant = await assistant_init.load_assistant(settings)
+        assistant = await assistant_init.update_assistant(settings)
+        await cls.update_settings(db, agent.settings_id, settings)
         thread = await assistant_init.create_thread()
-        chatgpt_json = await Chatgpt_json.create()
-        prompt_if_condition = await cls.get_prompt(db, 'if_condition')
-        return cls(assistant_init.client, assistant, thread, chain, chatgpt_json, prompt_if_condition)
+        chatgpt_json = await Chatgpt_json.create({'model': settings.get('model'), 'openai_key': user.openai_key})
+
+        return cls(assistant_init.client, assistant, thread, chain, chatgpt_json, prompts)
     
     @staticmethod
     async def get_prompt(db: AsyncSession, name: str):
@@ -45,9 +50,22 @@ class RunChain:
         return await edit_agent_by_uuid(db, agent_id, update_data)
     
     @staticmethod
-    async def get_agent_by_id(db: AsyncSession, agent_id: int):
-        agent = await get_agent_by_id(db, agent_id)
+    async def get_settings_by_id(db: AsyncSession, id: int):
+        return await get_settings_by_id(db, id)
+    
+    @staticmethod
+    async def update_settings(db: AsyncSession, settings_id: int, update_data: dict):
+        return await edit_settings(db, settings_id, update_data)
+    
+    @staticmethod
+    async def get_agent_by_uuid(db: AsyncSession, agent_uuid: str):
+        agent = await get_agent_by_uuid(db, agent_uuid)
         return agent if agent else ''
+
+    @staticmethod
+    async def get_user_by_uuid(db: AsyncSession, user_uuid: str):
+        user = await get_user_by_uuid(db, user_uuid)
+        return user if user else ''  
     
     async def run_step(self, message, file_ids):
         await self.client.beta.threads.messages.create(
@@ -85,32 +103,32 @@ class RunChain:
             step = steps[step_id]
             yield json.dumps(step)
             message = await self.run_step("{} Input message: {}".format(step.get('step_instruction'), message), file_ids)               
-            yield message
+            yield json.dumps({"console": message})
             step_id = step.get('next_steps')[0]
-            yield 'next step {}'.format(step_id)             
+            yield json.dumps({"next_stp": str(step_id)})             
         while True:
             step = steps[step_id]
             if len(step.get('next_steps')) == 0:
                 yield json.dumps(step)
                 message = await self.run_step("{} Input message: {}".format(step.get('step_instruction'), message), [])               
-                yield message
+                yield json.dumps({"result": message})
                 yield "__END_OF_RESPONSE__"
                 break
             elif len(step.get('next_steps')) > 1:
                 yield json.dumps(step)
                 message = await self.run_step("{} Input message: {}".format(step.get('step_instruction'), message), [])
-                yield message
+                yield json.dumps({"console": message})
                 next_steps = [next_step for next_step in steps if next_step.get('step_id') in step.get('next_steps')]
                 prompt = [{"role": "system", "content": self.prompt_if_condition}]
                 prompt.append({"role": "user", "content": "[current step]: {}, [step output]: {}, [next steps]: {}".format(step, message, next_steps)})
-                yield 'Identify next step'
+                yield json.dumps({"console": "Identify next step"})
                 response = await self.chatgpt_json.process_message(prompt)
                 result = json.loads(response.choices[0].message.content)
                 step_id = result.get('step_id')
-                yield 'next step {}'.format(step_id)
+                yield json.dumps({"next_stp": str(step_id)})
             else:
                 yield json.dumps(step)
                 message = await self.run_step("{} Input message: {}".format(step.get('step_instruction'), message), [])               
-                yield message
+                yield json.dumps({"console": message})
                 step_id = step.get('next_steps')[0]
-                yield 'next step {}'.format(step_id)
+                yield json.dumps({"next_stp": str(step_id)})
