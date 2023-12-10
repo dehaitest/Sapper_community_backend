@@ -30,7 +30,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // Input: Json string {"message": String data, "file_ids": List of strings, "mode": "CONTINUE" or "RUN_NEXT"}
     // Input example: {"message": "user input message", "file_ids": ["dafasa", "asdfasf"], "mode": "CONTINUE"}
     // Input example: {"message": "user input message", "file_ids": ["dafasa", "asdfasf"], "mode": "RUN_NEXT", "step_id": 0}
-    // Input example: {"message": "", "file_ids": ["dafasa", "asdfasf"], "mode": "RUN_NEXT", "step_id": 1} Note: if this is not the first message for "RUN_NEXT" mode, you can leave "message" to empty or any string value.
+    // Input example: {"message": "", "file_ids": [], "mode": "RUN_NEXT", "step_id": 1} 
+    // Note: If this is not the first message for "RUN_NEXT" mode, and if user input message and upload new files, just use the new message and file, if user doesn't input anything, you just leave them empty.
+    // Remember to edit the step_id for the "RUN_NEXT". You can get the step_id from last returned message.
     initializeChatbot(`ws://localhost:8000/ws/sapperchain/runchain?token=${accessToken}&agent_uuid=${agent_uuid}`, 'RunChain');
 
     // Add more chatbots here, e.g., initializeChatbot('wss://anotherendpoint', 'Chatbot 2');
