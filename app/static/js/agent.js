@@ -98,13 +98,13 @@ function updateModelSettings() {
 
 function updateKeySettings() {
     const settingsOpenAIKey = document.getElementById('settingsOpenAIKey').value;
-    const user_uuid = 'user_uGrLIUqDST7W1a6m'
+    const UserUuid = document.getElementById('userUuidOpenAIKey').value;
     // Construct the data object
     const settingsData = {
         openai_key: settingsOpenAIKey
     };
 
-    fetch(`/users/by-uuid/${user_uuid}`, {
+    fetch(`/users/by-uuid/${UserUuid}`, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json',

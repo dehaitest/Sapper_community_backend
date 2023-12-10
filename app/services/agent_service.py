@@ -2,7 +2,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from typing import List
 from ..models.agent_model import Agent
-from ..common import id_generation, data_conversion
+from ..common import id_generation, data_conversion, filter
 from ..services import settings_service
 import json
 
@@ -23,6 +23,7 @@ async def edit_agent_by_uuid(db: AsyncSession, agent_uuid: str, update_data: dic
     query = select(Agent).where(Agent.uuid == agent_uuid)
     result = await db.execute(query)
     db_agent = result.scalar_one_or_none()
+    update_data = filter.filter_none_values(update_data)
     if db_agent is not None:
         for key, value in update_data.items():
             if key == 'spl_form':

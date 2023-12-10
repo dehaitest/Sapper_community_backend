@@ -4,7 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from ..models.user_model import User
 from ..core.security import hash_password
-from ..common import id_generation
+from ..common import filter, id_generation
 from datetime import datetime, timedelta, timezone
 from jose import jwt, JWTError
 from app.core.config import settings
@@ -27,7 +27,7 @@ async def edit_user_by_id(db: AsyncSession, user_id: int, update_data: dict) -> 
     query = select(User).where(User.id == user_id)
     result = await db.execute(query)
     db_user = result.scalar_one_or_none()
-
+    update_data = filter.filter_none_values(update_data)
     if db_user is not None:
         update_other_than_last_login = any(key != "last_login" for key in update_data.keys())
         for key, value in update_data.items():
@@ -44,6 +44,7 @@ async def edit_user_by_uuid(db: AsyncSession, user_uuid: str, update_data: dict)
     query = select(User).where(User.uuid == user_uuid)
     result = await db.execute(query)
     db_user = result.scalar_one_or_none()
+    update_data = filter.filter_none_values(update_data)
     if db_user is not None:
         update_other_than_last_login = any(key != "last_login" for key in update_data.keys())
         for key, value in update_data.items():
@@ -91,6 +92,7 @@ def create_refresh_token(data: dict) -> str:
     return create_token(data, timedelta(minutes=settings.REFRESH_TOKEN_EXPIRE_MINUTES))
 
 async def validate_token(db: AsyncSession, token: str) -> Union[str, bool]:
+    print('token', token)
     try:
         payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
         uuid = payload.get("sub")
