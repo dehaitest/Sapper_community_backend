@@ -12,7 +12,6 @@ class UserCreate(BaseModel):
 
 class UserUpdate(BaseModel):
     name: Optional[str] = None
-    email: Optional[EmailStr] = None
     password: Optional[str] = None
     openai_key: Optional[str] = None
     active: Optional[bool] = None

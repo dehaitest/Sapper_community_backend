@@ -1,16 +1,33 @@
 document.addEventListener('DOMContentLoaded', function() {
     const accessToken = sessionStorage.getItem('accessToken');
     const agent_uuid = 'agent_ZztT8axsHZ0ZrliL'
+    // Copilot
     // Input: plain text
+    // Input example: "Please change the persona to computer science tutor."
     initializeChatbot(`ws://localhost:8000/ws/sapperchain/formcopilot?token=${accessToken}&agent_uuid=${agent_uuid}`, 'Copilot');
+
+    // CFP
     // Input: No need input, any char
+    // Input example: "1"
     initializeChatbot(`ws://localhost:8000/ws/sapperchain/splformtocfp?token=${accessToken}&agent_uuid=${agent_uuid}`, 'CFP');
+
+    // Linting
     // Input: No need input, any char
+    // Input example: "1"
     initializeChatbot(`ws://localhost:8000/ws/sapperchain/splformlint?token=${accessToken}&agent_uuid=${agent_uuid}`, 'Lint');
-    // Input: {"message": "user input message", "file_ids": ["dafasa", "asdfasf"]}
+
+    // Emulator
+    // Input: Json string {"message": String data, "file_ids": List of strings}
+    // Input example: {"message": "How can I solve the problem show in the file?", "file_ids": ["dafasa", "asdfasf"]}
     initializeChatbot(`ws://localhost:8000/ws/sapperchain/splemulator?token=${accessToken}&agent_uuid=${agent_uuid}`, 'Emulator');
+
+    // Compiler
     // Input: No need input, any char
+    // Input example: "1"
     initializeChatbot(`ws://localhost:8000/ws/sapperchain/splcompiler?token=${accessToken}&agent_uuid=${agent_uuid}`, 'Compiler');
+
+    // Chain running
+    // Input: Json string {"message": String data, "file_ids": List of strings}
     // Input: {"message": "user input message", "file_ids": ["dafasa", "asdfasf"]}
     initializeChatbot(`ws://localhost:8000/ws/sapperchain/runchain?token=${accessToken}&agent_uuid=${agent_uuid}`, 'RunChain');
 
