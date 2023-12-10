@@ -8,6 +8,7 @@ from ..user_service import get_user_by_uuid
 from sqlalchemy.ext.asyncio import AsyncSession
 from ...schemas.settings_schema import SettingsResponse
 import asyncio
+import copy
 
 class RunChain:
     def __init__(self, client, assistant, thread, chain, chatgpt_json, prompts) -> None:
@@ -21,7 +22,7 @@ class RunChain:
     @classmethod
     async def create(cls, db: AsyncSession, agent_uuid):
         prompts = {
-            'instruction': await cls.get_prompt(db, 'instruction'),
+            'chain_instruction': await cls.get_prompt(db, 'chain_instruction'),
             'if_condition': await cls.get_prompt(db, 'if_condition'),
         }
         agent = await cls.get_agent_by_uuid(db, agent_uuid)
@@ -32,8 +33,7 @@ class RunChain:
         settings = SettingsResponse.model_validate(settings, from_attributes=True).model_dump()
         assistant_init = await Assistant.create({'openai_key': user.openai_key})
         chain = json.loads(agent.chain)
-        instruction = prompts.get('instruction')
-        settings.update({'instruction': "{}, {}, {}, {}".format(instruction, chain.get('Persona', ''), chain.get('Audience', ''), chain.get('Terminology', ''))})
+        settings.update({'instruction': "{}\n[Persona]: {}\n[Audience]: {}\n[Terminology]: {}".format(prompts.get('chain_instruction'), chain.get('Persona', ''), chain.get('Audience', ''), chain.get('Terminology', ''))})
         assistant = await assistant_init.load_assistant(settings)
         assistant = await assistant_init.update_assistant(settings)
         await cls.update_settings(db, agent.settings_id, settings)
@@ -93,42 +93,89 @@ class RunChain:
         messages = await self.client.beta.threads.messages.list(thread_id=self.thread.id)
         return messages.data[0].content[0].text.value
 
+
+    async def run_chain(self, message_data, step_mode):
+        if step_mode:
+            async for response in self.run_chain_step(message_data):
+                yield response
+        else:
+            async for response in self.run_chain_continue(message_data):
+                yield response
+
+    async def run_chain_step(self, message_data):
+        steps = self.chain.get('Steps')
+        step_id = json.loads(message_data).get('step_id')
+        message = json.loads(message_data).get('message')
+        file_ids = json.loads(message_data).get('file_ids', [])
+        step = steps[step_id]
+        output_message = copy.deepcopy(step)    
+        if len(step.get('next_steps')) == 0:
+            message = await self.run_step("[step_type]:{}\n[step_instruction]:{}\n[[Input_message]]: {}".format(step.get('step_type'), step.get('step_instruction'), message), file_ids)
+            output_message.update({"console": message})         
+            output_message.update({"result": message})
+            output_message.update({"next_step": ''})
+            yield json.dumps(output_message)
+            # yield "__END_OF_RESPONSE__"
+        elif len(step.get('next_steps')) > 1:
+            message = await self.run_step("[step_type]:{}\n[step_instruction]:{}\n[Input_message]: {}".format(step.get('step_type'), step.get('step_instruction'), message), file_ids)
+            output_message.update({"console": message})
+            next_steps = [next_step for next_step in steps if next_step.get('step_id') in step.get('next_steps')]
+            prompt = [{"role": "system", "content": self.prompts.get('if_condition')}]
+            prompt.append({"role": "user", "content": "[current step]: {}, [step output]: {}, [next steps]: {}".format(step, message, next_steps)})
+            # yield json.dumps({"console": "Identify next step"})
+            response = await self.chatgpt_json.process_message(prompt)
+            result = json.loads(response.choices[0].message.content)
+            step_id = result.get('step_id')
+            output_message.update({"next_step": str(step_id)})
+            yield json.dumps(output_message)
+        else:
+            message = await self.run_step("[step_type]:{}\n[step_instruction]:{}\n[Input_message]: {}".format(step.get('step_type'), step.get('step_instruction'), message), file_ids)
+            output_message.update({"console": message})
+            step_id = step.get('next_steps')[0]
+            output_message.update({"next_step": str(step_id)})
+            yield json.dumps(output_message)
+
     
-    async def run_chain(self, message_data):
+    async def run_chain_continue(self, message_data):
         steps = self.chain.get('Steps')
         step_id = 0
         message = json.loads(message_data).get('message')
         file_ids = json.loads(message_data).get('file_ids', [])
         if len(file_ids):
             step = steps[step_id]
-            yield json.dumps(step)
-            message = await self.run_step("{} Input message: {}".format(step.get('step_instruction'), message), file_ids)               
-            yield json.dumps({"console": message})
+            output_message = copy.deepcopy(step)
+            json.dumps({"console": "Loading files..."})
+            message = await self.run_step("[step_type]:{}\n[step_instruction]:{}\n[Input_message]: {}".format(step.get('step_type'), step.get('step_instruction'), message), file_ids)
+            output_message.update({"console": message})           
             step_id = step.get('next_steps')[0]
-            yield json.dumps({"next_stp": str(step_id)})             
+            output_message.update({"next_step": str(step_id)})  
+            yield json.dumps(output_message)       
         while True:
             step = steps[step_id]
+            output_message = copy.deepcopy(step)
             if len(step.get('next_steps')) == 0:
-                yield json.dumps(step)
-                message = await self.run_step("{} Input message: {}".format(step.get('step_instruction'), message), [])               
-                yield json.dumps({"result": message})
+                message = await self.run_step("[step_type]:{}\n[step_instruction]:{}\n[Input_message]: {}".format(step.get('step_type'), step.get('step_instruction'), message), [])   
+                output_message.update({"console": message})         
+                output_message.update({"result": message})
+                output_message.update({"next_step": ''})
+                yield json.dumps(output_message)
                 yield "__END_OF_RESPONSE__"
                 break
             elif len(step.get('next_steps')) > 1:
-                yield json.dumps(step)
-                message = await self.run_step("{} Input message: {}".format(step.get('step_instruction'), message), [])
-                yield json.dumps({"console": message})
+                message = await self.run_step("[step_type]:{}\n[step_instruction]:{}\n[Input_message]: {}".format(step.get('step_type'), step.get('step_instruction'), message), [])
+                output_message.update({"console": message})
                 next_steps = [next_step for next_step in steps if next_step.get('step_id') in step.get('next_steps')]
                 prompt = [{"role": "system", "content": self.prompts.get('if_condition')}]
                 prompt.append({"role": "user", "content": "[current step]: {}, [step output]: {}, [next steps]: {}".format(step, message, next_steps)})
-                yield json.dumps({"console": "Identify next step"})
+                json.dumps({"console": "Identify next step"})
                 response = await self.chatgpt_json.process_message(prompt)
                 result = json.loads(response.choices[0].message.content)
                 step_id = result.get('step_id')
-                yield json.dumps({"next_stp": str(step_id)})
+                output_message.update({"next_step": str(step_id)})
+                yield json.dumps(output_message)
             else:
-                yield json.dumps(step)
-                message = await self.run_step("{} Input message: {}".format(step.get('step_instruction'), message), [])               
-                yield json.dumps({"console": message})
+                message = await self.run_step("[step_type]:{}\n[step_instruction]:{}\n[Input_message]: {}".format(step.get('step_type'), step.get('step_instruction'), message), [])               
+                output_message.update({"console": message})
                 step_id = step.get('next_steps')[0]
-                yield json.dumps({"next_stp": str(step_id)})
+                output_message.update({"next_step": str(step_id)})
+                yield json.dumps(output_message)

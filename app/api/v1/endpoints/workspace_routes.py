@@ -89,10 +89,19 @@ async def run_chain_endpoint(websocket: WebSocket, db: AsyncSession = Depends(ge
     await validate_token(db, websocket.query_params.get('token'))
     await websocket.accept()
     RunChain_instance = await RunChain.create(db, websocket.query_params.get('agent_uuid'))
+    step_mode = False  
     while True:
         data = await websocket.receive_text()
-        async for response in RunChain_instance.run_chain(data):
+        if json.loads(data).get('mode') == "CONTINUE":
+            step_mode = False
+        elif json.loads(data).get('mode') == "RUN_NEXT":
+            step_mode = True
+        else:
+            continue
+        async for response in RunChain_instance.run_chain(data, step_mode):
             await websocket.send_text(response)
+            if step_mode:
+                break  
 
 # Upload file
 @router.post("/sapperchain/uploadfile", response_model=FileResponse)

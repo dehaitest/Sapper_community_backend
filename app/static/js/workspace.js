@@ -27,8 +27,10 @@ document.addEventListener('DOMContentLoaded', function() {
     initializeChatbot(`ws://localhost:8000/ws/sapperchain/splcompiler?token=${accessToken}&agent_uuid=${agent_uuid}`, 'Compiler');
 
     // Chain running
-    // Input: Json string {"message": String data, "file_ids": List of strings}
-    // Input: {"message": "user input message", "file_ids": ["dafasa", "asdfasf"]}
+    // Input: Json string {"message": String data, "file_ids": List of strings, "mode": "CONTINUE" or "RUN_NEXT"}
+    // Input example: {"message": "user input message", "file_ids": ["dafasa", "asdfasf"], "mode": "CONTINUE"}
+    // Input example: {"message": "user input message", "file_ids": ["dafasa", "asdfasf"], "mode": "RUN_NEXT", "step_id": 0}
+    // Input example: {"message": "", "file_ids": ["dafasa", "asdfasf"], "mode": "RUN_NEXT", "step_id": 1} Note: if this is not the first message for "RUN_NEXT" mode, you can leave "message" to empty or any string value.
     initializeChatbot(`ws://localhost:8000/ws/sapperchain/runchain?token=${accessToken}&agent_uuid=${agent_uuid}`, 'RunChain');
 
     // Add more chatbots here, e.g., initializeChatbot('wss://anotherendpoint', 'Chatbot 2');
