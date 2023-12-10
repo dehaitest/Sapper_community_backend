@@ -13,7 +13,7 @@ app.include_router(api_router)
 # Add CORS middleware to allow all origins
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],  # Specify the allowed origin
+    allow_origins=["*"],  # Specify the allowed origin
     allow_credentials=True,
     allow_methods=["*"],  # Allows all methods
     allow_headers=["*"],  # Allows all headers
