@@ -11,7 +11,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from ....services.database import get_db_session
 from ....schemas.file_schema import FileResponse
 from ....services.user_service import validate_token 
-from ...dependencies import auth_current_user
+from ...dependencies import auth_current_user, get_current_user
 import json
 
 router = APIRouter()
@@ -105,6 +105,6 @@ async def run_chain_endpoint(websocket: WebSocket, db: AsyncSession = Depends(ge
 
 # Upload file
 @router.post("/sapperchain/uploadfile", response_model=FileResponse)
-async def upload_file_endpoint(file: UploadFile = File(...), _: None = Depends(auth_current_user)):
-    UploadUserFile_Instance = await UploadUserFile.create()
+async def upload_file_endpoint(file: UploadFile = File(...), db: AsyncSession = Depends(get_db_session), user_uuid = Depends(get_current_user)):
+    UploadUserFile_Instance = await UploadUserFile.create(db, user_uuid)
     return await UploadUserFile_Instance.upload_user_file(file)

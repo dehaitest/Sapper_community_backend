@@ -2,7 +2,7 @@ document.getElementById('uploadForm').addEventListener('submit', function(event)
     event.preventDefault();
     uploadFile();
 });
-
+const accessToken = sessionStorage.getItem('accessToken');
 function uploadFile() {
     const input = document.getElementById('fileInput');
     const file = input.files[0];
