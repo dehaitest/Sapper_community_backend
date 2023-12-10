@@ -18,7 +18,7 @@ async def create_agent_endpoint(agent_data: AgentCreate, db: AsyncSession = Depe
 async def edit_agent_card_endpoint(agent_uuid: str, update_data: AgentCreate, db: AsyncSession = Depends(get_db_session), _: None = Depends(auth_current_user)):
     agent = await agent_service.edit_agent(db, agent_uuid, update_data.model_dump())
     if agent is None:
-        raise HTTPException(status_code=404, detail="Agent not found")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Agent not found")
     return agent
 
 # Edit agent 
@@ -26,7 +26,7 @@ async def edit_agent_card_endpoint(agent_uuid: str, update_data: AgentCreate, db
 async def edit_agent_endpoint(agent_uuid: str, update_data: AgentUpdate, db: AsyncSession = Depends(get_db_session), _: None = Depends(auth_current_user)):
     agent = await agent_service.edit_agent_by_uuid(db, agent_uuid, update_data.model_dump())
     if agent is None:
-        raise HTTPException(status_code=404, detail="Agent not found")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Agent not found")
     return agent
 
 # Get agent by name
@@ -34,7 +34,7 @@ async def edit_agent_endpoint(agent_uuid: str, update_data: AgentUpdate, db: Asy
 async def get_agent_by_name_endpoint(agent_name: str = Query(...), db: AsyncSession = Depends(get_db_session), _: None = Depends(auth_current_user)):
     agent = await agent_service.get_agent_by_name(db, agent_name)
     if agent is None:
-        raise HTTPException(status_code=404, detail="Agent not found")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Agent not found")
     return agent
 
 # Get agent by UUID
@@ -42,7 +42,7 @@ async def get_agent_by_name_endpoint(agent_name: str = Query(...), db: AsyncSess
 async def get_agent_by_uuid_endpoint(agent_uuid: str, db: AsyncSession = Depends(get_db_session), _: None = Depends(auth_current_user)):
     agent = await agent_service.get_agent_by_uuid(db, agent_uuid)
     if agent is None:
-        raise HTTPException(status_code=404, detail="Agent not found")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Agent not found")
     return agent
 
 # Get agents by creator
@@ -50,7 +50,7 @@ async def get_agent_by_uuid_endpoint(agent_uuid: str, db: AsyncSession = Depends
 async def get_agents_by_creator_endpoint(user_uuid: str, db: AsyncSession = Depends(get_db_session), _: None = Depends(auth_current_user)):
     agents = await agent_service.get_agents_by_creator(db, user_uuid)
     if not agents:
-        raise HTTPException(status_code=404, detail="Agents not found for the given creator")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Agents not found for the given creator")
     return agents
 
 # Get agent by id
@@ -58,7 +58,7 @@ async def get_agents_by_creator_endpoint(user_uuid: str, db: AsyncSession = Depe
 async def get_agent_by_id_endpoint(agent_id: int, db: AsyncSession = Depends(get_db_session), _: None = Depends(auth_current_user)):
     agent = await agent_service.get_agent_by_id(db, agent_id)
     if agent is None:
-        raise HTTPException(status_code=404, detail="Agent not found")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Agent not found")
     return agent
 
 # Delete agent by id
@@ -66,14 +66,14 @@ async def get_agent_by_id_endpoint(agent_id: int, db: AsyncSession = Depends(get
 async def delete_agent_by_id_endpoint(agent_id: int, db: AsyncSession = Depends(get_db_session), _: None = Depends(auth_current_user)):
     success = await agent_service.delete_agent_by_id(db, agent_id)
     if not success:
-        raise HTTPException(status_code=404, detail="Agent not found")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Agent not found")
     
 # Delete agent by uuid
 @router.delete("/agents/by-uuid/{agent_uuid}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_agent_by_uuid_endpoint(agent_uuid: str, db: AsyncSession = Depends(get_db_session), _: None = Depends(auth_current_user)):
     success = await agent_service.delete_agent_by_uuid(db, agent_uuid)
     if not success:
-        raise HTTPException(status_code=404, detail="Agent not found")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Agent not found")
 
 # Get all agents
 @router.get("/agents/all", response_model=List[AgentResponse])

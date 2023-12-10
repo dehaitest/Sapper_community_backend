@@ -18,7 +18,7 @@ async def create_prompt_endpoint(prompt_data: PromptCreate, db: AsyncSession = D
 async def edit_prompt_endpoint(prompt_id: int, update_data: PromptUpdate, db: AsyncSession = Depends(get_db_session), _: None = Depends(auth_current_user)):
     prompt = await prompt_service.edit_prompt(db, prompt_id, update_data.model_dump())
     if prompt is None:
-        raise HTTPException(status_code=404, detail="Prompt not found")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Prompt not found")
     return prompt
 
 # Get prompt by name
@@ -26,7 +26,7 @@ async def edit_prompt_endpoint(prompt_id: int, update_data: PromptUpdate, db: As
 async def get_prompt_by_name_endpoint(prompt_name: str = Query(...), db: AsyncSession = Depends(get_db_session), _: None = Depends(auth_current_user)):
     prompt = await prompt_service.get_prompt_by_name(db, prompt_name)
     if prompt is None:
-        raise HTTPException(status_code=404, detail="Prompt not found")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Prompt not found")
     return prompt
 
 # Get prompt by id
@@ -35,7 +35,7 @@ async def get_prompt_by_id_endpoint(prompt_id: int, db: AsyncSession = Depends(g
     print('byid')
     prompt = await prompt_service.get_prompt_by_id(db, prompt_id)
     if prompt is None:
-        raise HTTPException(status_code=404, detail="Prompt not found")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Prompt not found")
     return prompt
 
 # Delete prompt
@@ -43,7 +43,7 @@ async def get_prompt_by_id_endpoint(prompt_id: int, db: AsyncSession = Depends(g
 async def delete_prompt_endpoint(prompt_id: int, db: AsyncSession = Depends(get_db_session), _: None = Depends(auth_current_user)):
     success = await prompt_service.delete_prompt(db, prompt_id)
     if not success:
-        raise HTTPException(status_code=404, detail="Prompt not found")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Prompt not found")
     
 # Get all prompt
 @router.get("/prompts/all", response_model=List[PromptResponse])

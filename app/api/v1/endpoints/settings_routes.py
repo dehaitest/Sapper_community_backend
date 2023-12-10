@@ -18,7 +18,7 @@ async def create_settings_endpoint(settings_data: SettingsCreate, db: AsyncSessi
 async def edit_settings_endpoint(settings_id: int, update_data: SettingsUpdate, db: AsyncSession = Depends(get_db_session), _: None = Depends(auth_current_user)):
     settings = await settings_service.edit_settings(db, settings_id, update_data.model_dump())
     if settings is None:
-        raise HTTPException(status_code=404, detail="Settings not found")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Settings not found")
     return settings
 
 # Get settings by id
@@ -26,7 +26,7 @@ async def edit_settings_endpoint(settings_id: int, update_data: SettingsUpdate, 
 async def get_settings_by_id_endpoint(settings_id: int, db: AsyncSession = Depends(get_db_session), _: None = Depends(auth_current_user)):
     settings = await settings_service.get_settings_by_id(db, settings_id)
     if settings is None:
-        raise HTTPException(status_code=404, detail="Settings not found")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Settings not found")
     return settings
 
 # Delete settings
@@ -34,7 +34,7 @@ async def get_settings_by_id_endpoint(settings_id: int, db: AsyncSession = Depen
 async def delete_settings_endpoint(settings_id: int, db: AsyncSession = Depends(get_db_session), _: None = Depends(auth_current_user)):
     success = await settings_service.delete_settings(db, settings_id)
     if not success:
-        raise HTTPException(status_code=404, detail="Settings not found")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Settings not found")
 
 # Get all settings
 @router.get("/settings/all", response_model=List[SettingsResponse])

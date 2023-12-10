@@ -11,7 +11,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from ....services.database import get_db_session
 from ....schemas.file_schema import FileResponse
 from ....services.user_service import validate_token 
-from ...dependencies import auth_current_user, get_current_user
+from ...dependencies import get_current_user
 import json
 
 router = APIRouter()

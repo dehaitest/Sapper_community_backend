@@ -104,7 +104,7 @@ class RunChain:
 
     async def run_chain_step(self, message_data):
         steps = self.chain.get('Steps')
-        step_id = json.loads(message_data).get('step_id')
+        step_id = int(json.loads(message_data).get('step_id'))
         message = json.loads(message_data).get('message')
         file_ids = json.loads(message_data).get('file_ids', [])
         step = steps[step_id]
@@ -135,7 +135,6 @@ class RunChain:
             output_message.update({"next_step": str(step_id)})
             yield json.dumps(output_message)
 
-    
     async def run_chain_continue(self, message_data):
         steps = self.chain.get('Steps')
         step_id = 0

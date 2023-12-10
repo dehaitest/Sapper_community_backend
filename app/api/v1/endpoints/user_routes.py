@@ -15,8 +15,7 @@ router = APIRouter()
 # Create user / Sign up
 @router.post("/users/", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
 async def create_user(user: UserCreate, db: AsyncSession = Depends(get_db_session)):
-    existing_user = await user_service.get_user_by_email(db, user.email)
-    if existing_user:
+    if await user_service.get_user_by_email(db, user.email):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="The email address is already in use."
@@ -28,7 +27,7 @@ async def create_user(user: UserCreate, db: AsyncSession = Depends(get_db_sessio
 async def get_user_by_id(user_id: int, db: AsyncSession = Depends(get_db_session), _: None = Depends(auth_current_user)):
     db_user = await user_service.get_user_by_id(db, user_id)
     if db_user is None:
-        raise HTTPException(status_code=404, detail="User not found")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
     return db_user
 
 # Get user by UUID
@@ -36,7 +35,7 @@ async def get_user_by_id(user_id: int, db: AsyncSession = Depends(get_db_session
 async def get_user_by_uuid(user_uuid: str, db: AsyncSession = Depends(get_db_session), _: None = Depends(auth_current_user)):
     db_user = await user_service.get_user_by_uuid(db, user_uuid)
     if db_user is None:
-        raise HTTPException(status_code=404, detail="User not found")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
     return db_user
 
 # Edit user by UUID
@@ -44,7 +43,7 @@ async def get_user_by_uuid(user_uuid: str, db: AsyncSession = Depends(get_db_ses
 async def edit_user_by_uuid_endpoint(user_uuid: str, update_data: UserUpdate, db: AsyncSession = Depends(get_db_session), _: None = Depends(auth_current_user)):
     user = await user_service.edit_user_by_uuid(db, user_uuid, update_data.model_dump())
     if user is None:
-        raise HTTPException(status_code=404, detail="User not found")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
     return user
 
 # Login
