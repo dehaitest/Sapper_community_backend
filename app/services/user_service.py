@@ -92,7 +92,6 @@ def create_refresh_token(data: dict) -> str:
     return create_token(data, timedelta(minutes=settings.REFRESH_TOKEN_EXPIRE_MINUTES))
 
 async def validate_token(db: AsyncSession, token: str) -> Union[str, bool]:
-    print('token', token)
     try:
         payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
         uuid = payload.get("sub")

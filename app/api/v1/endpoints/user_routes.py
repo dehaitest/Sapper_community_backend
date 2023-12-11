@@ -61,7 +61,7 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
     access_token = user_service.create_access_token(data={"sub": user.uuid})
     refresh_token = user_service.create_refresh_token(data={"sub": user.uuid})
     
-    user_response = UserResponse(uuid=user.uuid, name=user.name, active=user.active)
+    user_response = UserResponse.model_validate(user, from_attributes=True).model_dump()
     token_data = Token(access_token=access_token)
     response_data = UserWithToken(user=user_response, token=token_data)
     response = JSONResponse(content=response_data.model_dump())
