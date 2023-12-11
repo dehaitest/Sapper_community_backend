@@ -71,9 +71,11 @@ class SPLFormCopilot:
     
     async def copilot_spl(self, db: AsyncSession, message, agent):
         prompt = [{"role": "system", "content": self.prompts.get('splform_copilot')}]
-        prompt.append({"role": "user", "content": "[user description]: {}\n[old_SPL]: {}".format(message, agent.spl)})
+        prompt.append({"role": "user", "content": "[user description]: {}\n[SPL]: {}".format(message, agent.spl)})
+        print("copilot prompt:", prompt)
         response = await self.chatgpt_json.process_message(prompt)
         result = json.loads(response.choices[0].message.content)
+        print("copilot result:", result)
         splform = convert_spl_to_splform(result)
         agent_data = {'spl': json.dumps(result), 'spl_form': json.dumps(splform)}
         agent = await SPLFormCopilot.update_agent(db, self.agent_uuid, agent_data)
@@ -161,6 +163,7 @@ class SPLFormCopilot:
             try:
                 instructionData['sections'].append({
                     "subSectionId": str(len(instructionData['sections'])),
+                    "sequencialId":str(0),
                     "subSectionType": "Name",
                     "content": instruction_name
                 })
@@ -168,23 +171,31 @@ class SPLFormCopilot:
                 print(f"Error while adding section: {e}")
 
             try:
-                instructionData['sections'].append({
-                    "subSectionId": str(len(instructionData['sections'])),
-                    "subSectionType": "Commands",
-                    "content": instruction_command
-                })
+                for i, command in enumerate(instruction_command):
+                    instructionData['sections'].append(
+                        {
+                            "subSectionId": str(len(instructionData['sections'])),
+                            "sequencialId":str(i),
+                            "subSectionType": "Command",
+                            "content": command
+                        } 
+                ) 
             except Exception as e:
                 print(f"Error while adding section: {e}")
 
             try:
-                instructionData['sections'].append({
-                    "subSectionId": str(len(instructionData['sections'])),
-                    "subSectionType": "Rules",
-                    "content": instruction_rule
-                })
+                for i, rule in enumerate(instruction_rule):
+                    instructionData['sections'].append(
+                        {
+                            "subSectionId": str(len(instructionData['sections'])),
+                            "sequencialId":str(i),
+                            "subSectionType": "Rule",
+                            "content": rule
+                        } 
+                )
             except Exception as e:
                 print(f"Error while adding section: {e}")
-
+            print(instructionData)
             yield json.dumps(instructionData)
             splform['formData'].append(instructionData)
         spl = convert_splform_to_spl(splform)
