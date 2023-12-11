@@ -4,7 +4,7 @@ from datetime import datetime
 
 # Base model for shared attributes
 class AgentBase(BaseModel):
-    name: str
+    name: Optional[str] = None
     image: Optional[str] = None
     description: Optional[str] = None
     spl: Optional[str] = None
