@@ -52,12 +52,14 @@ class SPLFormToCFP:
     async def spl_to_cfp(self, spl):
         prompt = [{"role": "system", "content": self.prompts.get('generate_cfp')}]
         prompt.append({"role": "user", "content": "[SPL]: {}".format(spl)})
+        print('CFP:', prompt)
         response = await self.chatgpt_json.process_message(prompt)
         return json.loads(response.choices[0].message.content)
     
     async def cfp_debugging(self, persona, cfp):
         prompt = [{"role": "system", "content": self.prompts.get('cfp_debug')}]
         prompt.append({"role": "user", "content": "[SPL]: {}, [ExecutionPaths]: {}".format(persona, cfp)})
+        print('Debug:', prompt)
         response = await self.chatgpt_json.process_message(prompt)
         return json.loads(response.choices[0].message.content)
     
