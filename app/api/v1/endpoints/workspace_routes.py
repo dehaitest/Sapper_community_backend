@@ -110,11 +110,10 @@ async def run_chain_endpoint(websocket: WebSocket):
             step_mode = True
         else:
             continue
-        async with SessionLocal() as db:
-            async for response in RunChain_instance.run_chain(db, data, step_mode):
-                await websocket.send_text(response)
-                if step_mode:
-                    break  
+        async for response in RunChain_instance.run_chain(data, step_mode):
+            await websocket.send_text(response)
+            if step_mode:
+                break  
 
 # Upload file
 @router.post("/sapperchain/uploadfile", response_model=FileResponse)
