@@ -17,9 +17,11 @@ def convert_spl_to_splform(spl):
 
 def convert_splform_to_spl(splform):
     spl = {}
+    i = 0
     for section in splform['formData']:
-        if "Instruction" in section['sectionType']:
-            section_key = f"{section['sectionType']}"
+        if section['sectionType'] == "Instruction":
+            section_key = f"{section['sectionType']}-{i}" 
+            i += 1
             spl[section_key] = {}
             for sub_section in section['sections']:
                 spl[section_key][sub_section['subSectionType']] = sub_section['content']
