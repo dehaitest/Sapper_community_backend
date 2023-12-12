@@ -90,9 +90,8 @@ async def spl_emulator_endpoint(websocket: WebSocket):
     await websocket.accept()
     while True:
         data = await websocket.receive_text()
-        async with SessionLocal() as db:
-            async for response in SPLEmulator_instance.spl_emulator(db, data):
-                await websocket.send_text(response)
+        async for response in SPLEmulator_instance.spl_emulator(data):
+            await websocket.send_text(response)
 
 # Run chain
 @router.websocket("/ws/sapperchain/runchain")
