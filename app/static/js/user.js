@@ -15,6 +15,14 @@ document.addEventListener("DOMContentLoaded", function() {
     document.getElementById('refreshTokenButton').addEventListener('click', function(event) {
         refreshAccessToken();
     });
+
+    document.getElementById('promptButton').addEventListener('click', function() {
+        window.location.href = '/prompt.html';
+    });
+
+    document.getElementById('agentButton').addEventListener('click', function() {
+        window.location.href = '/agent.html';
+    });
 });
 const accessToken = sessionStorage.getItem('accessToken');
 function createUser() {
