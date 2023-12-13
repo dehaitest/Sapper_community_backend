@@ -61,7 +61,7 @@ class SPLFormCopilot:
         prompt = [{"role": "system", "content": system_prompt}]
         prompt.append({"role": "user", "content": "[user description]: {}\n[SPL]: {}".format(message, agent.spl)})
         response = await self.chatgpt.process_message(prompt)
-        yield response.choices[0].message.content
+        return response.choices[0].message.content
 
     async def copilot_suggest(self, system_prompt, agent):
         prompt = [{"role": "system", "content": system_prompt}]
@@ -237,9 +237,9 @@ class SPLFormCopilot:
     async def splform_copilot(self, db, message):
         agent = await SPLFormCopilot.get_agent_by_uuid(db, self.agent_uuid)
         if agent.spl:
-            async for response in self.copilot_chat(self.prompts.get('copilot_chat'), message, agent):
-                yield response
-            async for response in self.copilot_spl(db, message, agent):
+            chat_message =  await self.copilot_chat(self.prompts.get('copilot_chat'), message, agent)
+            yield chat_message
+            async for response in self.copilot_spl(db, chat_message, agent):
                 yield response
         else:
             yield json.dumps({'copilot': 'Initializing agent...Creating SPL form...'})
