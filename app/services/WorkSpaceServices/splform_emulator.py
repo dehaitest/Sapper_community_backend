@@ -8,13 +8,13 @@ from sqlalchemy.ext.asyncio import AsyncSession
 import asyncio
 
 class SPLEmulator:
-    def __init__(self, client, assistant, thread) -> None:
+    def __init__(self, client, assistant, thread_id) -> None:
         self.client = client
         self.assistant = assistant
-        self.thread = thread
+        self.thread_id = thread_id
 
     @classmethod
-    async def create(cls, db: AsyncSession, agent_uuid):
+    async def create(cls, db: AsyncSession, agent_uuid: str, new_chat: bool):
         agent = await cls.get_agent_by_uuid(db, agent_uuid)
         settings = await cls.get_settings_by_id(db, agent.settings_id)
         settings = SettingsResponse.model_validate(settings, from_attributes=True).model_dump()
@@ -27,9 +27,14 @@ class SPLEmulator:
         else:
             assistant = await assistant_init.create_assistant(settings)
             settings.update({'assistant_id': assistant.id})
+        if new_chat == "True" or not settings.get('thread_id', ''):
+            thread = await assistant_init.create_thread()
+            settings.update({'thread_id': thread.id})
+            thread_id = thread.id
+        else:
+            thread_id = settings.get('thread_id', '')
         await cls.update_settings(db, agent.settings_id, settings)
-        thread = await assistant_init.create_thread()
-        return cls(assistant_init.client, assistant, thread)
+        return cls(assistant_init.client, assistant, thread_id)
     
     @staticmethod
     async def update_agent(db: AsyncSession, agent_id: int, update_data: dict):
@@ -55,27 +60,27 @@ class SPLEmulator:
 
     async def spl_emulator(self, message_data):
         await self.client.beta.threads.messages.create(
-            thread_id=self.thread.id,
+            thread_id=self.thread_id,
             role="user",
             content=json.loads(message_data).get('message'),
             file_ids=json.loads(message_data).get('file_ids', [])
             )
 
         run = await self.client.beta.threads.runs.create(
-            thread_id=self.thread.id,
+            thread_id=self.thread_id,
             assistant_id=self.assistant.id)
 
         while run.status == "queued":
             await asyncio.sleep(1)
             run = await self.client.beta.threads.runs.retrieve(
-                thread_id=self.thread.id,
+                thread_id=self.thread_id,
                 run_id=run.id)
 
         while run.status == "in_progress":
             await asyncio.sleep(1)
             run = await self.client.beta.threads.runs.retrieve(
-                thread_id=self.thread.id,
+                thread_id=self.thread_id,
                 run_id=run.id)
         
-        messages = await self.client.beta.threads.messages.list(thread_id=self.thread.id)
+        messages = await self.client.beta.threads.messages.list(thread_id=self.thread_id)
         yield messages.data[0].content[0].text.value

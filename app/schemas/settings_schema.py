@@ -4,6 +4,7 @@ from typing import Optional
 class SettingsBase(BaseModel):
     model: Optional[str] = None
     assistant_id: Optional[str] = None
+    thread_id: Optional[str] = None
     instruction: Optional[str] = None
     file: Optional[str] = None
     tool: Optional[str] = None

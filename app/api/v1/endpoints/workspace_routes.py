@@ -85,7 +85,7 @@ async def spl_compiler_endpoint(websocket: WebSocket):
 async def spl_emulator_endpoint(websocket: WebSocket):
     async with SessionLocal() as db:
         await validate_token(db, websocket.query_params.get('token')) 
-        SPLEmulator_instance = await SPLEmulator.create(db, websocket.query_params.get('agent_uuid'))
+        SPLEmulator_instance = await SPLEmulator.create(db, websocket.query_params.get('agent_uuid'), websocket.query_params.get('new_chat'))
     await websocket.accept()
     while True:
         data = await websocket.receive_text()
@@ -97,7 +97,7 @@ async def spl_emulator_endpoint(websocket: WebSocket):
 async def run_chain_endpoint(websocket: WebSocket):
     async with SessionLocal() as db:
         await validate_token(db, websocket.query_params.get('token')) 
-        RunChain_instance = await RunChain.create(db, websocket.query_params.get('agent_uuid'))
+        RunChain_instance = await RunChain.create(db, websocket.query_params.get('agent_uuid'), websocket.query_params.get('new_chat'))
     await websocket.accept()
     step_mode = False  
     while True:

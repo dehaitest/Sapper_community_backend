@@ -11,16 +11,16 @@ import asyncio
 import copy
 
 class RunChain:
-    def __init__(self, client, assistant, thread, chain, chatgpt_json, prompts) -> None:
+    def __init__(self, client, assistant, thread_id, chain, chatgpt_json, prompts) -> None:
         self.client = client
         self.assistant = assistant
-        self.thread = thread
+        self.thread_id = thread_id
         self.chain = chain
         self.chatgpt_json = chatgpt_json
         self.prompts = prompts
 
     @classmethod
-    async def create(cls, db: AsyncSession, agent_uuid):
+    async def create(cls, db: AsyncSession, agent_uuid, new_chat):
         prompts = {
             'chain_instruction': await cls.get_prompt(db, 'chain_instruction'),
             'if_condition': await cls.get_prompt(db, 'if_condition'),
@@ -36,9 +36,15 @@ class RunChain:
         settings.update({'instruction': "{}\n[Persona]: {}\n[Audience]: {}\n[Terminology]: {}".format(prompts.get('chain_instruction'), chain.get('Persona', ''), chain.get('Audience', ''), chain.get('Terminology', ''))})
         assistant = await assistant_init.load_assistant(settings)
         assistant = await assistant_init.update_assistant(settings)
+        if new_chat == "True" or not settings.get('thread_id', ''):
+            thread = await assistant_init.create_thread()
+            settings.update({'thread_id': thread.id})
+            thread_id = thread.id
+        else:
+            thread_id = settings.get('thread_id', '')
         await cls.update_settings(db, agent.settings_id, settings)
         thread = await assistant_init.create_thread()
-        return cls(assistant_init.client, assistant, thread, chain, chatgpt_json, prompts)
+        return cls(assistant_init.client, assistant, thread_id, chain, chatgpt_json, prompts)
     
     @staticmethod
     async def get_prompt(db: AsyncSession, name: str):
@@ -69,28 +75,28 @@ class RunChain:
     
     async def run_step(self, message, file_ids):
         await self.client.beta.threads.messages.create(
-            thread_id=self.thread.id,
+            thread_id=self.thread_id,
             role="user",
             content=message,
             file_ids=file_ids)
 
         run = await self.client.beta.threads.runs.create(
-            thread_id=self.thread.id,
+            thread_id=self.thread_id,
             assistant_id=self.assistant.id)
 
         while run.status == "queued":
             await asyncio.sleep(1)
             run = await self.client.beta.threads.runs.retrieve(
-                thread_id=self.thread.id,
+                thread_id=self.thread_id,
                 run_id=run.id)
 
         while run.status == "in_progress":
             await asyncio.sleep(1)
             run = await self.client.beta.threads.runs.retrieve(
-                thread_id=self.thread.id,
+                thread_id=self.thread_id,
                 run_id=run.id)
 
-        messages = await self.client.beta.threads.messages.list(thread_id=self.thread.id)
+        messages = await self.client.beta.threads.messages.list(thread_id=self.thread_id)
         return messages.data[0].content[0].text.value
 
 

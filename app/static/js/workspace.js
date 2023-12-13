@@ -19,7 +19,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // Emulator
     // Input: Json string {"message": String data, "file_ids": List of strings}
     // Input example: {"message": "How can I solve the problem show in the file?", "file_ids": ["dafasa", "asdfasf"]}
-    initializeChatbot(`ws://localhost:8000/ws/sapperchain/splemulator?token=${accessToken}&agent_uuid=${agent_uuid}`, 'Emulator');
+    let isNewChat = false; // or false, depending on your logic
+    let newChatParam = isNewChat ? "True" : "False";
+    initializeChatbot(`ws://localhost:8000/ws/sapperchain/splemulator?token=${accessToken}&agent_uuid=${agent_uuid}&new_chat=${newChatParam}`, 'Emulator');
 
     // Compiler
     // Input: No need input, any char
@@ -33,7 +35,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // Input example: {"message": "", "file_ids": [], "mode": "RUN_NEXT", "step_id": 1} 
     // Note: If this is not the first message for "RUN_NEXT" mode, and if user input message and upload new files, just use the new message and file, if user doesn't input anything, you just leave them empty.
     // Remember to edit the step_id for the "RUN_NEXT". You can get the step_id from last returned message.
-    initializeChatbot(`ws://localhost:8000/ws/sapperchain/runchain?token=${accessToken}&agent_uuid=${agent_uuid}`, 'RunChain');
+    isNewChat = false; // or false, depending on your logic
+    newChatParam = isNewChat ? "True" : "False";
+    initializeChatbot(`ws://localhost:8000/ws/sapperchain/runchain?token=${accessToken}&agent_uuid=${agent_uuid}&new_chat=${newChatParam}`, 'RunChain');
 
     // Add more chatbots here, e.g., initializeChatbot('wss://anotherendpoint', 'Chatbot 2');
 });
