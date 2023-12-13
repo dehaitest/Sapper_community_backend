@@ -61,7 +61,6 @@ async def form_copilot_endpoint(websocket: WebSocket):
         await validate_token(db, websocket.query_params.get('token'))
         SPLFormCopilot_instance = await SPLFormCopilot.create(db, websocket.query_params.get('agent_uuid')) 
     await websocket.accept()
-    await websocket.send_text(json.dumps({'copilot': 'Welcome to Sapper copilot! How can I help you?'}))
     while True:
         data = await websocket.receive_text()
         async with SessionLocal() as db:

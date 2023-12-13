@@ -4,15 +4,15 @@ def convert_spl_to_splform(spl):
     splform = {"formData": []}
     for section_type, sections in spl.items():
         section_id = str(len(splform['formData']))
+        print(sections.items())
         if 'Instruction' in section_type:
-            print(sections.items())
             splform_sections = [{"subSectionId": str(i), "sequencialId": key.split('-')[1], "subSectionType": key.split('-')[0], "content": value} for i, (key, value) in enumerate(sections.items())]
             splform['formData'].append({"sectionId": section_id, "sectionType": section_type, "sections": splform_sections})
         elif 'Guardrails' in section_type:
-            splform_sections = [{"subSectionId": str(i), "subSectionType": key, "content": value} for i, (key, value) in enumerate(sections.items())]
+            splform_sections = [{"subSectionId": str(i), "sequencialId": str(i), "subSectionType": key, "content": value} for i, (key, value) in enumerate(sections.items())]
             splform['formData'].append({"sectionId": section_id, "sectionType": "Guardrails", "sections": splform_sections})
         else:
-            splform_sections = [{"subSectionId": sec.split('-')[1], "subSectionType": sec.split('-')[0], "content": value} for sec, value in sections.items()]
+            splform_sections = [{"subSectionId": key.split('-')[1], "sequencialId": key.split('-')[1], "subSectionType": key.split('-')[0], "content": value} for key, value in sections.items()]
             splform['formData'].append({"sectionId": section_id, "sectionType": section_type, "sections": splform_sections})
     return splform      
 
@@ -36,6 +36,6 @@ def convert_splform_to_spl(splform):
             section_key = section['sectionType']
             spl[section_key] = {}
             for sub_section in section['sections']:
-                sub_section_key = f"{sub_section['subSectionType']}-{sub_section['subSectionId']}"
+                sub_section_key = f"{sub_section['subSectionType']}-{sub_section['sequencialId']}"
                 spl[section_key][sub_section_key] = sub_section['content']
     return spl

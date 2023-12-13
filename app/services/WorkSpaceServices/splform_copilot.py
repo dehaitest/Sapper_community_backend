@@ -88,6 +88,7 @@ class SPLFormCopilot:
             "sections": [
                 {
                     "subSectionId": str(i),
+                    "sequencialId":str(i),
                     "subSectionType": "Description",
                     "content": persona
                 } for i, persona in enumerate(personas)
@@ -101,6 +102,7 @@ class SPLFormCopilot:
             "sections": [
                 {
                     "subSectionId": str(i),
+                    "sequencialId":str(i),
                     "subSectionType": "Description",
                     "content": audience
                 } for i, audience in enumerate(audiences)
@@ -114,7 +116,8 @@ class SPLFormCopilot:
             "sections": [
                 {
                     "subSectionId": str(i),
-                    "subSectionType": "Description",
+                    "sequencialId":str(i),
+                    "subSectionType": "Term",
                     "content": terminology
                 } for i, terminology in enumerate(terminologies)
             ]
@@ -128,6 +131,7 @@ class SPLFormCopilot:
             "sections": [
                 {
                     "subSectionId": str(i),
+                    "sequencialId":str(i),
                     "subSectionType": "Rule",
                     "content": context_rule
                 } for i, context_rule in enumerate(context_rules)
@@ -142,6 +146,7 @@ class SPLFormCopilot:
             "sections": [
                 {
                     "subSectionId": str(i),
+                    "sequencialId":str(i),
                     "subSectionType": name,
                     "content": description
                 } for i, (name, description) in enumerate(guardrails.items())
@@ -237,7 +242,7 @@ class SPLFormCopilot:
             async for response in self.copilot_spl(db, message, agent):
                 yield response
         else:
-            yield json.dumps({'copilot': 'Initializing agent...\nCreating SPL form...'})
+            yield json.dumps({'copilot': 'Initializing agent...Creating SPL form...'})
             async for response in  self.initialize_spl(db, message):
                 yield response
         async for response in self.copilot_suggest(self.prompts.get('copilot_suggest'), await SPLFormCopilot.get_agent_by_uuid(db, self.agent_uuid)):

@@ -8,7 +8,7 @@ from ....schemas.user_schema import UserCreate, UserResponse, UserWithToken, Tok
 from fastapi.responses import JSONResponse
 from typing import Optional
 from datetime import datetime
-from ...dependencies import auth_current_user
+from ...dependencies import get_current_user
 
 router = APIRouter()
 
@@ -24,7 +24,7 @@ async def create_user(user: UserCreate, db: AsyncSession = Depends(get_db_sessio
 
 # Get user by ID
 @router.get("/users/by-id/{user_id}", response_model=UserResponse)
-async def get_user_by_id(user_id: int, db: AsyncSession = Depends(get_db_session), _: None = Depends(auth_current_user)):
+async def get_user_by_id(user_id: int, db: AsyncSession = Depends(get_db_session), _: None = Depends(get_current_user)):
     db_user = await user_service.get_user_by_id(db, user_id)
     if db_user is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
@@ -32,7 +32,7 @@ async def get_user_by_id(user_id: int, db: AsyncSession = Depends(get_db_session
 
 # Get user by UUID
 @router.get("/users/by-uuid/{user_uuid}", response_model=UserResponse)
-async def get_user_by_uuid(user_uuid: str, db: AsyncSession = Depends(get_db_session), _: None = Depends(auth_current_user)):
+async def get_user_by_uuid(user_uuid: str, db: AsyncSession = Depends(get_db_session), _: None = Depends(get_current_user)):
     db_user = await user_service.get_user_by_uuid(db, user_uuid)
     if db_user is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
@@ -40,7 +40,7 @@ async def get_user_by_uuid(user_uuid: str, db: AsyncSession = Depends(get_db_ses
 
 # Edit user by UUID
 @router.put("/users/by-uuid/{user_uuid}", response_model=UserResponse)
-async def edit_user_by_uuid_endpoint(user_uuid: str, update_data: UserUpdate, db: AsyncSession = Depends(get_db_session), _: None = Depends(auth_current_user)):
+async def edit_user_by_uuid_endpoint(user_uuid: str, update_data: UserUpdate, db: AsyncSession = Depends(get_db_session), _: None = Depends(get_current_user)):
     user = await user_service.edit_user_by_uuid(db, user_uuid, update_data.model_dump())
     if user is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
