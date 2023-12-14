@@ -4,7 +4,6 @@ def convert_spl_to_splform(spl):
     splform = {"formData": []}
     for section_type, sections in spl.items():
         section_id = str(len(splform['formData']))
-        print(sections.items())
         if 'Instruction' in section_type:
             splform_sections = [{"subSectionId": str(i), "sequencialId": key.split('-')[1], "subSectionType": key.split('-')[0], "content": value} for i, (key, value) in enumerate(sections.items())]
             splform['formData'].append({"sectionId": section_id, "sectionType": section_type, "sections": splform_sections})

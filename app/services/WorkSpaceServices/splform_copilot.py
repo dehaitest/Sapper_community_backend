@@ -14,6 +14,7 @@ class SPLFormCopilot:
         self.chatgpt_json = chatgpt_json
         self.chatgpt = chatgpt
         self.agent_uuid = agent_uuid
+        self.chat_prompt = [{"role": "system", "content": self.prompts.get('copilot_chat')}]
 
     @classmethod
     async def create(cls, db: AsyncSession, agent_uuid: str):
@@ -57,10 +58,15 @@ class SPLFormCopilot:
     async def update_agent(db: AsyncSession, agent_uuid: str, update_data: dict):
         return await edit_agent_by_uuid(db, agent_uuid, update_data)
     
-    async def copilot_chat(self, system_prompt, message, agent):
-        prompt = [{"role": "system", "content": system_prompt}]
-        prompt.append({"role": "user", "content": "[user description]: {}\n[SPL]: {}".format(message, agent.spl)})
-        response = await self.chatgpt.process_message(prompt)
+    async def copilot_chat(self, message, agent):
+        self.chat_prompt.append({"role": "user", "content": "[user description]: {}\n[SPL]: {}".format(message, agent.spl)})
+        response = await self.chatgpt.process_message(self.chat_prompt)
+        self.chat_prompt.append({"role": response.choices[0].message.role, "content": response.choices[0].message.content})
+        if len(self.chat_prompt) > 7:
+            self.chat_prompt = [self.chat_prompt[0]] + self.chat_prompt[:6]
+        print(len(self.chat_prompt))
+        print(self.chat_prompt)
+        print('**************************')
         return response.choices[0].message.content
 
     async def copilot_suggest(self, system_prompt, agent):
@@ -237,7 +243,7 @@ class SPLFormCopilot:
     async def splform_copilot(self, db, message):
         agent = await SPLFormCopilot.get_agent_by_uuid(db, self.agent_uuid)
         if agent.spl:
-            chat_message =  await self.copilot_chat(self.prompts.get('copilot_chat'), message, agent)
+            chat_message =  await self.copilot_chat(message, agent)
             yield chat_message
             async for response in self.copilot_spl(db, chat_message, agent):
                 yield response
