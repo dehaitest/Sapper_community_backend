@@ -42,7 +42,7 @@ class Assistant:
             )
             return assistant
         except Exception as e:
-            print(f"An error occurred when creating assistant: {e}")
+            print(f"An error occurred when updating assistant: {e}")
 
     async def create_thread(self):
         try:

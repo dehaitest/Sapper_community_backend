@@ -1,5 +1,4 @@
 from fastapi import APIRouter, WebSocket, Depends, File, UploadFile
-from ....services.WorkSpaceServices.require_to_splform import RequireToSPLForm
 from ....services.WorkSpaceServices.splform_to_cfp import SPLFormToCFP
 from ....services.WorkSpaceServices.splform_lint import SPLFormLint
 from ....services.WorkSpaceServices.splform_copilot import SPLFormCopilot
@@ -14,19 +13,6 @@ from ...dependencies import get_current_user
 import json
 
 router = APIRouter()
-
-# Initialize SPL form (deprecated)
-@router.websocket("/ws/sapperchain/requiretosplform")
-async def require_to_splform_endpoint(websocket: WebSocket):
-    async with SessionLocal() as db:
-        await validate_token(db, websocket.query_params.get('token'))
-    await websocket.accept()
-    requireToSPLForm_instance = await RequireToSPLForm.create()
-    while True: 
-        data = await websocket.receive_text()
-        async with SessionLocal() as db:
-            async for response in requireToSPLForm_instance.require_to_splForm(db, data):
-                await websocket.send_text(response)
 
 # SPL linting
 @router.websocket("/ws/sapperchain/splformlint")
