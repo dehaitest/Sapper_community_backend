@@ -65,7 +65,6 @@ class SPLEmulator:
             content=json.loads(message_data).get('message'),
             file_ids=json.loads(message_data).get('file_ids', [])
             )
-
         run = await self.client.beta.threads.runs.create(
             thread_id=self.thread_id,
             assistant_id=self.assistant.id)
@@ -81,6 +80,5 @@ class SPLEmulator:
             run = await self.client.beta.threads.runs.retrieve(
                 thread_id=self.thread_id,
                 run_id=run.id)
-        
         messages = await self.client.beta.threads.messages.list(thread_id=self.thread_id)
         yield messages.data[0].content[0].text.value

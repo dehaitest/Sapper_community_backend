@@ -1,7 +1,6 @@
 import openai
 import asyncio
-# from ...core.config import settings
-from sqlalchemy.ext.asyncio import AsyncSession
+from fastapi import HTTPException, status
 
 class Chatgpt:
     def __init__(self):
@@ -28,9 +27,9 @@ class Chatgpt:
             )
             return response
         except asyncio.TimeoutError:
-            print("Request timed out")
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Request timed out")
         except Exception as e:
-            print(f"An error occurred: {e}")
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"An error occurred: {e}")
     
 class Chatgpt_json:
     def __init__(self):
@@ -58,9 +57,9 @@ class Chatgpt_json:
             )
             return response
         except asyncio.TimeoutError:
-            print("Request timed out")
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Request timed out")
         except Exception as e:
-            print(f"An error occurred: {e}")
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"An error occurred: {e}")
 
 
 class Chatgpt_stream:
@@ -90,6 +89,6 @@ class Chatgpt_stream:
             async for part in stream:
                 yield part
         except asyncio.TimeoutError:
-            print("Request timed out")
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Request timed out")
         except Exception as e:
-            print(f"An error occurred: {e}")
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"An error occurred: {e}")
