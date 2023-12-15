@@ -23,7 +23,7 @@ class Chatgpt:
                     model=self.model,
                     messages=message,
                 ),
-                timeout=60  # Timeout in seconds
+                timeout=120  # Timeout in seconds
             )
             return response
         except asyncio.TimeoutError:
@@ -53,7 +53,7 @@ class Chatgpt_json:
                     messages=message,
                     response_format={"type": "json_object"},
                 ),
-                timeout=60  # Timeout in seconds
+                timeout=120  # Timeout in seconds
             )
             return response
         except asyncio.TimeoutError:
@@ -84,7 +84,7 @@ class Chatgpt_stream:
                     messages=message,
                     stream=True,
                 ),
-                timeout=60  # Timeout in seconds
+                timeout=120  # Timeout in seconds
             )
             async for part in stream:
                 yield part
