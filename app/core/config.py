@@ -9,6 +9,7 @@ class Settings(BaseSettings):
     REFRESH_TOKEN_EXPIRE_MINUTES: int
     OPENAI_MODEL: str
     OPENAI_KEY: str
+    DEFAULT_AGENT: str
 
     class Config:
         env_file = ".env"

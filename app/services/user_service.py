@@ -4,7 +4,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from ..models.user_model import User
 from ..core.security import hash_password
+from ..core.config import settings
 from ..common import filter, id_generation
+from ..schemas.agent_schema import AgentDefault
+from .agent_service import create_agent, get_agent_by_uuid
 from datetime import datetime, timedelta, timezone
 from jose import jwt, JWTError
 from app.core.config import settings
@@ -17,6 +20,8 @@ async def create_user(db: AsyncSession, user_data: dict) -> User:
     while await get_user_by_uuid(db, uuid):
         uuid = 'user_{}'.format(id_generation.generate_id())
     db_user = User(**user_data, uuid=uuid, hashed_password=hashed_password, active=True)
+    agent = await get_agent_by_uuid(db, settings.DEFAULT_AGENT)
+    await create_agent(db, uuid, AgentDefault.model_validate(agent).model_dump())
     db.add(db_user)
     await db.commit()
     await db.refresh(db_user)

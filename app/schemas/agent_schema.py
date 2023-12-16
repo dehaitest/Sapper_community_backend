@@ -20,6 +20,19 @@ class AgentBase(BaseModel):
     class Config:
         from_attributes = True
 
+class AgentDefault(BaseModel):
+    name: Optional[str] = None
+    image: Optional[str] = None
+    description: Optional[str] = None
+    spl: Optional[str] = None
+    spl_form: Optional[str] = None
+    cfp: Optional[str] = None
+    lint: Optional[str] = None
+    chain: Optional[str] = None
+
+    class Config:
+        from_attributes = True
+
 # Model for creation requests
 class AgentCreate(BaseModel):
     name: str

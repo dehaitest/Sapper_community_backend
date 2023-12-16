@@ -53,7 +53,6 @@ class SPLFormLint:
         spl = agent.spl
         prompt = [{"role": "system", "content": self.prompts.get('spl_linting')}]
         prompt.append({"role": "user", "content": "[SPL]: {}".format(spl)})
-        print(prompt)
         response = await self.chatgpt_json.process_message(prompt)
         result = json.loads(response.choices[0].message.content)
         agent_data = {'lint': json.dumps(result)}

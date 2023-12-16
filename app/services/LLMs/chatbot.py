@@ -12,7 +12,8 @@ class Chatbot():
         try:
             stream = await asyncio.wait_for(
                 self.client.chat.completions.create(
-                    model=settings.OPENAI_MODEL,
+                    # model=settings.OPENAI_MODEL,
+                    model="gpt-4-1106-preview",
                     messages=self.chat_history,
                     stream=True,
                 ),

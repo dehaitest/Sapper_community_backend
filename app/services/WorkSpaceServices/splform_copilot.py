@@ -62,8 +62,8 @@ class SPLFormCopilot:
         self.chat_prompt.append({"role": "user", "content": "[user description]: {}\n[SPL]: {}".format(message, agent.spl)})
         response = await self.chatgpt.process_message(self.chat_prompt)
         self.chat_prompt.append({"role": response.choices[0].message.role, "content": response.choices[0].message.content})
-        if len(self.chat_prompt) > 7:
-            self.chat_prompt = [self.chat_prompt[0]] + self.chat_prompt[:6]
+        if len(self.chat_prompt) > 5:
+            self.chat_prompt = [self.chat_prompt[0]] + self.chat_prompt[:4]
         return response.choices[0].message.content
 
     async def copilot_suggest(self, system_prompt, agent):
