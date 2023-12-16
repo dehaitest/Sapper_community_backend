@@ -20,8 +20,11 @@ async def create_user(db: AsyncSession, user_data: dict) -> User:
     while await get_user_by_uuid(db, uuid):
         uuid = 'user_{}'.format(id_generation.generate_id())
     db_user = User(**user_data, uuid=uuid, hashed_password=hashed_password, active=True)
-    agent = await get_agent_by_uuid(db, settings.DEFAULT_AGENT)
-    await create_agent(db, uuid, AgentDefault.model_validate(agent).model_dump())
+    try:
+        agent = await get_agent_by_uuid(db, settings.DEFAULT_AGENT)
+        await create_agent(db, uuid, AgentDefault.model_validate(agent).model_dump())
+    except:
+        pass
     db.add(db_user)
     await db.commit()
     await db.refresh(db_user)
