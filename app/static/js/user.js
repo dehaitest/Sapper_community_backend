@@ -23,6 +23,14 @@ document.addEventListener("DOMContentLoaded", function() {
     document.getElementById('agentButton').addEventListener('click', function() {
         window.location.href = '/agent.html';
     });
+
+    document.getElementById('workspaceButton').addEventListener('click', function() {
+        window.location.href = '/workspacetest.html';
+    });
+
+    document.getElementById('publishButton').addEventListener('click', function() {
+        window.location.href = '/publish.html';
+    });
 });
 const accessToken = sessionStorage.getItem('accessToken');
 function createUser() {

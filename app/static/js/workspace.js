@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
     const accessToken = sessionStorage.getItem('accessToken');
-    const agent_uuid = 'agent_j8xrtTsKeMJtG9jR'
+    const agent_uuid = "agent_rmOHpnsWvJ1hNWWQ";
     // Copilot
     // Input: plain text
     // Input example: "Please change the persona to computer science tutor."
@@ -39,7 +39,9 @@ document.addEventListener('DOMContentLoaded', function() {
     newChatParam = isNewChat ? "True" : "False";
     initializeChatbot(`ws://localhost:8000/ws/sapperchain/runchain?token=${accessToken}&agent_uuid=${agent_uuid}&new_chat=${newChatParam}`, 'RunChain');
 
-    // Add more chatbots here, e.g., initializeChatbot('wss://anotherendpoint', 'Chatbot 2');
+    // Wechat
+    initializeChatbot(`ws://localhost:8000/ws/client/wechat?token=${accessToken}&agent_uuid=${agent_uuid}`, 'Wechat');
+
 });
 
 function initializeChatbot(endpoint, chatbotName) {

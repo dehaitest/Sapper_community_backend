@@ -7,9 +7,11 @@ from ....services.WorkSpaceServices.splform_emulator import SPLEmulator
 from ....services.WorkSpaceServices.run_chain import RunChain
 from ....services.WorkSpaceServices.upload_file import UploadUserFile
 from ....services.database import SessionLocal
+from sqlalchemy.ext.asyncio import AsyncSession
 from ....schemas.file_schema import FileResponse
 from ....services.user_service import validate_token 
 from ...dependencies import get_current_user
+from ....services.database import get_db_session
 import json
 
 router = APIRouter()
@@ -101,7 +103,7 @@ async def run_chain_endpoint(websocket: WebSocket):
 
 # Upload file
 @router.post("/sapperchain/uploadfile", response_model=FileResponse)
-async def upload_file_endpoint(file: UploadFile = File(...), user_uuid = Depends(get_current_user)):
-    async with SessionLocal() as db:
-        UploadUserFile_Instance = await UploadUserFile.create(db, user_uuid)
-        return await UploadUserFile_Instance.upload_user_file(file)
+async def upload_file_endpoint(file: UploadFile = File(...), user_uuid = Depends(get_current_user), db: AsyncSession = Depends(get_db_session)):
+    UploadUserFile_Instance = await UploadUserFile.create(db, user_uuid)
+    return await UploadUserFile_Instance.upload_user_file(file)
+    

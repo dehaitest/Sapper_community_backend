@@ -1,20 +1,19 @@
-import json
 from ..LLMs.assistant import Assistant
 from ..agent_service import get_agent_by_uuid
-from ..settings_service import get_settings_by_id, edit_settings
+from ..settings_service import get_settings_by_id
 from ..user_service import get_user_by_uuid
 from ...schemas.settings_schema import SettingsResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 import asyncio
 
-class SPLEmulator:
+class WechatClient:
     def __init__(self, client, assistant, thread_id) -> None:
         self.client = client
         self.assistant = assistant
         self.thread_id = thread_id
 
     @classmethod
-    async def create(cls, db: AsyncSession, agent_uuid: str, new_chat: str):
+    async def create(cls, db: AsyncSession, agent_uuid: str):
         agent = await cls.get_agent_by_uuid(db, agent_uuid)
         settings = await cls.get_settings_by_id(db, agent.settings_id)
         settings = SettingsResponse.model_validate(settings, from_attributes=True).model_dump()
@@ -26,23 +25,12 @@ class SPLEmulator:
             assistant = await assistant_init.update_assistant(settings)
         else:
             assistant = await assistant_init.create_assistant(settings)
-            settings.update({'assistant_id': assistant.id})
-        if new_chat == "True" or not settings.get('thread_id', ''):
-            thread = await assistant_init.create_thread()
-            settings.update({'thread_id': thread.id})
-            thread_id = thread.id
-        else:
-            thread_id = settings.get('thread_id', '')
-        await cls.update_settings(db, agent.settings_id, settings)
-        return cls(assistant_init.client, assistant, thread_id)
+        thread = await assistant_init.create_thread()
+        return cls(assistant_init.client, assistant, thread.id)
     
     @staticmethod
     async def get_settings_by_id(db: AsyncSession, id: int):
         return await get_settings_by_id(db, id)
-    
-    @staticmethod
-    async def update_settings(db: AsyncSession, settings_id: int, update_data: dict):
-        return await edit_settings(db, settings_id, update_data)
     
     @staticmethod
     async def get_agent_by_uuid(db: AsyncSession, agent_uuid: str):
@@ -54,12 +42,11 @@ class SPLEmulator:
         user = await get_user_by_uuid(db, user_uuid)
         return user if user else ''    
 
-    async def spl_emulator(self, message_data):
+    async def wechat_client(self, message):
         await self.client.beta.threads.messages.create(
             thread_id=self.thread_id,
             role="user",
-            content=json.loads(message_data).get('message'),
-            file_ids=json.loads(message_data).get('file_ids', [])
+            content=message
             )
         run = await self.client.beta.threads.runs.create(
             thread_id=self.thread_id,

@@ -177,6 +177,16 @@ class SPLFormCopilot:
                 print(f"Error while adding section: {e}")
 
             try:
+                instructionData['sections'].append({
+                    "subSectionId": str(len(instructionData['sections'])),
+                    "sequencialId":str(0),
+                    "subSectionType": "UI",
+                    "content": "False"
+                })
+            except Exception as e:
+                print(f"Error while adding section: {e}")
+
+            try:
                 for i, command in enumerate(instruction_command):
                     instructionData['sections'].append(
                         {

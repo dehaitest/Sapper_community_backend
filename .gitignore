@@ -1,3 +1,4 @@
 .env
 create_backend_structure.sh
 test/
+sapper_env/
