@@ -5,10 +5,9 @@ async function publishWechat() {
 async function publishRobot() {
     publish('/sapperchain/publish/robot');
 }
-
+const accessToken = sessionStorage.getItem('accessToken');
 async function publish(endpoint) {
     const agentUuid = document.getElementById('agentUuid').value;
-    const accessToken = sessionStorage.getItem('accessToken');
 
     const data = {
         accessToken: accessToken,
@@ -20,6 +19,7 @@ async function publish(endpoint) {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                "Authorization": `Bearer ${accessToken}`
             },
             body: JSON.stringify(data)
         });
