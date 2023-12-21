@@ -40,7 +40,9 @@ document.addEventListener('DOMContentLoaded', function() {
     initializeChatbot(`ws://localhost:8000/ws/sapperchain/runchain?token=${accessToken}&agent_uuid=${agent_uuid}&new_chat=${newChatParam}`, 'RunChain');
 
     // Wechat
-    initializeChatbot(`ws://localhost:8000/ws/client/wechat?token=${accessToken}&agent_uuid=${agent_uuid}`, 'Wechat');
+    // initializeChatbot(`ws://localhost:8000/ws/client/wechat?token=${accessToken}&agent_uuid=${agent_uuid}`, 'Wechat');
+    initializeChatbot(`wss://ugaiforge.ai/ws/client/wechat?token=DMyNjE1NTN9.noHvr0lb2xQo0Hcgf83OrlEzr5DkHODaAwr8wx1tJJE&agent_uuid=agent_78PAH75XgFgBxDJV`, 'Wechat');
+
 
 });
 

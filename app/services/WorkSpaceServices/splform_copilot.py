@@ -157,12 +157,12 @@ class SPLFormCopilot:
         }
         yield json.dumps(guardrailsData)
         splform['formData'].append(guardrailsData)
-        for instruction_name in instructions.keys():
+        for i, instruction_name in enumerate(instructions.keys()):
             instruction = instructions[instruction_name]
             instruction_command, instruction_rule = await self.instruction_content(self.prompts.get('instruction_content'), message, personas, audiences, instruction)
             instructionData = {
                 "sectionId": str(len(splform['formData'])),
-                "sectionType": 'Instruction',
+                "sectionType": 'Instruction-' + str(i),
                 "sections": []
             }
 
