@@ -1,0 +1,18 @@
+{
+    "ui": [
+        {
+            "html": "<!DOCTYPE html>\n<html>\n<head>\n  <link rel=\"stylesheet\" type=\"text/css\" href=\"styles.css\">\n</head>\n<body>\n  <div>\n    <input type=\"text\" id=\"searchInput\">\n    <button id=\"searchButton\">Search</button>\n  </div>\n  <div id=\"displayProducts\"></div>\n  <div id=\"displayFilteredProducts\"></div>\n  <script src=\"script.js\"></script>\n</body>\n</html>",
+            "css": "body {\n  font-family: Arial, sans-serif;\n}\ninput[type=text] {\n  width: 200px;\n  padding: 10px;\n  margin: 10px 0;\n  display: inline-block;\n  border: 1px solid #ccc;\n}\nbutton {\n  padding: 10px 20px;\n  background-color: #4CAF50;\n  color: white;\n  border: none;\n  cursor: pointer;\n}\nbutton:hover {\n  opacity: 0.8;\n}",
+            "javascript": "const allProducts = [\n  {\n    \"ProductName\": \"Building Blocks Set\",\n    \"ProductDescription\": \"A creative set of colorful building blocks to inspire imaginative play and problem-solving skills.\",\n    \"ProductPrice\": \"$19.99\"\n  },\n  // ... (other products)\n];\n\nfunction displayProducts(products) {\n  // code to display all products\n}\n\nfunction displayFilteredProducts(filteredProducts) {\n  // code to display filtered products\n}\n\ndocument.getElementById('searchButton').addEventListener('click', function() {\n  const searchInput = document.getElementById('searchInput').value;\n  // code to filter products based on searchInput\n  // code to send HTTP POST request\n});",
+            "section": "Instruction-0",
+            "name": "Product browsing"
+        },
+        {
+            "html": "<!DOCTYPE html>\n<html>\n<head>\n  <link rel=\"stylesheet\" type=\"text/css\" href=\"styles.css\">\n</head>\n<body>\n  <div>\n    <input type=\"text\" id=\"Input1\">\n    <button id=\"Button1\" onclick=\"sendRequest()\">Submit</button>\n  </div>\n  <div id=\"response\"></div>\n  <script src=\"script.js\"></script>\n</body>\n</html>",
+            "css": "body {\n  font-family: Arial, sans-serif;\n}\ninput, button {\n  margin: 10px;\n}",
+            "javascript": "function sendRequest() {\n  const input = document.getElementById('Input1').value;\n  const response = fetch('url', {\n    method: 'POST',\n    headers: {\n      'Content-Type': 'application/x-www-form-urlencoded',\n    },\n    body: new URLSearchParams({\n      'Input1': input,\n    })\n  });\n  response.then(res => res.json()).then(data => {\n    document.getElementById('response').innerText = JSON.stringify(data);\n  });\n}",
+            "section": "Instruction-1",
+            "name": "Customer support"
+        }
+    ]
+}

@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', function() {
     const accessToken = sessionStorage.getItem('accessToken');
     const agent_uuid = "agent_rmOHpnsWvJ1hNWWQ";
+    const instruction = "Instruction-1"
     // Copilot
     // Input: plain text
     // Input example: "Please change the persona to computer science tutor."
@@ -43,6 +44,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // initializeChatbot(`ws://localhost:8000/ws/client/wechat?token=${accessToken}&agent_uuid=${agent_uuid}`, 'Wechat');
     initializeChatbot(`wss://ugaiforge.ai/ws/client/wechat?token=DMyNjE1NTN9.noHvr0lb2xQo0Hcgf83OrlEzr5DkHODaAwr8wx1tJJE&agent_uuid=agent_78PAH75XgFgBxDJV`, 'Wechat');
 
+
+    // Website
+    initializeChatbot(`ws://localhost:8000/client/website?agent_uuid=${agent_uuid}&instruction=${instruction}`, 'Website');
 
 });
 

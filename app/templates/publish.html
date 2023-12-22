@@ -14,6 +14,17 @@
 
     <!-- Publish to Robot Button -->
     <button onclick="publishRobot()">Publish to Robot</button>
+
+    <!-- Publish to Website Button -->
+    <button onclick="publishWebsite()">Publish to Website</button>
+
+    <h2>Website</h2>
+    <form id="websiteForm">
+        <input type="text" id="agent_uuid" placeholder="Agent UUID" required>
+        <input type="text" id="instruction" placeholder="Instruction" required>
+        <textarea id="user_input" placeholder="Input" required></textarea>
+        <button type="submit">Submit</button>
+    </form>
     
     <div id="result"></div>
 </body>

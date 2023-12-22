@@ -1,8 +1,12 @@
-from fastapi import APIRouter, WebSocket
+from fastapi import APIRouter, WebSocket, Depends, Query
 from ....services.chat_service import ChatService
+from sqlalchemy.ext.asyncio import AsyncSession
+from ....services.database import get_db_session
 from ....services.database import SessionLocal
 from ....services.user_service import validate_token 
-from ....services.ClientServices.wechat import WechatClient
+from ....services.ClientServices.wechat_client import WechatClient
+from ....services.ClientServices.website_client import WebsiteClient
+from ....schemas.client_schema import ClientWebsite
 
 router = APIRouter()
 
@@ -38,3 +42,9 @@ async def robot_client_endpoint(websocket: WebSocket):
         data = await websocket.receive_text()
         async for response in WechatClient_instance.wechat_client(data):
             await websocket.send_text(response)
+
+# Website client
+@router.post("/client/website")
+async def website_client_endpoint(data: ClientWebsite, agent_uuid: str = Query(...), instruction: str = Query(...), db: AsyncSession = Depends(get_db_session)):
+    WebsiteClient_Instance = await WebsiteClient.create(db, agent_uuid, instruction)
+    return await WebsiteClient_Instance.website_client(data)
