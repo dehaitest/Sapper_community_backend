@@ -17,5 +17,5 @@ class WechatTemplate:
         return prompt.prompt if prompt else ''
 
     async def generate_client(self, data):
-        url = f"ws://localhost:8000/ws/client/wechat?token={data.accessToken}&agent_uuid={data.agentUuid}"
+        url = f"wss://ugaiforge.ai/ws/client/wechat?token={data.accessToken}&agent_uuid={data.agentUuid}"
         return self.template.replace("{{url}}", url)

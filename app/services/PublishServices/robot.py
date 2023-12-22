@@ -17,5 +17,5 @@ class RobotTemplate:
         return prompt.prompt if prompt else ''
 
     async def generate_client(self, data):
-        url = f"wss://ugaiforge.ai/ws/client/wechat?token={data.accessToken}&agent_uuid={data.agentUuid}"
+        url = f"wss://ugaiforge.ai/ws/client/robot?token={data.accessToken}&agent_uuid={data.agentUuid}"
         return self.template.replace("{{url}}", url)

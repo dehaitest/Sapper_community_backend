@@ -97,7 +97,6 @@ class SPLFormCopilot:
                 } for i, persona in enumerate(personas)
             ]
         }
-        yield json.dumps(personaData)
         splform['formData'].append(personaData)
         audienceData = {
             "sectionId": str(len(splform['formData'])),
@@ -111,7 +110,6 @@ class SPLFormCopilot:
                 } for i, audience in enumerate(audiences)
             ]
         }
-        yield json.dumps(audienceData)
         splform['formData'].append(audienceData)
         terminologyData = {
             "sectionId": str(len(splform['formData'])),
@@ -125,7 +123,6 @@ class SPLFormCopilot:
                 } for i, terminology in enumerate(terminologies)
             ]
         }
-        yield json.dumps(terminologyData)
         splform['formData'].append(terminologyData)
         context_rules = await self.context_control(self.prompts.get('context_control'), message, personas, audiences, instructions)
         contextRuleData ={
@@ -140,7 +137,6 @@ class SPLFormCopilot:
                 } for i, context_rule in enumerate(context_rules)
             ]
         }
-        yield json.dumps(contextRuleData)
         splform['formData'].append(contextRuleData)
         guardrails = await self.guardrails(self.prompts.get('spl_guardrails'), message, personas, audiences, instructions)
         guardrailsData ={
@@ -155,7 +151,6 @@ class SPLFormCopilot:
                 } for i, (name, description) in enumerate(guardrails.items())
             ]
         }
-        yield json.dumps(guardrailsData)
         splform['formData'].append(guardrailsData)
         for i, instruction_name in enumerate(instructions.keys()):
             instruction = instructions[instruction_name]
@@ -211,7 +206,6 @@ class SPLFormCopilot:
                 )
             except Exception as e:
                 print(f"Error while adding section: {e}")
-            yield json.dumps(instructionData)
             splform['formData'].append(instructionData)
         spl = convert_splform_to_spl(splform)
         agent_data = {'spl': json.dumps(spl), 'spl_form': json.dumps(splform)}
