@@ -48,9 +48,7 @@ class WebsiteTemplate:
 
     async def code_generation(self, visual_design_template, design_page_template, commands):
         prompt = [{"role": "system", "content": self.prompts.get('code_generation')}]
-        prompt.append({"role": "user", "content": "{Design_page_template Replacement Flag}: " + design_page_template})
-        prompt.append({"role": "user", "content": "{Visual_design_template Replacement Flag}: " + visual_design_template})
-        prompt.append({"role": "user", "content": "{task Replacement Flag}: " + commands})
+        prompt.append({"role": "user", "content": "{Design_page_template Replacement Flag}: " + design_page_template + "\n{Visual_design_template Replacement Flag}: " + visual_design_template + "\n{task Replacement Flag}: " + commands})
         response = await self.chatgpt_json.process_message(prompt)
         result = json.loads(response.choices[0].message.content)
         return result
