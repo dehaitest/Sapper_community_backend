@@ -1,27 +1,89 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Workspace test</title>
-    <link rel="stylesheet" href="/static/css/websitetest2.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Product List</title>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+  <style>
+    /* Custom styles can be added here */
+  </style>
 </head>
 <body>
-<!-- Product Listing Page -->
-
-<main class="container">
-  <div class="row">
-    <!-- Search Input -->
-    <div class="input-field col s12">
-      <input id="search" type="text" class="validate">
-      <label for="search">Search Products</label>
+  <header class="center-align">
+    <h1>Product Category</h1>
+  </header>
+  <div class="container">
+    <div class="row" id="productList">
+      <!-- Product cards will be dynamically generated here -->
     </div>
   </div>
-  <!-- Product Cards -->
-  <div class="row" id="product-list">
-    <!-- Product Cards will be dynamically generated here -->
-  </div>
-</main>
-    <script src="/static/js/websitetest2.js"></script>
+  <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+  <script>
+// JavaScript functionality for dynamic rendering of products based on user's search input
+const allProducts = [
+  {
+    "ProductName": "Building Blocks Set",
+    "ProductDescription": "A creative set of colorful building blocks to inspire imaginative play and problem-solving skills.",
+    "ProductPrice": "$19.99"
+  },
+  {
+    "ProductName": "Stuffed Teddy Bear",
+    "ProductDescription": "A soft and cuddly teddy bear, perfect for snuggling and comforting children of all ages.",
+    "ProductPrice": "$14.95"
+  },
+  {
+    "ProductName": "Remote-Controlled Car",
+    "ProductDescription": "An exciting remote-controlled car with high-speed capabilities, providing hours of fun for kids and adults alike.",
+    "ProductPrice": "$29.99"
+  },
+  {
+    "ProductName": "Art Supplies Kit",
+    "ProductDescription": "A complete art supplies kit including paints, brushes, and canvases for young artists to unleash their creativity.",
+    "ProductPrice": "$24.99"
+  },
+  {
+    "ProductName": "Puzzle Game Set",
+    "ProductDescription": "A collection of challenging and educational puzzles that promote cognitive development and problem-solving skills.",
+    "ProductPrice": "$17.50"
+  }
+];
+
+function displayProducts(products) {
+  const productList = document.getElementById('productList');
+  productList.innerHTML = '';
+  products.forEach(product => {
+    const card = document.createElement('div');
+    card.className = 'col s12 m4';
+    card.innerHTML = `
+      <div class="card">
+        <div class="card-image">
+          <img src="product-image.jpg">
+          <span class="card-title">${product.ProductName}</span>
+        </div>
+        <div class="card-content">
+          <p>${product.ProductDescription}</p>
+          <p>${product.ProductPrice}</p>
+        </div>
+      </div>`;
+    productList.appendChild(card);
+  });
+}
+
+// Initial display of all products
+displayProducts(allProducts);
+
+// Wait for user's search input
+const searchInput = document.getElementById('searchInput');
+searchInput.addEventListener('input', () => {
+  // Implement functionality to search and get products based on the user's search input
+  const userInput = searchInput.value.toLowerCase();
+  const filteredProducts = allProducts.filter(product => {
+    return product.ProductName.toLowerCase().includes(userInput);
+  });
+  displayProducts(filteredProducts);
+});  </script>
 </body>
 </html>

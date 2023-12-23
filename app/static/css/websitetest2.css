@@ -1,15 +1,12 @@
-/* Product Listing Page Styles */
-
-/* Search Input Styles */
-#search {
-  border-bottom: 1px solid #9e9e9e;
-  box-shadow: none;
+/* styles.css */
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
 }
-
-/* Product Card Styles */
-.card {
-  margin-bottom: 20px;
-  padding: 20px;
+main {
+  flex: 1 0 auto;
 }
-
-/* JavaScript to display filtered products */
+#products-list .card {
+  margin: 10px;
+}

@@ -1,0 +1,29 @@
+/* Custom CSS for Product Listing Page */
+body {
+    background-color: #f9f9f9;
+    font-family: Arial, sans-serif;
+  }
+  
+  h1 {
+    margin-bottom: 30px;
+    text-align: center;
+  }
+  
+  .card {
+    margin-bottom: 20px;
+  }
+  
+  .card-image {
+    height: 200px;
+    overflow: hidden;
+  }
+  
+  .card-image img {
+    height: 100%;
+    width: auto;
+  }
+  
+  .card-content {
+    min-height: 100px;
+  }
+  

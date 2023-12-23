@@ -1,29 +1,23 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Workspace test</title>
-    <link rel="stylesheet" href="/static/css/websitetest.css">
+  <title>Product Listing Page</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
 </head>
 <body>
-<!-- Product Page Template -->
-<div class="product-page-container">
-    <div class="product-image">
-      <img src="" alt="Product Image">
+  <div class="container">
+    <h3>Product Listing</h3>
+    <div class="input-field">
+      <input id="search" type="text" class="validate">
+      <label for="search">Search Products</label>
     </div>
-    <div class="product-details">
-      <h2 class="product-title"></h2>
-      <p class="product-price"></p>
-      <p class="product-description"></p>
-      <button class="btn-large waves-effect waves-light">Add to Cart</button>
+    <div class="row" id="product-list">
+      <!-- Product cards will be dynamically added here -->
     </div>
   </div>
-  <div class="search-bar">
-    <input id="search" type="text" placeholder="Search for a product">
-    <button class="btn waves-effect waves-light" onclick="searchProducts()">Search</button>
-  </div>
-  <div class="products-container"></div>
-    <script src="/static/js/websitetest.js"></script>
+  <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+  <script src="/static/js/websitetest.js"></script>
 </body>
 </html>
