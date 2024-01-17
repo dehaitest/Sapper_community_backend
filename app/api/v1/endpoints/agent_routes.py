@@ -32,7 +32,7 @@ async def edit_agent_endpoint(agent_uuid: str, update_data: AgentUpdate, db: Asy
 # Get agent by name
 @router.get("/agents/by-name/", response_model=AgentResponsePersonal)
 async def get_agent_by_name_endpoint(agent_name: str = Query(...), db: AsyncSession = Depends(get_db_session), _: None = Depends(get_current_user)):
-    agent = await agent_service.get_agent_by_name(db, agent_name)
+    agent = await agent_service.get_agents_by_name(db, agent_name)
     if agent is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Agent not found")
     return agent

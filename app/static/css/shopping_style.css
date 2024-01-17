@@ -1,0 +1,142 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+header {
+  background-color: #f2f2f2;
+  padding: 10px;
+  width: 100%;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.logo {
+  font-size: 24px;
+  font-weight: bold;
+}
+nav ul {
+  list-style-type: none;
+  padding: 0;
+  display: flex;
+}
+nav ul li {
+  margin-right: 20px;
+}
+nav ul li a {
+  text-decoration: none;
+  color: #000;
+}
+.customer-support {
+  font-size: 14px;
+}
+.AllProducts {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.product-card {
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin: 10px;
+  width: 200px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; /* 保持按钮在底部 */
+  padding: 10px;
+}
+.product-card h2 {
+  margin: 0 0 10px 0;
+}
+.button-container {
+  width: 100%;
+  text-align: center;
+}
+#cart {
+  padding: 10px 20px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.3s;
+}
+#cart:hover {
+  background-color: #45a049;
+  transform: scale(1.05);
+}
+#cart:active {
+  background-color: #3e8e41;
+  transform: scale(0.95);
+}
+.user-question-section {
+margin-top: 20px;
+margin-bottom: 20px; 
+display: flex;
+flex-direction: row; 
+justify-content: center; 
+align-items: center;
+width: 100%;
+}
+#search {
+margin-top: 20px;
+text-align: center; 
+width: 100%; 
+}
+#UsersQuestion, #UsersSearch {
+padding: 10px;
+width: 300px;
+border-radius: 5px;
+border: 1px solid #ccc;
+margin-right: 10px; 
+}
+#searchButton, #fetchButton {
+padding: 10px 20px;
+border-radius: 5px;
+border: none;
+background-color: #007bff;
+color: white;
+cursor: pointer;
+}
+#searchButton:hover {
+background-color: #0056b3;
+}
+#fetchButton:hover {
+background-color: #0056b3;
+}
+footer {
+background-color: #333;
+color: #fff;
+padding: 20px;
+text-align: center;
+width: 100%;
+box-sizing: border-box;
+}
+.social-media-links a {
+color: #fff;
+margin: 0 10px;
+}
+.results {
+background-color: #f1f1f1;
+border-radius: 10px;
+border: 1px solid #ccc;
+padding: 10px;
+margin: 10px;
+position: relative;
+width: fit-content;
+max-width: 80%;
+}
+
+.results::after {
+content: "";
+position: absolute;
+bottom: 100%;
+left: 20px;
+border-width: 10px;
+border-style: solid;
+border-color: transparent transparent #f1f1f1 transparent;
+}

@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+  <header>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <div class="logo">Product Browing</div>
+    <nav>
+      <ul>
+        <li><a href="#">Home</a></li>
+        <li><a href="#">Products</a></li>
+        <li><a href="#">Contact</a></li>
+      </ul>
+    </nav>
+    <title>Product List</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <link rel="stylesheet" type="text/css" href="static/css/shopping_style.css">
+    <style>
+     
+    </style>
+  </header>
+  <main>
+  <div id='search'>
+      <input type='text' id='UsersSearch' placeholder='Search for products'>
+      <button id='searchButton'>Search</button>
+  </div>
+    <section class="AllProducts">
+      <div class="product-card">
+        <h5>Building Blocks Set</h5>
+        <p>A creative set of colorful building blocks to inspire imaginative play and problem-solving skills.</p>
+        <p>$19.99</p>
+        <button id="cart">Add to cart </button>
+      </div>
+      <div class="product-card">
+        <h5>Stuffed Teddy Bear</h5>
+        <p>A soft and cuddly teddy bear, perfect for snuggling and comforting children of all ages.</p>
+        <p>$14.95</p>
+        <button id="cart">Add to cart </button>
+      </div>
+      <div class="product-card">
+        <h5>Remote-Controlled Car</h5>
+        <p>An exciting remote-controlled car with high-speed capabilities, providing hours of fun for kids and adults alike.</p>
+        <p>$29.99</p>
+        <button id="cart">Add to cart </button>
+      </div>
+      <div class="product-card">
+        <h5>Art Supplies Kit</h5>
+        <p>A complete art supplies kit including paints, brushes, and canvases for young artists to unleash their creativity.</p>
+        <p>$24.99</p>
+        <button id="cart">Add to cart </button>
+      </div>
+      <div class="product-card">
+        <h5>Puzzle Game Set</h5>
+        <p>A collection of challenging and educational puzzles that promote cognitive development and problem-solving skills.</p>
+        <p>$17.50</p>
+        <button id="cart">Add to cart </button>
+      </div>
+      <div class="product-card">
+        <h5>Eco-Friendly Water Bottle</h5>
+        <p>A durable and environmentally friendly water bottle made from recycled materials. Ideal for staying hydrated on the go.</p>
+        <p>$18.50</p>
+        <button id="cart">Add to cart</button>
+      </div>
+      <div class="product-card">
+        <h5>Wireless Bluetooth Headphones</h5>
+        <p>High-quality wireless headphones with excellent sound clarity and long battery life. Perfect for music lovers and commuters.</p>
+        <p>$59.99</p>
+        <button id="cart">Add to cart</button>
+      </div>
+      <div class="product-card">
+        <h5>Organic Cotton T-Shirt</h5>
+        <p>Soft, sustainable, and stylish organic cotton T-shirt, available in various colors. Great for casual wear.</p>
+        <p>$24.95</p>
+        <button id="cart">Add to cart</button>
+      </div>
+      <div class="product-card">
+        <h5>Smart Fitness Watch</h5>
+        <p>A versatile smartwatch with fitness tracking, heart rate monitoring, and smartphone connectivity. Keep track of your health easily.</p>
+        <p>$129.00</p>
+        <button id="cart">Add to cart</button>
+      </div>
+      <div class="product-card">
+        <h5>Handcrafted Leather Wallet</h5>
+        <p>Elegantly designed, this handcrafted leather wallet combines style with functionality. Multiple compartments for cards and cash.</p>
+        <p>$45.00</p>
+        <button id="cart">Add to cart</button>
+      </div>
+      <div class="product-card">
+        <h5>Gourmet Coffee Beans (1 lb)</h5>
+        <p>Premium quality, freshly roasted gourmet coffee beans. Enjoy a delicious and aromatic coffee experience.</p>
+        <p>$22.00</p>
+        <button id="cart">Add to cart</button>
+      </div>
+      <div class="product-card">
+        <h5>Digital E-Reader</h5>
+        <p>Lightweight and portable, this digital e-reader holds thousands of books and has a glare-free screen for comfortable reading.</p>
+        <p>$80.00</p>
+        <button id="cart">Add to cart</button>
+      </div>
+      <div class="product-card">
+        <h5>Luxury Silk Scarf</h5>
+        <p>A beautiful, high-quality silk scarf, perfect for adding a touch of elegance to any outfit.</p>
+        <p>$35.00</p>
+        <button id="cart">Add to cart</button>
+      </div>
+      <div class="product-card">
+        <h5>Stainless Steel Cookware Set</h5>
+        <p>A professional-grade stainless steel cookware set that includes everything needed to create amazing meals.</p>
+        <p>$199.99</p>
+        <button id="cart">Add to cart</button>
+      </div>
+      <div class="product-card">
+        <h5>Portable Bluetooth Speaker</h5>
+        <p>Compact and powerful Bluetooth speaker with excellent sound quality. Water-resistant and perfect for outdoor activities.</p>
+        <p>$49.95</p>
+        <button id="cart">Add to cart</button>
+      </div>
+      <div class="product-card">
+        <h5>Artisanal Scented Candles</h5>
+        <p>Hand-poured scented candles made with natural soy wax and essential oils. Creates a soothing ambiance in any room.</p>
+        <p>$28.00</p>
+        <button id="cart">Add to cart</button>
+      </div>
+      <div class="product-card">
+        <h5>Wooden Puzzle Board Game</h5>
+        <p>An engaging and challenging wooden puzzle board game, perfect for family nights and developing problem-solving skills.</p>
+        <p>$34.95</p>
+        <button id="cart">Add to cart</button>
+      </div>
+      <div class="product-card">
+        <h5>Mini Indoor Herb Garden Kit</h5>
+        <p>Grow your own herbs indoors with this easy-to-use mini herb garden kit. Includes seeds, pots, and soil.</p>
+        <p>$19.99</p>
+        <button id="cart">Add to cart</button>
+      </div>
+    </section>
+      <section class="user-question-section">
+        <input type="text" id="UsersQuestion" placeholder='Ask for products..'>
+        <button id="fetchButton">Agent Shopper</button>
+        <div id="Answer" class="results">Agent Shopper will reply here...</div>
+    </section>
+  </main>
+  <footer>
+    <div class="copyright">Copyright &copy; 2022 Company Name</div>
+    <div class="social-media-links">
+      <a href="#">Facebook</a>
+      <a href="#">Twitter</a>
+      <a href="#">Instagram</a>
+    </div>
+    <div class="additional-links">
+      <a href="#">Terms of Service</a>
+      <a href="#">Privacy Policy</a>
+    </div>
+  </footer>
+  <script>
+    document.getElementById('fetchButton').addEventListener('click', function() {
+  const prompt = document.getElementById('UsersQuestion').value;
+  loadConfigScript().then(() => {
+    fetchOpenAIResponse(prompt);
+  });
+});
+
+function loadConfigScript() {
+  return new Promise((resolve, reject) => {
+    const script = document.createElement('script');
+    script.src = '/static/js/config.js';
+    script.onload = resolve;
+    script.onerror = reject;
+    document.head.appendChild(script);
+  });
+}
+
+function fuzzySearch(input, products) {
+  const results = [];
+  const query = input.toLowerCase();
+
+  for (const product of products) {
+    const productName = product.name.toLowerCase();
+    if (productName.includes(query)) {
+      results.push(product);
+    }
+  }
+
+  return results;
+}
+
+const products = [
+  { name: 'Building Blocks Set', description: 'A creative set of colorful building blocks to inspire imaginative play and problem-solving skills.', price: '$19.99' },
+  { name: 'Stuffed Teddy Bear', description: 'A soft and cuddly teddy bear, perfect for snuggling and comforting children of all ages.', price: '$14.95' },
+  { name: 'Remote-Controlled Car', description: 'An exciting remote-controlled car with high-speed capabilities, providing hours of fun for kids and adults alike.', price: '$29.99' },
+  { name: 'Art Supplies Kit', description: 'A complete art supplies kit including paints, brushes, and canvases for young artists to unleash their creativity.', price: '$24.99' },
+  { name: 'Puzzle Game Set', description: 'A collection of challenging and educational puzzles that promote cognitive development and problem-solving skills.', price: '$17.50' },
+  { name: 'Eco-Friendly Water Bottle', description: 'A durable and environmentally friendly water bottle made from recycled materials. Ideal for staying hydrated on the go.', price: '$18.50' },
+  { name: 'Wireless Bluetooth Headphones', description: 'High-quality wireless headphones with excellent sound clarity and long battery life. Perfect for music lovers and commuters.', price: '$59.99' },
+  { name: 'Organic Cotton T-Shirt', description: 'Soft, sustainable, and stylish organic cotton T-shirt, available in various colors. Great for casual wear.', price: '$24.95' },
+  { name: 'Smart Fitness Watch', description: 'A versatile smartwatch with fitness tracking, heart rate monitoring, and smartphone connectivity. Keep track of your health easily.', price: '$129.00' },
+  { name: 'Handcrafted Leather Wallet', description: 'Elegantly designed, this handcrafted leather wallet combines style with functionality. Multiple compartments for cards and cash.', price: '$45.00' },
+  { name: 'Gourmet Coffee Beans (1 lb)', description: 'Premium quality, freshly roasted gourmet coffee beans. Enjoy a delicious and aromatic coffee experience.', price: '$22.00' },
+  { name: 'Digital E-Reader', description: 'Lightweight and portable, this digital e-reader holds thousands of books and has a glare-free screen for comfortable reading.', price: '$80.00' },
+  { name: 'Luxury Silk Scarf', description: 'A beautiful, high-quality silk scarf, perfect for adding a touch of elegance to any outfit.', price: '$35.00' },
+  { name: 'Stainless Steel Cookware Set', description: 'A professional-grade stainless steel cookware set that includes everything needed to create amazing meals.', price: '$199.99' },
+  { name: 'Portable Bluetooth Speaker', description: 'Compact and powerful Bluetooth speaker with excellent sound quality. Water-resistant and perfect for outdoor activities.', price: '$49.95' },
+  { name: 'Artisanal Scented Candles', description: 'Hand-poured scented candles made with natural soy wax and essential oils. Creates a soothing ambiance in any room.', price: '$28.00' },
+  { name: 'Wooden Puzzle Board Game', description: 'An engaging and challenging wooden puzzle board game, perfect for family nights and developing problem-solving skills.', price: '$34.95' },
+  { name: 'Mini Indoor Herb Garden Kit', description: 'Grow your own herbs indoors with this easy-to-use mini herb garden kit. Includes seeds, pots, and soil.', price: '$19.99' }
+];
+
+
+document.getElementById('searchButton').addEventListener('click', function() {
+  const userInput = document.getElementById('UsersSearch').value;
+  const searchResults = fuzzySearch(userInput, products);
+  const productSection = document.querySelector('.AllProducts');
+
+  productSection.innerHTML = '';
+
+  searchResults.forEach(product => {
+    const productCard = document.createElement('div');
+    productCard.classList.add('product-card');
+    productCard.innerHTML = `
+      <h5 id = "FilteredProducts">${product.name}</h5>
+      <p>${product.description}</p>
+      <p>${product.price}</p>
+      <button id="cart">Add to cart</button>
+    `;
+    productSection.appendChild(productCard);
+  });
+});
+
+
+function fetchOpenAIResponse(prompt) {
+  const data = {
+      model: 'gpt-3.5-turbo',
+      messages: [
+          { role: "system", content: "You are a shopping robot. Building Blocks Set: Priced at $19.99, this is a creative set of colorful building blocks designed to inspire imaginative play and enhance problem-solving skills. Stuffed Teddy Bear: For $14.95, this soft and cuddly teddy bear is perfect for snuggling, offering comfort to children of all ages. Remote-Controlled Car: Available for $29.99, it's an exciting remote-controlled car boasting high-speed capabilities, providing endless fun for both kids and adults. 3.Art Supplies Kit: This complete kit, costing $24.99, includes paints, brushes, and canvases, allowing young artists to unleash their creativity. Puzzle Game Set: Priced at $17.50, it features a collection of challenging and educational puzzles that promote cognitive development and problem-solving skills. Eco-Friendly Water Bottle: For $18.50, this durable and environmentally friendly water bottle is made from recycled materials, ideal for staying hydrated on the go. Wireless Bluetooth Headphones: These high-quality headphones, available at $59.99, offer excellent sound clarity and long battery life, perfect for music enthusiasts and commuters. Organic Cotton T-Shirt: Priced at $24.95, this soft, sustainable, and stylish organic cotton T-shirt is available in various colors, suitable for casual wear. Smart Fitness Watch: At $129.00, this versatile smartwatch features fitness tracking, heart rate monitoring, and smartphone connectivity, making health tracking convenient. Handcrafted Leather Wallet: This elegantly designed wallet costs $45.00 and combines style with functionality, offering multiple compartments for cards and cash. Gourmet Coffee Beans (1 lb): These premium quality, freshly roasted gourmet coffee beans are priced at $22.00, ensuring a delicious and aromatic coffee experience. Digital E-Reader: For $80.00, this lightweight and portable e-reader holds thousands of books and comes with a glare-free screen for comfortable reading. Luxury Silk Scarf: This beautiful, high-quality silk scarf, available for $35.00, is perfect for adding a touch of elegance to any outfit. Stainless Steel Cookware Set: Priced at $199.99, this professional-grade stainless steel cookware set includes everything needed to create amazing meals. Portable Bluetooth Speaker: This compact and powerful speaker, costing $49.95, offers excellent sound quality and is water-resistant, making it perfect for outdoor activities. Artisanal Scented Candles: For $28.00, these hand-poured scented candles are made with natural soy wax and essential oils, creating a soothing ambiance in any room. Wooden Puzzle Board Game: Available at $34.95, this engaging and challenging wooden puzzle board game is perfect for family nights and enhancing problem-solving skills. Mini Indoor Herb Garden Kit: Priced at $19.99, this easy-to-use mini herb garden kit includes seeds, pots, and soil, allowing you to grow your own herbs indoors. Please make intelligent recommendations based on user questions." },
+          { role: "user", content: prompt }
+      ]
+  };
+
+  fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + apiConfig.key
+      },
+      body: JSON.stringify(data)
+  })
+  .then(response => response.json())
+  .then(data => {
+
+      console.log(data);
+      if (data.choices && data.choices.length > 0) {
+          document.getElementById('Answer').innerText = data.choices[0].message.content;
+      } else {
+          document.getElementById('Answer').innerText = 'None effect data';
+      }
+  })
+  .catch(error => console.error('Error:', error));
+}
+  </script>
+</body>
+</html>
