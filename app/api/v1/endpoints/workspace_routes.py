@@ -7,11 +7,9 @@ from ....services.WorkSpaceServices.splform_emulator import SPLEmulator
 from ....services.WorkSpaceServices.run_chain import RunChain
 from ....services.WorkSpaceServices.upload_file import UploadUserFile
 from ....services.database import SessionLocal
-from sqlalchemy.ext.asyncio import AsyncSession
 from ....schemas.file_schema import FileResponse
 from ....services.user_service import validate_token 
 from ...dependencies import get_current_user
-from ....services.database import get_db_session
 import json
 
 router = APIRouter()
@@ -20,7 +18,10 @@ router = APIRouter()
 @router.websocket("/ws/sapperchain/splformlint")
 async def SPLForm_Lint_endpoint(websocket: WebSocket):
     async with SessionLocal() as db:
-        await validate_token(db, websocket.query_params.get('token'))   
+        valid_user = await validate_token(db, websocket.query_params.get('token', ""))
+        if not valid_user:
+            await websocket.close(code=1008)  
+            return
         SPLFormLint_instance = await SPLFormLint.create(db, websocket.query_params.get('agent_uuid')) 
     await websocket.accept()
     while True:
@@ -33,7 +34,10 @@ async def SPLForm_Lint_endpoint(websocket: WebSocket):
 @router.websocket("/ws/sapperchain/splformtocfp")
 async def splform_to_cfp_endpoint(websocket: WebSocket):
     async with SessionLocal() as db:
-        await validate_token(db, websocket.query_params.get('token')) 
+        valid_user = await validate_token(db, websocket.query_params.get('token', ""))
+        if not valid_user:
+            await websocket.close(code=1008)  
+            return 
         SPLFormToCFP_instance = await SPLFormToCFP.create(db, websocket.query_params.get('agent_uuid'))
     await websocket.accept()
     while True:
@@ -46,7 +50,10 @@ async def splform_to_cfp_endpoint(websocket: WebSocket):
 @router.websocket("/ws/sapperchain/formcopilot")
 async def form_copilot_endpoint(websocket: WebSocket):
     async with SessionLocal() as db:
-        await validate_token(db, websocket.query_params.get('token'))
+        valid_user = await validate_token(db, websocket.query_params.get('token', ""))
+        if not valid_user:
+            await websocket.close(code=1008)  
+            return
         SPLFormCopilot_instance = await SPLFormCopilot.create(db, websocket.query_params.get('agent_uuid')) 
     await websocket.accept()
     while True:
@@ -59,7 +66,10 @@ async def form_copilot_endpoint(websocket: WebSocket):
 @router.websocket("/ws/sapperchain/splcompiler")
 async def spl_compiler_endpoint(websocket: WebSocket):
     async with SessionLocal() as db:
-        await validate_token(db, websocket.query_params.get('token')) 
+        valid_user = await validate_token(db, websocket.query_params.get('token', ""))
+        if not valid_user:
+            await websocket.close(code=1008)  
+            return 
         SPLCompiler_instance = await SPLCompiler.create(db, websocket.query_params.get('agent_uuid'))
     await websocket.accept()
     while True: 
@@ -72,7 +82,10 @@ async def spl_compiler_endpoint(websocket: WebSocket):
 @router.websocket("/ws/sapperchain/splemulator")
 async def spl_emulator_endpoint(websocket: WebSocket):
     async with SessionLocal() as db:
-        await validate_token(db, websocket.query_params.get('token')) 
+        valid_user = await validate_token(db, websocket.query_params.get('token', ""))
+        if not valid_user:
+            await websocket.close(code=1008)  
+            return
         SPLEmulator_instance = await SPLEmulator.create(db, websocket.query_params.get('agent_uuid'), websocket.query_params.get('new_chat'))
     await websocket.accept()
     while True:
@@ -84,7 +97,10 @@ async def spl_emulator_endpoint(websocket: WebSocket):
 @router.websocket("/ws/sapperchain/runchain")
 async def run_chain_endpoint(websocket: WebSocket):
     async with SessionLocal() as db:
-        await validate_token(db, websocket.query_params.get('token')) 
+        valid_user = await validate_token(db, websocket.query_params.get('token', ""))
+        if not valid_user:
+            await websocket.close(code=1008)  
+            return 
         RunChain_instance = await RunChain.create(db, websocket.query_params.get('agent_uuid'), websocket.query_params.get('new_chat'))
     await websocket.accept()
     step_mode = False  
@@ -103,7 +119,7 @@ async def run_chain_endpoint(websocket: WebSocket):
 
 # Upload file
 @router.post("/sapperchain/uploadfile", response_model=FileResponse)
-async def upload_file_endpoint(file: UploadFile = File(...), user_uuid = Depends(get_current_user), db: AsyncSession = Depends(get_db_session)):
-    UploadUserFile_Instance = await UploadUserFile.create(db, user_uuid)
-    return await UploadUserFile_Instance.upload_user_file(file)
-    
+async def upload_file_endpoint(file: UploadFile = File(...), user_uuid = Depends(get_current_user)):
+    async with SessionLocal() as db:
+        UploadUserFile_Instance = await UploadUserFile.create(db, user_uuid)
+        return await UploadUserFile_Instance.upload_user_file(file)
